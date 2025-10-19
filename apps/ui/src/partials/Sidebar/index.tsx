@@ -1,7 +1,7 @@
 import { Box, Button, type DefaultMantineColor, Flex, Text, Title } from "@mantine/core";
 import { type ReactNode } from "react";
 import { FaPerson } from "react-icons/fa6";
-import { GiBookshelf, GiFlowers, GiPartyHat, GiRuleBook, GiVillage } from "react-icons/gi";
+import { GiBookshelf, GiExplosionRays, GiFlowers, GiPartyHat, GiRuleBook, GiVillage } from "react-icons/gi";
 import { PiCoins } from "react-icons/pi";
 import { FaRobot } from "react-icons/fa";
 import Characters from "./Modals/Characters.tsx";
@@ -13,6 +13,7 @@ import Style from "./Modals/Style.tsx";
 import Rules from "./Modals/Rules.tsx";
 import Agent from "./Modals/Agent.tsx";
 import Hypebot from "./Modals/Hypebot.tsx";
+import Clear from "./Modals/Clear.tsx";
 
 export default function Sidebar() {
   const [isCharacterModalOpened, { open: openCharacterModal, close: closeCharacterModal }] = useDisclosure(false);
@@ -23,6 +24,7 @@ export default function Sidebar() {
   const [isRulesModalOpened, { open: openRulesModal, close: closeRulesModal }] = useDisclosure(false);
   const [isAgentModalOpened, { open: openAgentModal, close: closeAgentModal }] = useDisclosure(false);
   const [isHypebotModalOpened, { open: openHypebotModal, close: closeHypebotModal }] = useDisclosure(false);
+  const [isClearOpened, { open: openClearModal, close: closeClearModal }] = useDisclosure(false);
   return (
     <Flex direction="column" py="md" pl="md" pr="lg">
       <Flex direction="column" mb="xl">
@@ -85,6 +87,15 @@ export default function Sidebar() {
             icon={<GiPartyHat />}
             color="grape"
             modal={<Hypebot isOpened={isHypebotModalOpened} close={closeHypebotModal} />}
+            open={openHypebotModal}
+          />
+        </Flex>
+        <Flex direction="column" mb="xl" gap="sm">
+          <ModalButton
+            label="Clear History?"
+            icon={<GiExplosionRays />}
+            color="orange"
+            modal={<Clear isOpened={isClearOpened} close={closeClearModal} />}
             open={openHypebotModal}
           />
         </Flex>
