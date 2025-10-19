@@ -14,7 +14,7 @@ export default function Equips() {
         onChange={(e) => setValue(e.currentTarget.value)}
         flex={1}
         minRows={16}
-        maxRows={24}
+        maxRows={16}
         autosize
       />
     </Box>

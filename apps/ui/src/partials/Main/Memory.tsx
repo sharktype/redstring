@@ -9,7 +9,14 @@ export default function Memory() {
       <Title order={3} c="blue" mb="xs">
         <FaBook /> Memory
       </Title>
-      <Textarea value={value} onChange={(e) => setValue(e.currentTarget.value)} flex={1} minRows={16} autosize />
+      <Textarea
+        value={value}
+        onChange={(e) => setValue(e.currentTarget.value)}
+        flex={1}
+        minRows={16}
+        maxRows={16}
+        autosize
+      />
     </Box>
   );
 }
