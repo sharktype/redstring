@@ -43,7 +43,7 @@ export function Stream() {
         <Flex mb="xs">
           <Badge color="lime">Storyteller</Badge>
         </Flex>
-        <Markdown>{streamingMessage || "_The Storyteller is thinking..._"}</Markdown>
+        <Markdown>{streamingMessage.trim() || "_The Storyteller is thinking..._"}</Markdown>
       </Card>
     </Flex>
   );

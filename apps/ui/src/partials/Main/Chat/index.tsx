@@ -93,7 +93,9 @@ export default function Chat() {
 
   useEffect(() => {
     textareaRef.current?.focus();
+  }, []);
 
+  useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
       if (event.key === "Enter" && !event.shiftKey) {
         event.preventDefault();
