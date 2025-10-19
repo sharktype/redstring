@@ -5,6 +5,8 @@ import { useLocalStorage } from "@mantine/hooks";
 import type MessageData from "../../../models/Message.ts";
 import Message from "./Message.tsx";
 
+const MAX_MESSAGES_IN_HISTORY = 50;
+
 export default function Chat() {
   const textareaRef = useRef<HTMLTextAreaElement>(null);
 
@@ -17,7 +19,10 @@ export default function Chat() {
       return;
     }
 
-    setMessages((prevMessages) => [...prevMessages, { content: value.trim(), role: "user" }]);
+    setMessages((prevMessages) => [
+      ...prevMessages.slice(-MAX_MESSAGES_IN_HISTORY + 1),
+      { content: value.trim(), role: "user" },
+    ]);
 
     if (textareaRef.current) {
       textareaRef.current.value = "";
@@ -32,8 +37,6 @@ export default function Chat() {
       }
     });
   }, []);
-
-  console.log(messages);
 
   return (
     <Flex direction="column" flex={1} h="100vh" miw={768}>

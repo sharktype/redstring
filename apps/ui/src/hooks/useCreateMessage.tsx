@@ -1,0 +1,44 @@
+import type MessageData from "../models/Message";
+import { useCallback } from "react";
+
+export default function useCreateMessage(messages: MessageData[]) {
+  return useCallback(() => {
+    return createMessage(messages);
+  }, [messages]);
+}
+
+function createMessage(messages: MessageData[]) {
+  // More transient.
+
+  const equips = localStorage.getItem("equips") || "";
+  const inventory = localStorage.getItem("inventory") || "";
+  const stats = localStorage.getItem("stats") || "";
+  const memory = localStorage.getItem("memory") || "";
+
+  // More permanent.
+
+  const characters = localStorage.getItem("characters") || "";
+  const setting = localStorage.getItem("setting") || "";
+  const economy = localStorage.getItem("economy") || "";
+  const plot = localStorage.getItem("plot") || "";
+  const style = localStorage.getItem("style") || "";
+  const rules = localStorage.getItem("rules") || "";
+
+  const flattenedMessages = messages.map((msg) => `${msg.role.toUpperCase()}:\n${msg.content}`).join("\n\n");
+
+  const parts = [
+    `CHARACTERS:\n${characters}`,
+    `SETTING:\n${setting}`,
+    `ECONOMY:\n${economy}`,
+    `PLOT:\n${plot}`,
+    `RULES:\n${rules}`,
+    `STYLE:\n${style}`,
+    `EQUIPS:\n${equips}`,
+    `INVENTORY:\n${inventory}`,
+    `STATS:\n${stats}`,
+    `MEMORY:\n${memory}`,
+    `----\nMOST RECENT 50 MESSAGES:\n----\n\n${flattenedMessages}`,
+  ];
+
+  return parts.join("\n\n");
+}

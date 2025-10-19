@@ -1,11 +1,14 @@
 import type MessageData from "../../../models/Message.ts";
 import { Badge, Card, type DefaultMantineColor, Flex } from "@mantine/core";
+import { useLlmContext } from "../../../context/LlmContext.tsx";
 
 interface MessageProps {
   message: MessageData;
 }
 
 export default function Message(props: MessageProps) {
+  const { isStreaming } = useLlmContext();
+
   let speakerText = "";
   let speakerColor: DefaultMantineColor = "gray";
   if (props.message.role === "user") {
@@ -27,7 +30,7 @@ export default function Message(props: MessageProps) {
         <Flex mb="xs">
           <Badge color={speakerColor}>{speakerText}</Badge>
         </Flex>
-        <Flex>{props.message.content}</Flex>
+        <Flex>{isStreaming ? "" : props.message.content}</Flex>
       </Card>
     </Flex>
   );
