@@ -40,11 +40,9 @@ export function Stream() {
     <Flex mb="md" justify="flex-start">
       <Card miw="100%" bg="gray" shadow="sm" p="md">
         <Flex mb="xs">
-          <Badge color="lime">
-            Storyteller (<i>typing...</i>)
-          </Badge>
+          <Badge color="lime">Storyteller</Badge>
         </Flex>
-        <Flex>{streamingMessage}</Flex>
+        <Flex>{streamingMessage || <i>The Storyteller is thinking...</i>}</Flex>
       </Card>
     </Flex>
   );
