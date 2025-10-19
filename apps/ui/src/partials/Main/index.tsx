@@ -10,7 +10,7 @@ export default function Main() {
   return (
     <Flex h="100vh">
       <Chat />
-      <Flex w={680} miw={400} maw={680} direction="column" mr={64} my="auto">
+      <Flex w={620} miw={320} maw={620} direction="column" mr={64} my="auto">
         <Flex>
           <Equips />
           <Inventory />

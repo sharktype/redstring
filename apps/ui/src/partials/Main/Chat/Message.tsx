@@ -39,7 +39,7 @@ export function Stream() {
   const { streamingMessage } = useLlmContext();
   return (
     <Flex mb="md" justify="flex-start">
-      <Card miw="100%" bg="gray" shadow="sm" p="md">
+      <Card miw="100%" bg="gray" shadow="sm" p="xs">
         <Flex mb="xs">
           <Badge color="lime">Storyteller</Badge>
         </Flex>

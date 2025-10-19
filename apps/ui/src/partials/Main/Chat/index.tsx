@@ -9,7 +9,7 @@ import useSendMessage from "../../../hooks/useSendMessage.tsx";
 
 const MAX_MESSAGES_IN_HISTORY = 50;
 
-const SCROLL_THRESHOLD_PIXELS = 64;
+const SCROLL_THRESHOLD_PIXELS = 128;
 
 export default function Chat() {
   const textareaRef = useRef<HTMLTextAreaElement>(null);
