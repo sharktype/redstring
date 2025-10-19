@@ -1,0 +1,59 @@
+Generate a comprehensive list of all locations of below general format. [Square brackets] here denote variables that
+are to be replaced with its name that can also be repeated. {...} represents "any number of other fields that are not
+specified here" which may be nested and repeated as needed. {Curly braces} with text inside represent an optional
+non-repeated field that the user is recommended to provide.
+
+Do not include residential buildings unless they're notable or important to the plot or side quests.
+
+```
+# {City Name}
+
+- Jurisdiction: {type and heirarchical tree, e.g., Kingdom > Duchy > County and their leader's names and houses}
+  - Description: {description of the wider political entity outside the city}
+- Geography: {geographical description, e.g., coastal city, river nearby, mountains to the north}
+- Population: {population and demographics}
+- Economy: {main industries, trade goods, wealth level}
+- Description: {overall description of the city, its atmosphere, architecture, and notable features}
+- Needs:
+  - Food: {where food comes from}
+  - Water: {where water comes from}
+  - Security: {structure of security/law enforcement}
+- Factions:
+  - [Faction]
+    - Description: {general description of the faction}
+    - Goals: {goals and motivations of the faction}
+    - Influence: {level of influence in the city}
+    - Relations: {relations with other factions}
+    - Leaders: {notable leaders and members as a tree if applicable}
+- Laws:
+  - [Law]: {description of the law and its enforcement}
+
+## [District Name]
+
+- Adjacent Districts: {list of adjacent districts}
+- Description: {description of the district and its primary function}
+- Architecture: {style and state of buildings and layout}
+- 5 Senses: {description, especially of sounds and smells}
+- Status: {general wealth and condition of the district}
+- Demographics: {population characteristics of the district, including racial}
+- Proportion of Residential Buildings: {approximate percentage of residential buildings in the district}
+- Factions: {city-wide factions, and minor players or groups specific to the district not covered already}
+- Tensions: {any notable tensions or conflicts in the district, especially between factions or social groups}
+
+### [Transitory Road/Park/Square/Alley]
+
+- Description: {description of the road/park/square/alley, its features, and atmosphere}
+- Why: {if more than one of these per district, explain why this one is notable or different}
+
+### [Building Name/Purpose]
+
+- Type: {type of building, e.g., shop, inn, residence, government building}
+- Description: {description of the building's exterior and interior, including layout if relevant}
+- Owner: {name and brief description of the owner if applicable}
+- Tier: {S-F tier of services or goods provided if applicable - cost usually scales to match}
+- Goods/Services: {general description of goods and services if applicable}
+```
+
+Guidance from user:
+
+(if empty, ask for the user to provide more details about what they want)

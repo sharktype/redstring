@@ -1,0 +1,14 @@
+Generate a character.
+
+```
+# [Character Name]
+
+- Physical: {description of physical appearance, clothing, distinguishing features}
+- Personality: {description of personality traits, demeanour, and typical behaviour}
+- Description: {background, role, and any other relevant information about the character}
+- Secrets: {secrets that are NOT known by the human player}
+```
+
+Do so based on these guidelines:
+
+(If empty, ask the user to provide some guidelines and context)
