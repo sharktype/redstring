@@ -1,6 +1,7 @@
 import type MessageData from "../../../models/Message.ts";
 import { Badge, Card, type DefaultMantineColor, Flex } from "@mantine/core";
 import { useLlmContext } from "../../../context/LlmContext.tsx";
+import Markdown from "react-markdown";
 
 interface MessageProps {
   message: MessageData;
@@ -28,7 +29,7 @@ export default function Message(props: MessageProps) {
         <Flex mb="xs">
           <Badge color={speakerColor}>{speakerText}</Badge>
         </Flex>
-        <Flex>{props.message.content}</Flex>
+        <Markdown>{props.message.content}</Markdown>
       </Card>
     </Flex>
   );
@@ -42,7 +43,7 @@ export function Stream() {
         <Flex mb="xs">
           <Badge color="lime">Storyteller</Badge>
         </Flex>
-        <Flex>{streamingMessage || <i>The Storyteller is thinking...</i>}</Flex>
+        <Markdown>{streamingMessage || "_The Storyteller is thinking..._"}</Markdown>
       </Card>
     </Flex>
   );

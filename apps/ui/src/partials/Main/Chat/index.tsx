@@ -65,7 +65,7 @@ export default function Chat() {
   return (
     <Flex direction="column" flex={1} h="100vh" miw={768}>
       <Container h="100%" miw={768}>
-        <Flex direction="column" flex={1} h="100%" p="xl" style={{ whiteSpace: "pre-wrap" }}>
+        <Flex direction="column" flex={1} h="100%" p="xl">
           <Box flex={1} style={{ overflowY: "auto" }} mt="xl">
             {messages.length === 0 && (
               <Box c="gray" ta="center" mt="lg">
