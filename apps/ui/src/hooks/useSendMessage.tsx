@@ -4,18 +4,44 @@ import type MessageData from "../models/Message.ts";
 import { useLlmContext } from "../context/LlmContext.tsx";
 import { useCallback } from "react";
 import systemPrompt from "../text/prompt-world-system.txt?raw";
+import useCreateOpenAiClient from "./useCreateOpenAiClient.tsx";
 
 export default function useSendMessage() {
   const [messages, setMessages] = useLocalStorage<MessageData[]>({ key: "messages", defaultValue: [] });
   const [openAiModel] = useLocalStorage({ key: "open-ai-model", defaultValue: "" });
 
-  const { setIsStreaming, setStreamingMessage, openAiClient } = useLlmContext();
+  const { setIsStreaming, setStreamingMessage, openAiClient, setOpenAiClient } = useLlmContext();
 
   const createMessage = useCreateMessage(messages);
+  const createOpenAiClient = useCreateOpenAiClient();
 
   return useCallback(async () => {
+    setIsStreaming(true);
+
+    let actualOpenAiClient = openAiClient;
+
     if (!openAiClient) {
-      console.warn("WARN - OpenAI client is not initialized when sending message");
+      console.info("INFO - OpenAI client is not initialized when sending message; attempting to instantiate");
+
+      const newOpenAiClient = createOpenAiClient();
+      if (!newOpenAiClient) {
+        console.warn("WARN - failed to create OpenAI client when sending message");
+
+        setIsStreaming(false);
+
+        return;
+      }
+
+      setOpenAiClient(newOpenAiClient);
+      actualOpenAiClient = newOpenAiClient;
+
+      console.log("INFO - OpenAI client created successfully when sending message");
+    }
+
+    if (!actualOpenAiClient) {
+      console.error("ERROR - OpenAI client is still undefined after creation attempt");
+
+      setIsStreaming(false);
 
       return;
     }
@@ -24,7 +50,7 @@ export default function useSendMessage() {
 
     const userMessage = createMessage();
 
-    const stream = await openAiClient.chat.completions.create({
+    const stream = await actualOpenAiClient.chat.completions.create({
       model: openAiModel,
       messages: [
         { role: "system", content: systemPrompt },
@@ -34,8 +60,6 @@ export default function useSendMessage() {
     });
 
     console.log("INFO - OpenAI streaming response started");
-
-    setIsStreaming(true);
 
     let fullResponse = "";
     for await (const part of stream) {
@@ -53,5 +77,14 @@ export default function useSendMessage() {
     setMessages((currentMessages) => {
       return [...currentMessages, { role: "assistant", content: fullResponse }];
     });
-  }, [openAiClient, setStreamingMessage, setIsStreaming, setMessages, openAiModel, createMessage]);
+  }, [
+    openAiClient,
+    setStreamingMessage,
+    setIsStreaming,
+    setMessages,
+    openAiModel,
+    createMessage,
+    createOpenAiClient,
+    setOpenAiClient,
+  ]);
 }
