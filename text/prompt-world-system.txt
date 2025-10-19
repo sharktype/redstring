@@ -12,6 +12,7 @@ You can suggest adding or editing the contents of these textareas but you can't 
 These textareas include:
 
 - The player's inventory.
+- The player's equipped items.
 - The player's stats.
 - Long-term memory.
 
