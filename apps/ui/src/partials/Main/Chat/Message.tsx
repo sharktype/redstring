@@ -7,8 +7,6 @@ interface MessageProps {
 }
 
 export default function Message(props: MessageProps) {
-  const { isStreaming } = useLlmContext();
-
   let speakerText = "";
   let speakerColor: DefaultMantineColor = "gray";
   if (props.message.role === "user") {
@@ -30,7 +28,23 @@ export default function Message(props: MessageProps) {
         <Flex mb="xs">
           <Badge color={speakerColor}>{speakerText}</Badge>
         </Flex>
-        <Flex>{isStreaming ? "" : props.message.content}</Flex>
+        <Flex>{props.message.content}</Flex>
+      </Card>
+    </Flex>
+  );
+}
+
+export function Stream() {
+  const { streamingMessage } = useLlmContext();
+  return (
+    <Flex mb="md" justify="flex-start">
+      <Card miw="100%" bg="gray" shadow="sm" p="md">
+        <Flex mb="xs">
+          <Badge color="lime">
+            Storyteller (<i>typing...</i>)
+          </Badge>
+        </Flex>
+        <Flex>{streamingMessage}</Flex>
       </Card>
     </Flex>
   );

@@ -1,23 +1,33 @@
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef } from "react";
 import { Box, Button, Container, Flex, Textarea } from "@mantine/core";
 import { BiSend } from "react-icons/bi";
 import { useLocalStorage } from "@mantine/hooks";
 import type MessageData from "../../../models/Message.ts";
-import Message from "./Message.tsx";
+import Message, { Stream } from "./Message.tsx";
+import { useLlmContext } from "../../../context/LlmContext.tsx";
+import useSendMessage from "../../../hooks/useSendMessage.tsx";
 
 const MAX_MESSAGES_IN_HISTORY = 50;
 
 export default function Chat() {
   const textareaRef = useRef<HTMLTextAreaElement>(null);
+  const submitButtonRef = useRef<HTMLButtonElement>(null);
 
-  const [isLlmTyping] = useState(false);
+  const { isStreaming } = useLlmContext();
+
   const [messages, setMessages] = useLocalStorage<MessageData[]>({ key: "messages", defaultValue: [] });
 
-  const submit = () => {
+  const sendMessage = useSendMessage();
+
+  const submit = useCallback(() => {
     const value = textareaRef.current?.value;
     if (!value || value.trim() === "") {
+      console.debug("DEBUG - submit called without value");
+
       return;
     }
+
+    console.debug("DEBUG - submitting message:", value);
 
     setMessages((prevMessages) => [
       ...prevMessages.slice(-MAX_MESSAGES_IN_HISTORY + 1),
@@ -27,27 +37,48 @@ export default function Chat() {
     if (textareaRef.current) {
       textareaRef.current.value = "";
     }
-  };
+
+    // Now, start the LLM response process:
+
+    console.log("DEBUG - calling sendMessage to process LLM response");
+
+    void sendMessage();
+  }, [sendMessage, setMessages]);
 
   useEffect(() => {
     textareaRef.current?.focus();
-    textareaRef.current?.addEventListener("keydown", (event) => {
+
+    const handleKeyDown = (event: KeyboardEvent) => {
       if (event.key === "Enter" && !event.shiftKey) {
+        event.preventDefault();
         submit();
       }
-    });
-  }, []);
+    };
+
+    const textarea = textareaRef.current;
+    textarea?.addEventListener("keydown", handleKeyDown);
+
+    return () => {
+      textarea?.removeEventListener("keydown", handleKeyDown);
+    };
+  }, [submit]);
 
   return (
     <Flex direction="column" flex={1} h="100vh" miw={768}>
       <Container h="100%" miw={768}>
         <Flex direction="column" flex={1} h="100%" p="xl" style={{ whiteSpace: "pre-wrap" }}>
           <Box flex={1} style={{ overflowY: "auto" }} mt="xl">
+            {messages.length === 0 && (
+              <Box c="gray" ta="center" mt="lg">
+                The story has not yet begun...
+              </Box>
+            )}
             {messages.map((message, idx) => {
               return <Message key={`message-${idx}`} message={message} />;
             })}
+            {isStreaming ? <Stream /> : null}
           </Box>
-          <Box pos="relative" mb="xl">
+          <Box pos="relative" mb="xl" pt={4}>
             <Textarea
               description="Press ENTER to send. Press SHIFT + ENTER to add a new line."
               ref={textareaRef}
@@ -57,12 +88,13 @@ export default function Chat() {
               autosize
             />
             <Button
+              ref={submitButtonRef}
               pos="absolute"
               right={12}
               bottom={12}
               variant="light"
               size="xs"
-              disabled={isLlmTyping}
+              disabled={isStreaming}
               onClick={(e) => {
                 e.preventDefault();
                 submit();

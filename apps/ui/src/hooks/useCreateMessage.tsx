@@ -40,5 +40,9 @@ function createMessage(messages: MessageData[]) {
     `----\nMOST RECENT 50 MESSAGES:\n----\n\n${flattenedMessages}`,
   ];
 
-  return parts.join("\n\n");
+  const fullMessage = parts.join("\n\n");
+
+  console.log(`LOG - created debug message with parts of length ${fullMessage.length}`);
+
+  return fullMessage;
 }
