@@ -7,84 +7,87 @@ import systemPrompt from "../text/prompt-world-system.txt?raw";
 import useCreateOpenAiClient from "./useCreateOpenAiClient.tsx";
 
 export default function useSendMessage() {
-  const [messages, setMessages] = useLocalStorage<MessageData[]>({ key: "messages", defaultValue: [] });
+  const [_, setMessages] = useLocalStorage<MessageData[]>({ key: "messages", defaultValue: [] });
   const [openAiModel] = useLocalStorage({ key: "open-ai-model", defaultValue: "" });
 
   const { setIsStreaming, setStreamingMessage, openAiClient, setOpenAiClient } = useLlmContext();
 
-  const createMessage = useCreateMessage(messages);
   const createOpenAiClient = useCreateOpenAiClient();
+  const createMessage = useCreateMessage();
 
-  return useCallback(async () => {
-    setIsStreaming(true);
+  return useCallback(
+    async (messages: MessageData[]) => {
+      setIsStreaming(true);
 
-    let actualOpenAiClient = openAiClient;
+      let actualOpenAiClient = openAiClient;
 
-    if (!openAiClient) {
-      console.info("INFO - OpenAI client is not initialized when sending message; attempting to instantiate");
+      if (!openAiClient) {
+        console.info("INFO - OpenAI client is not initialized when sending message; attempting to instantiate");
 
-      const newOpenAiClient = createOpenAiClient();
-      if (!newOpenAiClient) {
-        console.warn("WARN - failed to create OpenAI client when sending message");
+        const newOpenAiClient = createOpenAiClient();
+        if (!newOpenAiClient) {
+          console.warn("WARN - failed to create OpenAI client when sending message");
+
+          setIsStreaming(false);
+
+          return;
+        }
+
+        setOpenAiClient(newOpenAiClient);
+        actualOpenAiClient = newOpenAiClient;
+
+        console.log("INFO - OpenAI client created successfully when sending message");
+      }
+
+      if (!actualOpenAiClient) {
+        console.error("ERROR - OpenAI client is still undefined after creation attempt");
 
         setIsStreaming(false);
 
         return;
       }
 
-      setOpenAiClient(newOpenAiClient);
-      actualOpenAiClient = newOpenAiClient;
+      console.log("INFO - sending message via OpenAI client");
 
-      console.log("INFO - OpenAI client created successfully when sending message");
-    }
+      const userMessage = createMessage(messages);
 
-    if (!actualOpenAiClient) {
-      console.error("ERROR - OpenAI client is still undefined after creation attempt");
+      const stream = await actualOpenAiClient.chat.completions.create({
+        model: openAiModel,
+        messages: [
+          { role: "system", content: systemPrompt },
+          { role: "user", content: userMessage },
+        ],
+        stream: true,
+      });
+
+      console.log("INFO - OpenAI streaming response started");
+
+      let fullResponse = "";
+      for await (const part of stream) {
+        fullResponse += part.choices[0]?.delta?.content || "";
+
+        setStreamingMessage(fullResponse);
+      }
+
+      // Once completed, we push the message to the history stack.
+
+      // TODO: handle cancelling a prompt and persisting partial responses.
 
       setIsStreaming(false);
-
-      return;
-    }
-
-    console.log("INFO - sending message via OpenAI client");
-
-    const userMessage = createMessage();
-
-    const stream = await actualOpenAiClient.chat.completions.create({
-      model: openAiModel,
-      messages: [
-        { role: "system", content: systemPrompt },
-        { role: "user", content: userMessage },
-      ],
-      stream: true,
-    });
-
-    console.log("INFO - OpenAI streaming response started");
-
-    let fullResponse = "";
-    for await (const part of stream) {
-      fullResponse += part.choices[0]?.delta?.content || "";
-
-      setStreamingMessage(fullResponse);
-    }
-
-    // Once completed, we push the message to the history stack.
-
-    // TODO: handle cancelling a prompt and persisting partial responses.
-
-    setIsStreaming(false);
-    setStreamingMessage("");
-    setMessages((currentMessages) => {
-      return [...currentMessages, { role: "assistant", content: fullResponse }];
-    });
-  }, [
-    openAiClient,
-    setStreamingMessage,
-    setIsStreaming,
-    setMessages,
-    openAiModel,
-    createMessage,
-    createOpenAiClient,
-    setOpenAiClient,
-  ]);
+      setStreamingMessage("");
+      setMessages((currentMessages) => {
+        return [...currentMessages, { role: "assistant", content: fullResponse }];
+      });
+    },
+    [
+      openAiClient,
+      setStreamingMessage,
+      setIsStreaming,
+      setMessages,
+      openAiModel,
+      createMessage,
+      createOpenAiClient,
+      setOpenAiClient,
+    ],
+  );
 }

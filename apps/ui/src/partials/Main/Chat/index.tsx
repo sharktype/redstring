@@ -27,12 +27,11 @@ export default function Chat() {
       return;
     }
 
-    console.debug("DEBUG - submitting message:", value);
+    const currentUserMessage: MessageData = { content: value.trim(), role: "user" };
 
-    setMessages((prevMessages) => [
-      ...prevMessages.slice(-MAX_MESSAGES_IN_HISTORY + 1),
-      { content: value.trim(), role: "user" },
-    ]);
+    console.debug("DEBUG - submitting user message:", JSON.stringify(currentUserMessage, null, 2));
+
+    setMessages((prevMessages) => [...prevMessages.slice(-MAX_MESSAGES_IN_HISTORY + 1), currentUserMessage]);
 
     if (textareaRef.current) {
       textareaRef.current.value = "";
@@ -42,8 +41,8 @@ export default function Chat() {
 
     console.log("DEBUG - calling sendMessage to process LLM response");
 
-    void sendMessage();
-  }, [sendMessage, setMessages]);
+    void sendMessage([...messages, currentUserMessage]);
+  }, [sendMessage, setMessages, messages]);
 
   useEffect(() => {
     textareaRef.current?.focus();

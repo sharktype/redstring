@@ -41,7 +41,7 @@ export default function Sidebar() {
   const [messages] = useLocalStorage<MessageData[]>({ key: "messages", defaultValue: [] });
   const [_, setLastDebugPrompt] = useLocalStorage<string>({ key: "last-debug-prompt", defaultValue: "" });
 
-  const createMessage = useCreateMessage(messages);
+  const createMessage = useCreateMessage();
 
   return (
     <Flex direction="column" py="md" pl="md" pr="lg">
@@ -115,7 +115,7 @@ export default function Sidebar() {
             color="green"
             modal={<Debug isOpened={isDebugPromptModalOpened} close={closeDebugPromptModal} />}
             open={() => {
-              setLastDebugPrompt(createMessage());
+              setLastDebugPrompt(createMessage(messages));
               openDebugPromptModal();
             }}
           />
