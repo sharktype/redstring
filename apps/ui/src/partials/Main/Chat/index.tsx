@@ -9,15 +9,62 @@ import useSendMessage from "../../../hooks/useSendMessage.tsx";
 
 const MAX_MESSAGES_IN_HISTORY = 50;
 
+const SCROLL_THRESHOLD_PIXELS = 64;
+
 export default function Chat() {
   const textareaRef = useRef<HTMLTextAreaElement>(null);
-  const submitButtonRef = useRef<HTMLButtonElement>(null);
 
-  const { isStreaming } = useLlmContext();
+  // These refs are for advanced scrolling handling.
+
+  const messagesEndRef = useRef<HTMLDivElement>(null);
+  const scrollContainerRef = useRef<HTMLDivElement>(null);
+  const isUserScrolledUpRef = useRef(false);
+
+  const { isStreaming, streamingMessage } = useLlmContext();
 
   const [messages, setMessages] = useLocalStorage<MessageData[]>({ key: "messages", defaultValue: [] });
 
   const sendMessage = useSendMessage();
+
+  const isAtBottom = useCallback(() => {
+    const container = scrollContainerRef.current;
+    if (!container) {
+      return true;
+    }
+
+    return container.scrollHeight - container.scrollTop - container.clientHeight < SCROLL_THRESHOLD_PIXELS;
+  }, []);
+
+  const scrollToBottom = useCallback(() => {
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+  }, []);
+
+  useEffect(() => {
+    // Track user scroll position.
+
+    const container = scrollContainerRef.current;
+    if (!container) {
+      return;
+    }
+
+    const handleScroll = () => {
+      isUserScrolledUpRef.current = !isAtBottom();
+    };
+
+    container.addEventListener("scroll", handleScroll);
+
+    return () => {
+      container.removeEventListener("scroll", handleScroll);
+    };
+  }, [isAtBottom]);
+
+  useEffect(() => {
+    // Auto-scroll only if the user is at the bottom when messages change.
+
+    if (!isUserScrolledUpRef.current) {
+      scrollToBottom();
+    }
+  }, [messages, isStreaming, scrollToBottom, streamingMessage]);
 
   const submit = useCallback(() => {
     const value = textareaRef.current?.value;
@@ -66,7 +113,7 @@ export default function Chat() {
     <Flex direction="column" flex={1} h="100vh" miw={768}>
       <Container h="100%" miw={768}>
         <Flex direction="column" flex={1} h="100%" p="xl">
-          <Box flex={1} style={{ overflowY: "auto" }} mt="xl">
+          <Box ref={scrollContainerRef} flex={1} style={{ overflowY: "auto" }} mt="xl">
             {messages.length === 0 && (
               <Box c="gray" ta="center" mt="lg">
                 The story has not yet begun...
@@ -76,6 +123,8 @@ export default function Chat() {
               return <Message key={`message-${idx}`} message={message} />;
             })}
             {isStreaming ? <Stream /> : null}
+
+            <Box ref={messagesEndRef} />
           </Box>
           <Box pos="relative" mb="xl" pt={4}>
             <Textarea
@@ -87,7 +136,6 @@ export default function Chat() {
               autosize
             />
             <Button
-              ref={submitButtonRef}
               pos="absolute"
               right={12}
               bottom={12}
