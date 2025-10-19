@@ -26,7 +26,10 @@ function createMessage(messages: MessageData[]) {
 
   const flattenedMessages = messages.map((msg) => `${msg.role.toUpperCase()}:\n${msg.content}`).join("\n\n");
 
+  const luckRoll = Math.floor(Math.random() * 100) + 1;
+
   const parts = [
+    `LR = ${luckRoll}/100`,
     `CHARACTERS:\n${characters}`,
     `SETTING:\n${setting}`,
     `ECONOMY:\n${economy}`,
