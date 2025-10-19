@@ -3,14 +3,14 @@ import Equips from "./Equips.tsx";
 import Inventory from "./Inventory.tsx";
 import Stats from "./Stats.tsx";
 import Memory from "./Memory.tsx";
-import Chat from "./Chat.tsx";
+import Chat from "./Chat";
 import Hypebot from "./Hypebot.tsx";
 
 export default function Main() {
   return (
     <Flex h="100vh">
       <Chat />
-      <Flex w={768} miw={512} maw={768} direction="column" mr={96} my="auto">
+      <Flex w={680} miw={400} maw={680} direction="column" mr={64} my="auto">
         <Flex>
           <Equips />
           <Inventory />
