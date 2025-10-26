@@ -8,7 +8,7 @@ import useCreateOpenAiClient from "./useCreateOpenAiClient.tsx";
 export default function useSendHype() {
   const [openAiModel] = useLocalStorage({ key: "open-ai-model", defaultValue: "" });
   const [hypebotPrompt] = useLocalStorage({ key: "hypebot-prompt", defaultValue: "" });
-  const [_, setHypebotResponse] = useLocalStorage({ key: "hypebot-response", defaultValue: "" });
+  const [hypebotResponse, setHypebotResponse] = useLocalStorage({ key: "hypebot-response", defaultValue: "" });
 
   const { openAiClient, setOpenAiClient, setIsHypebotThinking } = useLlmContext();
 
@@ -45,7 +45,7 @@ export default function useSendHype() {
 
       console.log("INFO - sending message via OpenAI client");
 
-      const hypebotMessage = createHype(messages);
+      const hypebotMessage = createHype(messages, hypebotResponse);
 
       const result = await actualOpenAiClient.chat.completions.create({
         model: openAiModel,
@@ -56,7 +56,11 @@ export default function useSendHype() {
         stream: false,
       });
 
-      const fullResponse = result.choices[0].message?.content || "";
+      const fullResponse = result.choices[0].message?.content?.replaceAll("—", " - ") || "";
+
+      if (!fullResponse) {
+        console.warn("WARN - received empty response from Hypebot");
+      }
 
       console.log("INFO - received Hypebot response from OpenAI client");
 
@@ -72,6 +76,7 @@ export default function useSendHype() {
       hypebotPrompt,
       setHypebotResponse,
       setIsHypebotThinking,
+      hypebotResponse,
     ],
   );
 }

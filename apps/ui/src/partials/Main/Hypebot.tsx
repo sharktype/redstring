@@ -7,10 +7,10 @@ export default function Hypebot() {
 
   const { isHypebotThinking } = useLlmContext();
 
-  let message = hypebotResponse;
+  let message = hypebotResponse.trim();
   if (isHypebotThinking) {
     message = "Hypebot is thinking...";
-  } else if (!hypebotResponse) {
+  } else if (!hypebotResponse.trim()) {
     message = "Hypebot is waiting excitedly to start!";
   }
 

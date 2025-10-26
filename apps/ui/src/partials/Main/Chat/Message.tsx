@@ -1,5 +1,5 @@
 import type MessageData from "../../../models/Message.ts";
-import { Badge, Card, type DefaultMantineColor, Flex } from "@mantine/core";
+import { Badge, Box, Card, type DefaultMantineColor, Flex } from "@mantine/core";
 import { useLlmContext } from "../../../context/LlmContext.tsx";
 import Markdown from "react-markdown";
 
@@ -29,7 +29,9 @@ export default function Message(props: MessageProps) {
         <Flex mb="xs">
           <Badge color={speakerColor}>{speakerText}</Badge>
         </Flex>
-        <Markdown>{props.message.content}</Markdown>
+        <Box maw={780} style={{ overflowX: "auto" }}>
+          <Markdown>{props.message.content}</Markdown>
+        </Box>
       </Card>
     </Flex>
   );
@@ -39,11 +41,13 @@ export function Stream() {
   const { streamingMessage } = useLlmContext();
   return (
     <Flex mb="md" justify="flex-start">
-      <Card miw="100%" bg="gray" shadow="sm" p="xs">
+      <Card miw="100%" bg="gray" shadow="sm" p="md">
         <Flex mb="xs">
           <Badge color="lime">Storyteller</Badge>
         </Flex>
-        <Markdown>{streamingMessage.trim() || "_The Storyteller is thinking..._"}</Markdown>
+        <Box maw={780} style={{ overflowX: "auto" }}>
+          <Markdown>{streamingMessage.trim() || "_The Storyteller is thinking..._"}</Markdown>
+        </Box>
       </Card>
     </Flex>
   );

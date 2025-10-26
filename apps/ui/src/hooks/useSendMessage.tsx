@@ -67,7 +67,9 @@ export default function useSendMessage() {
 
       let fullResponse = "";
       for await (const part of stream) {
-        fullResponse += part.choices[0]?.delta?.content || "";
+        // Kill all the em-dashes.
+
+        fullResponse += part.choices[0]?.delta?.content?.replaceAll("—", " - ") || "";
 
         setStreamingMessage(fullResponse);
       }
