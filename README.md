@@ -2,3 +2,12 @@
 
 FOSS LLM-powered opinionated story/scenario player based on a specific RPG philosophy.
 
+## Next Version
+
+- Make the location and character data structures more structured than just text blobs.
+- Make the interface more game-like, with stats displayed at all times on the sidebar.
+- Move "permanent content" to a less permanent spot as it's not that important to see at all times.
+- Summarisation of older messages every N messages to keep context window usage down.
+- Gamify location and time mechanics to be less LLM-dependent.
+- Allow modifying characters mid-game using LLM tool calls.
+- Allow specifying multiple LLMs for different tasks.
