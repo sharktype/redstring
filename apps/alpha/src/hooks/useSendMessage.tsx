@@ -52,14 +52,9 @@ export default function useSendMessage() {
 
       console.log("INFO - sending message via OpenAI client");
 
-      const userMessage = createMessage(messages);
-
       const stream = await actualOpenAiClient.chat.completions.create({
         model: openAiModel,
-        messages: [
-          { role: "system", content: systemPrompt },
-          { role: "user", content: userMessage },
-        ],
+        messages: [{ role: "system", content: systemPrompt }, ...createMessage(messages)],
         stream: true,
       });
 

@@ -7,7 +7,7 @@ export default function useCreateMessage() {
   }, []);
 }
 
-function createMessage(messages: MessageData[]) {
+function createMessage(messages: MessageData[]): MessageData[] {
   // More transient.
 
   const equips = localStorage.getItem("equips") || "";
@@ -24,8 +24,6 @@ function createMessage(messages: MessageData[]) {
   const style = localStorage.getItem("style") || "";
   const rules = localStorage.getItem("rules") || "";
 
-  const flattenedMessages = messages.map((msg) => `${msg.role.toUpperCase()}:\n${msg.content}`).join("\n\n");
-
   const parts = [
     `CHARACTERS:\n${characters}`,
     `SETTING:\n${setting}`,
@@ -37,12 +35,17 @@ function createMessage(messages: MessageData[]) {
     `INVENTORY:\n${inventory}`,
     `STATS:\n${stats}`,
     `MEMORY:\n${memory}`,
-    `----\nMOST RECENT 50 MESSAGES:\n----\n\n${flattenedMessages}`,
   ];
 
-  const fullMessage = parts.join("\n\n");
+  const fullSystemMessage = parts.join("\n\n");
 
-  console.log(`LOG - created debug message with parts of length ${fullMessage.length}`);
+  console.log(`LOG - created debug message with parts of length ${fullSystemMessage.length}`);
 
-  return fullMessage;
+  return [
+    {
+      role: "system",
+      content: fullSystemMessage,
+    },
+    ...messages,
+  ];
 }
