@@ -115,7 +115,7 @@ export default function Sidebar() {
             color="green"
             modal={<Debug isOpened={isDebugPromptModalOpened} close={closeDebugPromptModal} />}
             open={() => {
-              setLastDebugPrompt(createMessage(messages).join("\n\n"));
+              setLastDebugPrompt(JSON.stringify(createMessage(messages), null, 2));
               openDebugPromptModal();
             }}
           />
