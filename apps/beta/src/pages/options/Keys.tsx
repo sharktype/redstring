@@ -19,13 +19,38 @@ import { useProviderConfigs } from "../../db/hooks/useProviderConfigs.ts";
 import type ProviderConfig from "../../models/ProviderConfig.ts";
 import { AVAILABLE_PROVIDER_TYPES } from "../../models/ProviderConfig.ts";
 import { BiTrash } from "react-icons/bi";
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { BsLightbulb } from "react-icons/bs";
+import { OpenRouterConfig } from "../../handlers/providers/openrouter.ts";
 
 export default function Keys() {
 	const navigate = useNavigate();
 
-	const { providerConfigs } = useProviderConfigs();
+	const { rawProviderConfigs } = useProviderConfigs();
+
+	const [providerConfigs, setProviderConfigs] =
+		useState<ProviderConfig[]>(rawProviderConfigs);
+
+	useEffect(() => {
+		const augmentedProviderConfigs: ProviderConfig[] = rawProviderConfigs.map(
+			(config) => {
+				switch (config.type) {
+					case "openrouter":
+						return new OpenRouterConfig(
+							config.name,
+							config.apiKey,
+							config.model,
+							config.id,
+						);
+					default:
+						// Unexpected provider config type.
+						return config;
+				}
+			},
+		);
+
+		setProviderConfigs(augmentedProviderConfigs);
+	}, [rawProviderConfigs]);
 
 	const mappingsLink = (
 		<Anchor onClick={() => navigate("/options/mappings")}>Mappings</Anchor>
@@ -70,6 +95,7 @@ function KeyInput(props: { providerConfig?: ProviderConfig }) {
 	const { providerConfig } = props;
 
 	const [isDirtyNaive, setIsDirtyNaive] = useState(false);
+	const [isTesting, setIsTesting] = useState(false);
 
 	const nicknameRef = useRef<HTMLInputElement>(null);
 	const typeRef = useRef<HTMLSelectElement>(null);
@@ -85,20 +111,29 @@ function KeyInput(props: { providerConfig?: ProviderConfig }) {
 			?.value as (typeof AVAILABLE_PROVIDER_TYPES)[number];
 		const model = modelRef.current?.value || "";
 		const apiKey = apiKeyRef.current?.value || "";
-		if (providerConfig && providerConfig.id !== undefined) {
-			void updateProviderConfig(providerConfig.id, {
-				name,
-				type,
-				model,
-				apiKey,
-			});
-		} else {
-			void addProviderConfig({
-				name,
-				type,
-				model,
-				apiKey,
-			});
+
+		let newConfig: ProviderConfig | null = null;
+		switch (type) {
+			case "openrouter":
+				newConfig = new OpenRouterConfig(
+					name,
+					apiKey,
+					model,
+					providerConfig?.id,
+				);
+				break;
+			default:
+				// Unexpected provider config type.
+
+				return;
+		}
+
+		if (newConfig) {
+			if (providerConfig && providerConfig.id !== undefined) {
+				void updateProviderConfig(providerConfig.id, newConfig);
+			} else {
+				void addProviderConfig(newConfig);
+			}
 		}
 
 		setIsDirtyNaive(false);
@@ -130,6 +165,7 @@ function KeyInput(props: { providerConfig?: ProviderConfig }) {
 					ref={nicknameRef}
 					label="Nickname"
 					defaultValue={providerConfig?.name}
+					disabled={isTesting}
 					onChange={() => setIsDirtyNaive(true)}
 					flex={1}
 				/>
@@ -138,33 +174,56 @@ function KeyInput(props: { providerConfig?: ProviderConfig }) {
 				ref={typeRef}
 				label="Type"
 				data={AVAILABLE_PROVIDER_TYPES}
+				disabled={isTesting}
 				onChange={() => setIsDirtyNaive(true)}
 			/>
 			<TextInput
 				ref={modelRef}
 				label="Model"
 				defaultValue={providerConfig?.model}
+				disabled={isTesting}
 				onChange={() => setIsDirtyNaive(true)}
 			/>
 			<TextInput
 				ref={apiKeyRef}
 				label="API Key"
 				defaultValue={providerConfig?.apiKey}
+				disabled={isTesting}
 				onChange={() => setIsDirtyNaive(true)}
 			/>
 			<Group mt="md">
 				<Button
 					variant="outline"
 					color={providerConfig ? "yellow" : "green"}
-					disabled={providerConfig && !isDirtyNaive}
+					disabled={(providerConfig && !isDirtyNaive) || isTesting}
 					onClick={saveAction}
 					flex={1}
 				>
 					{providerConfig ? "Update" : "Add"}
 				</Button>
-				<Button variant="default" flex={1}>
-					Test
-				</Button>
+				{providerConfig && (
+					<Button
+						variant="default"
+						flex={1}
+						disabled={isTesting || isDirtyNaive}
+						onClick={async () => {
+							setIsTesting(true);
+
+							const result = await providerConfig.test();
+							if (result) {
+								alert("Test successful!");
+							} else {
+								alert(
+									"Test failed. Please check your API key and configuration.",
+								);
+							}
+
+							setIsTesting(false);
+						}}
+					>
+						{isTesting ? "Testing..." : "Test"}
+					</Button>
+				)}
 				{providerConfig && (
 					<ActionIcon
 						variant="subtle"

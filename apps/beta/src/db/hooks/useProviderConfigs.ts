@@ -3,7 +3,9 @@ import { db } from "../database.ts";
 import type ProviderConfig from "../../models/ProviderConfig.ts";
 
 export function useProviderConfigs() {
-	const providerConfigs =
+	// Note that these configs do not include methods.
+
+	const rawProviderConfigs =
 		useLiveQuery(() => db.providerConfigs.toArray(), []) ?? [];
 
 	const addProviderConfig = async (config: Omit<ProviderConfig, "id">) => {
@@ -22,7 +24,7 @@ export function useProviderConfigs() {
 	};
 
 	return {
-		providerConfigs,
+		rawProviderConfigs,
 		addProviderConfig,
 		updateProviderConfig,
 		deleteProviderConfig,

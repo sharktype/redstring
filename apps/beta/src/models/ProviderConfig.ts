@@ -5,6 +5,9 @@ export default interface ProviderConfig {
 	name: string;
 	apiKey: string;
 	model: string;
+
+	call(options: Record<string, unknown>): Promise<Response>;
+	test(): Promise<boolean>;
 }
 
 export const AVAILABLE_PROVIDER_TYPES = ["openrouter"] as const;
