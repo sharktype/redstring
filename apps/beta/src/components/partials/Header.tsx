@@ -18,7 +18,7 @@ export default function Header(props: { isShownOnMobile?: boolean }) {
 		>
 			<Box flex={1}>
 				<Text>
-					<b>❤️ྀི redstring</b>
+					<b>staircase</b>
 				</Text>
 				<Text size="xs">by sharktype</Text>
 			</Box>

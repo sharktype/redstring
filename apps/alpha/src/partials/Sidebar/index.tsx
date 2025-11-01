@@ -46,7 +46,7 @@ export default function Sidebar() {
   return (
     <Flex direction="column" py="md" pl="md" pr="lg">
       <Flex direction="column" mb="xl">
-        <Title mb="xs">❤️ྀི redstring</Title>
+        <Title mb="xs">staircase</Title>
         <Text>by sharktype</Text>
       </Flex>
       <Box flex={1}>

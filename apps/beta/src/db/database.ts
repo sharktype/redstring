@@ -5,7 +5,7 @@ class Database extends Dexie {
 	providerConfigs!: Table<ProviderConfig>;
 
 	constructor() {
-		super("redstring-db");
+		super("staircase-db");
 		this.version(1).stores({
 			providerConfigs: "++id, type, name, apiKey, model",
 		});
