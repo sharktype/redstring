@@ -12,3 +12,4 @@ FOSS LLM-powered opinionated story/scenario player based on a specific RPG philo
 - Allow modifying characters mid-game using LLM tool calls.
 - Allow specifying multiple LLMs for different tasks.
 - Add ability to retain/export all messages even after summarisation.
+- Replace native dropdowns with comboboxes.
