@@ -16,3 +16,4 @@ FOSS LLM-powered opinionated story/scenario player based on a specific RPG philo
 - Implement something to replace the stock browser alerts.
 - "Save slots" for storylines and worlds.
   - Best to implement this early for a data model that supports any number of stories/worlds.
+- Implement "password" blocking with eye icon to hide/show text for API key inputs.
