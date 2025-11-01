@@ -13,3 +13,4 @@ FOSS LLM-powered opinionated story/scenario player based on a specific RPG philo
 - Allow specifying multiple LLMs for different tasks.
 - Add ability to retain/export all messages even after summarisation.
 - Replace native dropdowns with comboboxes.
+- Implement something to replace the stock browser alerts.

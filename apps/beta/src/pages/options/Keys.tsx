@@ -143,6 +143,19 @@ function KeyInput(props: { providerConfig?: ProviderConfig }) {
 			} else {
 				void addProviderConfig(newConfig);
 			}
+
+			setIsTesting(true);
+			void newConfig.test().then((result) => {
+				if (result) {
+					alert("Configuration saved and test successful!");
+				} else {
+					alert(
+						"Configuration saved, but test failed. Please check your API key and configuration.",
+					);
+				}
+
+				setIsTesting(false);
+			});
 		}
 
 		setIsDirtyNaive(false);
