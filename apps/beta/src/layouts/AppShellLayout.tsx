@@ -29,7 +29,7 @@ export default function AppShellLayout() {
 				<Header isShownOnMobile />
 			</Group>
 			<Sidebar>{sidebar}</Sidebar>
-			<AppShell.Main>
+			<AppShell.Main pb="xl">
 				<Outlet />
 			</AppShell.Main>
 		</AppShell>

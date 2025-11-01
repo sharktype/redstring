@@ -59,7 +59,7 @@ export default function Keys() {
 	return (
 		<Container>
 			<Title mb="md">LLM Keys</Title>
-			<Alert title="Set your mappings" icon={<CgInfo />} mb="xl">
+			<Alert title="Set your mappings" icon={<CgInfo />} pb="lg" mb="xl">
 				<Stack>
 					<Text>You can define an unlimited number of LLM keys here.</Text>
 					<Text>
@@ -77,12 +77,22 @@ export default function Keys() {
 					{providerConfigs.map((config) => (
 						<GridCol
 							key={`provider-config-input-${config.id || "error"}`}
-							span={4}
+							span={{
+								base: 12,
+								md: 6,
+								lg: 4,
+							}}
 						>
 							<KeyInput providerConfig={config} />
 						</GridCol>
 					))}
-					<GridCol span={4}>
+					<GridCol
+						span={{
+							base: 12,
+							md: 6,
+							lg: 4,
+						}}
+					>
 						<KeyInput />
 					</GridCol>
 				</Grid>
