@@ -59,7 +59,7 @@ export default function Keys() {
 	return (
 		<Container>
 			<Title mb="md">LLM Keys</Title>
-			<Alert title="Set your mappings" icon={<CgInfo />} pb="lg" mb="xl">
+			<Alert title="Define your LLM clients" icon={<CgInfo />} pb="lg" mb="xl">
 				<Stack>
 					<Text>You can define an unlimited number of LLM keys here.</Text>
 					<Text>
@@ -68,35 +68,34 @@ export default function Keys() {
 						the {mappingsLink} page.
 					</Text>
 					<Text>
-						Your LLM keys are stored locally in your browser's local storage.
+						Your LLM keys are stored locally in your browser's local database
+						(IndexDB).
 					</Text>
 				</Stack>
 			</Alert>
-			<form>
-				<Grid gutter="xl">
-					{providerConfigs.map((config) => (
-						<GridCol
-							key={`provider-config-input-${config.id || "error"}`}
-							span={{
-								base: 12,
-								md: 6,
-								lg: 4,
-							}}
-						>
-							<KeyInput providerConfig={config} />
-						</GridCol>
-					))}
+			<Grid gutter="xl">
+				{providerConfigs.map((config) => (
 					<GridCol
+						key={`provider-config-input-${config.id || "error"}`}
 						span={{
 							base: 12,
 							md: 6,
 							lg: 4,
 						}}
 					>
-						<KeyInput />
+						<KeyInput providerConfig={config} />
 					</GridCol>
-				</Grid>
-			</form>
+				))}
+				<GridCol
+					span={{
+						base: 12,
+						md: 6,
+						lg: 4,
+					}}
+				>
+					<KeyInput />
+				</GridCol>
+			</Grid>
 		</Container>
 	);
 }
