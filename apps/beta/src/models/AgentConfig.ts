@@ -1,5 +1,5 @@
-export default interface Mapping {
-	type: (typeof AVAILABLE_MAPPING_TYPES)[number];
+export default interface AgentConfig {
+	type: (typeof AVAILABLE_AGENT_TYPES)[number];
 
 	id?: number;
 	prompt: {
@@ -12,7 +12,7 @@ export default interface Mapping {
 	};
 }
 
-export const AVAILABLE_MAPPING_TYPES = [
+export const AVAILABLE_AGENT_TYPES = [
 	"storyteller",
 	"summarizer",
 	"hypebot",

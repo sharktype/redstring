@@ -25,25 +25,25 @@ import { useNavigate } from "react-router";
 import { AiFillWarning } from "react-icons/ai";
 import { BiEdit, BiSave } from "react-icons/bi";
 
-export default function Mappings() {
+export default function Agents() {
 	const navigate = useNavigate();
 
-	const keysLink = (
-		<Anchor onClick={() => navigate("/options/keys")}>Mappings</Anchor>
+	const providersLink = (
+		<Anchor onClick={() => navigate("/options/providers")}>Providers</Anchor>
 	);
 
 	return (
 		<Container>
-			<Title mb="md">LLM Mappings</Title>
-			<Alert title="Set your mappings" icon={<CgInfo />} pb="lg" mb="xl">
+			<Title mb="md">Agents</Title>
+			<Alert title="Set your agent configs" icon={<CgInfo />} pb="lg" mb="xl">
 				<Stack>
 					<Text>
-						LLM mappings determine which configurations are used for which
+						LLM agent mappings determine which configurations are used for which
 						purposes.
 					</Text>
 					<Text>
-						Configure LLM keys in the {keysLink} page first, and make sure to
-						test them before coming here!
+						Configure LLM provider keys in the {providersLink} page first, and
+						make sure to test them before coming here!
 					</Text>
 				</Stack>
 			</Alert>

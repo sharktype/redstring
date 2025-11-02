@@ -17,10 +17,14 @@ export default function Options() {
 						LLM(s)
 					</Title>
 					<Stack gap="xs">
-						<OptionsItem label="Keys" href="/options/keys" icon={<FiKey />} />
 						<OptionsItem
-							label="Mappings"
-							href="/options/mappings"
+							label="Providers"
+							href="/options/providers"
+							icon={<FiKey />}
+						/>
+						<OptionsItem
+							label="Agents"
+							href="/options/agents"
 							icon={<FaMap />}
 						/>
 					</Stack>

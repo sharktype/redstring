@@ -4,8 +4,8 @@ import "./App.css";
 import { Route, Routes } from "react-router";
 import Game from "./pages/Game.tsx";
 import AppShellLayout from "./layouts/AppShellLayout.tsx";
-import Keys from "./pages/options/Keys.tsx";
-import Mappings from "./pages/options/Mappings.tsx";
+import Providers from "./pages/options/Providers.tsx";
+import Agents from "./pages/options/Agents.tsx";
 
 function App() {
 	return (
@@ -13,9 +13,9 @@ function App() {
 			<Route element={<AppShellLayout />}>
 				<Route index element={<Game />} />
 				<Route path="/options">
-					<Route index element={<Keys />} />
-					<Route path="/options/keys" element={<Keys />} />
-					<Route path="/options/mappings" element={<Mappings />} />
+					<Route index element={<Providers />} />
+					<Route path="/options/providers" element={<Providers />} />
+					<Route path="/options/agents" element={<Agents />} />
 				</Route>
 			</Route>
 		</Routes>

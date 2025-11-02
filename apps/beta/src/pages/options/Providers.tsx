@@ -23,7 +23,7 @@ import { useEffect, useRef, useState } from "react";
 import { BsLightbulb } from "react-icons/bs";
 import { OpenRouterConfig } from "../../handlers/providers/openrouter.ts";
 
-export default function Keys() {
+export default function Providers() {
 	const navigate = useNavigate();
 
 	const { rawProviderConfigs } = useProviderConfigs();
@@ -52,24 +52,29 @@ export default function Keys() {
 		setProviderConfigs(augmentedProviderConfigs);
 	}, [rawProviderConfigs]);
 
-	const mappingsLink = (
-		<Anchor onClick={() => navigate("/options/mappings")}>Mappings</Anchor>
+	const agentsLink = (
+		<Anchor onClick={() => navigate("/options/agents")}>Agents</Anchor>
 	);
 
 	return (
 		<Container>
-			<Title mb="md">LLM Keys</Title>
-			<Alert title="Define your LLM clients" icon={<CgInfo />} pb="lg" mb="xl">
+			<Title mb="md">LLM Providers</Title>
+			<Alert
+				title="Define your LLM providers"
+				icon={<CgInfo />}
+				pb="lg"
+				mb="xl"
+			>
 				<Stack>
-					<Text>You can define an unlimited number of LLM keys here.</Text>
+					<Text>You can define an unlimited number of LLM providers here.</Text>
 					<Text>
 						Please note that in order to use these LLM configurations in the
-						game engine, you will need to point functionality to the mappings in
-						the {mappingsLink} page.
+						game engine, you will need to point functionality to the agent
+						mappings in the {agentsLink} page.
 					</Text>
 					<Text>
-						Your LLM keys are stored locally in your browser's local database
-						(IndexDB).
+						Your LLM API keys are stored locally in your browser's local
+						database (IndexDB).
 					</Text>
 				</Stack>
 			</Alert>
