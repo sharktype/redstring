@@ -1,11 +1,21 @@
 import { useLocation, useNavigate } from "react-router";
-import { ActionIcon, Box, Flex, Group, Text } from "@mantine/core";
-import { CgOptions } from "react-icons/cg";
+import {
+	ActionIcon,
+	Box,
+	Flex,
+	Group,
+	Text,
+	useMantineColorScheme,
+} from "@mantine/core";
+import { CgDarkMode, CgOptions } from "react-icons/cg";
 import { IoMdArrowBack } from "react-icons/io";
+import { MdOutlineLightMode } from "react-icons/md";
 
 export default function Header(props: { isShownOnMobile?: boolean }) {
 	const navigate = useNavigate();
 	const location = useLocation();
+
+	const { colorScheme, toggleColorScheme } = useMantineColorScheme();
 
 	const isOptions = location.pathname.startsWith("/options");
 
@@ -23,6 +33,9 @@ export default function Header(props: { isShownOnMobile?: boolean }) {
 				<Text size="xs">by sharktype</Text>
 			</Box>
 			<Group gap="xs">
+				<ActionIcon variant="default" onClick={() => toggleColorScheme()}>
+					{colorScheme === "dark" ? <CgDarkMode /> : <MdOutlineLightMode />}
+				</ActionIcon>
 				<ActionIcon
 					variant="default"
 					onClick={() => {
