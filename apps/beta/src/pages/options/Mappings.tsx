@@ -122,6 +122,7 @@ export default function Mappings() {
 								Hypebot is just a fun extra bot, but it makes a call every
 								message.
 							</Text>
+							<Text>The storyteller never sees Hypebot's output.</Text>
 							<Text>
 								It is recommended to use a cheap and fast LLM for this agent.
 							</Text>
