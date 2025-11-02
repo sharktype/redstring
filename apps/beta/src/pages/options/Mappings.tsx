@@ -81,7 +81,11 @@ export default function Mappings() {
 				<Box>
 					<Alert color="green" icon={<AiFillWarning />} mb="md">
 						<Stack>
-							<Text>This agent summarises M messages ever N messages.</Text>
+							<Text>This agent summarises M messages every N messages.</Text>
+							<Text>
+								You should set N &gt;= M; anything else is done at your own
+								risk.
+							</Text>
 							<Text>
 								The quality of summaries greatly affects the storytelling LLM's
 								ability to maintain context over long stories.

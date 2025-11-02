@@ -3,6 +3,7 @@ import type ProviderConfig from "../models/ProviderConfig.ts";
 
 class Database extends Dexie {
 	providerConfigs!: Table<ProviderConfig>;
+	mappings!: Table<any>;
 
 	constructor() {
 		super("staircase-db");
