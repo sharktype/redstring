@@ -17,3 +17,5 @@ FOSS LLM-powered opinionated story/scenario player based on a specific RPG philo
 - "Save slots" for storylines and worlds.
   - Best to implement this early for a data model that supports any number of stories/worlds.
 - Implement "password" blocking with eye icon to hide/show text for API key inputs.
+- "Question answering bot" for the LLM: the LLM might directly ask you questions to clarify and build your world as you
+  go along, rather than upfront massive walls of text.
