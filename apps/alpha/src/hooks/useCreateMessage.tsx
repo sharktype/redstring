@@ -24,7 +24,26 @@ function createMessage(messages: MessageData[]): MessageData[] {
   const style = localStorage.getItem("style") || "";
   const rules = localStorage.getItem("rules") || "";
 
+  // RNG is a random number from 0 to 100 that the LLM might use.
+
+  const rng01 = Math.floor(Math.random() * 101);
+  const rng02 = Math.floor(Math.random() * 101);
+  const rng03 = Math.floor(Math.random() * 101);
+  const rng04 = Math.floor(Math.random() * 101);
+  const rng05 = Math.floor(Math.random() * 101);
+  const rng06 = Math.floor(Math.random() * 101);
+  const rng07 = Math.floor(Math.random() * 101);
+  const rng08 = Math.floor(Math.random() * 101);
+
   const parts = [
+    `RNG 1/8\n${rng01}/100.0`,
+    `RNG 2/8\n${rng02}/100.0`,
+    `RNG 3/8\n${rng03}/100.0`,
+    `RNG 4/8\n${rng04}/100.0`,
+    `RNG 5/8\n${rng05}/100.0`,
+    `RNG 6/8\n${rng06}/100.0`,
+    `RNG 7/8\n${rng07}/100.0`,
+    `RNG 8/8\n${rng08}/100.0`,
     `CHARACTERS:\n${characters}`,
     `SETTING:\n${setting}`,
     `ECONOMY:\n${economy}`,
