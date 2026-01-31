@@ -1,13 +1,16 @@
 import type MessageData from "../../../models/Message.ts";
-import { Badge, Box, Card, type DefaultMantineColor, Flex } from "@mantine/core";
+import { Badge, Box, Button, Card, type DefaultMantineColor, Flex } from "@mantine/core";
 import { useLlmContext } from "../../../context/LlmContext.tsx";
 import Markdown from "react-markdown";
+import { useLocalStorage } from "@mantine/hooks";
 
 interface MessageProps {
   message: MessageData;
 }
 
 export default function Message(props: MessageProps) {
+  const [messages, setMessages] = useLocalStorage<MessageData[]>({ key: "messages", defaultValue: [] });
+
   let speakerText = "";
   let speakerColor: DefaultMantineColor = "gray";
   if (props.message.role === "user") {
@@ -32,6 +35,19 @@ export default function Message(props: MessageProps) {
         <Box maw={780} style={{ overflowX: "auto" }}>
           <Markdown>{props.message.content}</Markdown>
         </Box>
+        <Button
+          size="xs"
+          mt="md"
+          color="red"
+          variant="subtle"
+          onClick={() => {
+            // this sucks but whatever
+
+            setMessages(messages.filter((m) => m.content !== props.message.content));
+          }}
+        >
+          Delete
+        </Button>
       </Card>
     </Flex>
   );
