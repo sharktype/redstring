@@ -92,18 +92,17 @@ function OptionsItem(props: {
 }) {
 	const navigate = useNavigate();
 	return (
-		<Box>
-			<Button
-				variant={props.isDanger ? "subtle" : "default"}
-				color={props.isDanger ? "red" : undefined}
-				size="xs"
-				leftSection={props.icon}
-				onClick={() => props.href && navigate(props.href)}
-				disabled={!props.href}
-				style={{ cursor: props.href ? undefined : "not-allowed" }}
-			>
-				{props.label}
-			</Button>
-		</Box>
+		<Button
+			variant={props.isDanger ? "subtle" : "default"}
+			color={props.isDanger ? "red" : undefined}
+			size="xs"
+			leftSection={props.icon}
+			justify="flex-start"
+			onClick={() => props.href && navigate(props.href)}
+			disabled={!props.href}
+			style={{ cursor: props.href ? undefined : "not-allowed" }}
+		>
+			{props.label}
+		</Button>
 	);
 }
