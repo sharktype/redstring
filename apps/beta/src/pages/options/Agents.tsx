@@ -1,25 +1,20 @@
-// Types of LLMs for this engine:
-
-// Final LLMs to add to this:
-
-// - Worldbuilding generator LLM - standalone and optional LLM to generate worldbuilding content.
-//   - Called manually via UI.
-// - Character generator LLM - as above but with characters.
-//   - Called manually via UI.
-
 import { useEffect, useState } from "react";
 import {
 	ActionIcon,
 	Alert,
 	Anchor,
+	Button,
 	Container,
 	Group,
+	Modal,
 	NumberInput,
 	Select,
 	Stack,
 	Text,
+	Textarea,
 	Title,
 } from "@mantine/core";
+import { useDisclosure } from "@mantine/hooks";
 import { CgInfo } from "react-icons/cg";
 import { AiFillWarning } from "react-icons/ai";
 import { BiEdit, BiSave } from "react-icons/bi";
@@ -30,6 +25,17 @@ import {
 	useAgentConfig,
 } from "../../db/hooks/useAgentConfigs.ts";
 import type AgentConfig from "../../models/AgentConfig.ts";
+import {
+	DEFAULT_STORYTELLER_PROMPT,
+	DEFAULT_SUMMARIZER_PROMPT,
+	DEFAULT_HYPEBOT_PROMPT,
+} from "../../models/AgentConfig.ts";
+
+const DEFAULT_PROMPTS: Record<string, string> = {
+	storyteller: DEFAULT_STORYTELLER_PROMPT,
+	summarizer: DEFAULT_SUMMARIZER_PROMPT,
+	hypebot: DEFAULT_HYPEBOT_PROMPT,
+};
 
 export default function Agents() {
 	const navigate = useNavigate();
@@ -80,7 +86,8 @@ export default function Agents() {
 							<Text>This agent summarises M messages every N messages.</Text>
 							<Text>
 								You should set N &gt;= M; anything else is done at your own
-								risk.
+								risk. A setting of <code>M=24</code> and <code>N=48</code> is a
+								solid default.
 							</Text>
 							<Text>
 								The quality of summaries greatly affects the storytelling LLM's
@@ -130,6 +137,22 @@ function AgentInput({
 }: AgentInputProps) {
 	const [isSaving, setIsSaving] = useState(false);
 
+	// PROMPT
+
+	const [isPromptEditOpened, { open: openPromptEdit, close: closePromptEdit }] =
+		useDisclosure(false);
+
+	const defaultPrompt = DEFAULT_PROMPTS[agentConfig?.type ?? ""] ?? "";
+
+	const savedPrompt = agentConfig?.prompt ?? defaultPrompt;
+	const [prompt, setPrompt] = useState(savedPrompt);
+
+	useEffect(() => {
+		setPrompt(savedPrompt);
+	}, [savedPrompt]);
+
+	// PROVIDER
+
 	const { providerConfigs } = useProviderConfigs();
 	const providerOptions = providerConfigs.map((config) => ({
 		value: config.id?.toString() ?? "",
@@ -145,11 +168,16 @@ function AgentInput({
 		setSelectedProvider(savedProvider);
 	}, [savedProvider]);
 
+	// NUMERICAL PARAMETERS
+
 	const savedNumerical = agentConfig?.parameters?.numerical ?? {};
-	const [numericalParams, setNumericalParams] = useState<
+	const [numericalParameters, setNumericalParameters] = useState<
 		Record<string, number>
 	>(() => {
-		if (!numericalFields) return {};
+		if (!numericalFields) {
+			return {};
+		}
+
 		return Object.fromEntries(
 			Object.entries(numericalFields).map(([k, defaultVal]) => [
 				k,
@@ -161,7 +189,7 @@ function AgentInput({
 	useEffect(() => {
 		if (numericalFields) {
 			const numerical = agentConfig?.parameters?.numerical ?? {};
-			setNumericalParams(
+			setNumericalParameters(
 				Object.fromEntries(
 					Object.entries(numericalFields).map(([k, defaultVal]) => [
 						k,
@@ -172,12 +200,17 @@ function AgentInput({
 		}
 	}, [agentConfig?.parameters?.numerical, numericalFields]);
 
+	// DIRTY CHECK
+
 	const isProviderDirty = selectedProvider !== savedProvider;
-	const isNumericalDirty = Object.entries(numericalParams).some(
+	const isNumericalDirty = Object.entries(numericalParameters).some(
 		([key, value]) =>
 			value !== (savedNumerical[key]?.value ?? numericalFields?.[key]),
 	);
-	const isDirty = isProviderDirty || isNumericalDirty;
+	const isPromptDirty = prompt !== savedPrompt;
+	const isDirty = isProviderDirty || isNumericalDirty || isPromptDirty;
+
+	// SAVE HANDLER
 
 	const { updateAgentConfig } = useAgentConfigs();
 
@@ -187,12 +220,13 @@ function AgentInput({
 		if (!agentConfig?.id) {
 			alert("Agent config not found. Please refresh the page and try again.");
 			setIsSaving(false);
+
 			return;
 		}
 
 		const updatedNumerical: Record<string, { value: number; default: number }> =
 			{};
-		Object.entries(numericalParams).forEach(([key, value]) => {
+		Object.entries(numericalParameters).forEach(([key, value]) => {
 			updatedNumerical[key] = {
 				value,
 				default: numericalFields?.[key] ?? value,
@@ -203,6 +237,7 @@ function AgentInput({
 			providerConfigId: selectedProvider
 				? parseInt(selectedProvider)
 				: undefined,
+			prompt,
 			parameters: {
 				...agentConfig.parameters,
 				numerical: updatedNumerical,
@@ -242,10 +277,10 @@ function AgentInput({
 						<NumberInput
 							key={key}
 							label={key}
-							value={numericalParams[key] ?? defaultValue}
+							value={numericalParameters[key] ?? defaultValue}
 							onChange={(val) => {
 								if (typeof val === "number") {
-									setNumericalParams((previous) => ({
+									setNumericalParameters((previous) => ({
 										...previous,
 										[key]: val,
 									}));
@@ -266,11 +301,81 @@ function AgentInput({
 					>
 						<BiSave />
 					</ActionIcon>
-					<ActionIcon variant="outline" size="sm" disabled={isSaving}>
+					<ActionIcon
+						variant="outline"
+						size="sm"
+						disabled={isSaving}
+						onClick={openPromptEdit}
+					>
 						<BiEdit />
 					</ActionIcon>
 				</Group>
 			</Group>
+			<AgentEditModal
+				title={label}
+				value={prompt}
+				opened={isPromptEditOpened}
+				onClose={closePromptEdit}
+				defaultPrompt={defaultPrompt}
+				setPrompt={setPrompt}
+			/>
 		</Stack>
+	);
+}
+
+interface AgentEditModalProps {
+	opened: boolean;
+	onClose: () => void;
+	title: string;
+	value: string;
+	setPrompt: (value: string) => void;
+	defaultPrompt: string;
+}
+
+function AgentEditModal({
+	opened,
+	onClose,
+	title,
+	value,
+	setPrompt,
+	defaultPrompt,
+}: AgentEditModalProps) {
+	const [showConfirmation, setShowConfirmation] = useState(false);
+
+	const handleReset = () => {
+		if (showConfirmation) {
+			setPrompt(defaultPrompt);
+			setShowConfirmation(false);
+		} else {
+			setShowConfirmation(true);
+		}
+	};
+
+	return (
+		<Modal
+			opened={opened}
+			onClose={onClose}
+			title={`Edit ${title} Prompt`}
+			size="lg"
+		>
+			<Stack>
+				<Textarea
+					autosize
+					minRows={4}
+					value={value}
+					placeholder={`Prompt given to the ${title.toLowerCase()} agent.`}
+					onChange={(e) => setPrompt(e.currentTarget.value)}
+				/>
+				<Button
+					variant="outline"
+					color={showConfirmation ? "red" : undefined}
+					onClick={handleReset}
+				>
+					{showConfirmation
+						? "Are you sure you want to reset to the default prompt?"
+						: "Reset to default prompt"}
+				</Button>
+			</Stack>
+		</Modal>
 	);
 }

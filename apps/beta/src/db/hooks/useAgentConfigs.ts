@@ -2,7 +2,18 @@ import { useEffect } from "react";
 import { useLiveQuery } from "dexie-react-hooks";
 import { db } from "../database.ts";
 import type AgentConfig from "../../models/AgentConfig.ts";
-import { AVAILABLE_AGENT_TYPES } from "../../models/AgentConfig.ts";
+import {
+	AVAILABLE_AGENT_TYPES,
+	DEFAULT_STORYTELLER_PROMPT,
+	DEFAULT_SUMMARIZER_PROMPT,
+	DEFAULT_HYPEBOT_PROMPT,
+} from "../../models/AgentConfig.ts";
+
+const DEFAULT_PROMPTS: Record<string, string> = {
+	storyteller: DEFAULT_STORYTELLER_PROMPT,
+	summarizer: DEFAULT_SUMMARIZER_PROMPT,
+	hypebot: DEFAULT_HYPEBOT_PROMPT,
+};
 
 export function useAgentConfigs() {
 	const agentConfigs = useLiveQuery(() => db.agentConfigs.toArray(), []) ?? [];
@@ -47,7 +58,7 @@ export function useAgentConfig(type: (typeof AVAILABLE_AGENT_TYPES)[number]) {
 				console.debug("no config found for type", type, "creating default");
 				await db.agentConfigs.add({
 					type,
-					prompt: { base: "", current: "", default: "" },
+					prompt: DEFAULT_PROMPTS[type] ?? "",
 					parameters: { numerical: {} },
 				});
 			}

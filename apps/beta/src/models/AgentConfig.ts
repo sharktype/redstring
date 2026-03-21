@@ -3,11 +3,7 @@ export default interface AgentConfig {
 
 	id?: number;
 	providerConfigId?: number;
-	prompt: {
-		base: string;
-		current: string;
-		default: string;
-	};
+	prompt: string;
 	parameters: {
 		numerical: Record<string, { value: number; default: number }>;
 	};
@@ -19,14 +15,10 @@ export const AVAILABLE_AGENT_TYPES = [
 	"hypebot",
 ] as const;
 
-export const BASE_STORYTELLER_PROMPT = "";
+// TODO: These are placeholders for now. They should read from files.
 
-export const BASE_SUMMARIZER_PROMPT = "";
+export const DEFAULT_STORYTELLER_PROMPT = "You are a creative storyteller.";
 
-export const BASE_HYPEBOT_PROMPT = "";
+export const DEFAULT_SUMMARIZER_PROMPT = "You are a summarization agent.";
 
-export const DEFAULT_STORYTELLER_PROMPT = "";
-
-export const DEFAULT_SUMMARIZER_PROMPT = "";
-
-export const DEFAULT_HYPEBOT_PROMPT = "";
+export const DEFAULT_HYPEBOT_PROMPT = "You are Hypebot, a commentator.";
