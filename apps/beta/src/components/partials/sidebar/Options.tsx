@@ -41,11 +41,12 @@ export default function Options() {
 				</Box>
 				<Box>
 					<Title order={4} mb="md">
-						Style
+						Gameplay
 					</Title>
 					<Stack gap="xs">
 						<OptionsItem label="Rules" icon={<GiWorld />} />
 						<OptionsItem label="Reinforcement" icon={<GiWorld />} />
+						<OptionsItem label="Modules" icon={<GiWorld />} />
 						<OptionsItem label="Chargen" icon={<GiWorld />} />
 					</Stack>
 				</Box>
