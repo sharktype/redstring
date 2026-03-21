@@ -47,6 +47,7 @@ export default function Options() {
 						<OptionsItem label="Rules" icon={<GiWorld />} />
 						<OptionsItem label="Reinforcement" icon={<GiWorld />} />
 						<OptionsItem label="Modules" icon={<GiWorld />} />
+						<OptionsItem label="Feature Flags" icon={<GiWorld />} />
 						<OptionsItem label="Chargen" icon={<GiWorld />} />
 					</Stack>
 				</Box>
