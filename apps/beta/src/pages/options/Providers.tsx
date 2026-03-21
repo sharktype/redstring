@@ -26,13 +26,12 @@ import { OpenRouterConfig } from "../../handlers/providers/openrouter.ts";
 export default function Providers() {
 	const navigate = useNavigate();
 
-	const { rawProviderConfigs } = useProviderConfigs();
-
-	const [providerConfigs, setProviderConfigs] =
-		useState<ProviderConfig[]>(rawProviderConfigs);
+	const { providerConfigs } = useProviderConfigs();
+	const [providerConfigsState, setProviderConfigsState] =
+		useState<ProviderConfig[]>(providerConfigs);
 
 	useEffect(() => {
-		const augmentedProviderConfigs: ProviderConfig[] = rawProviderConfigs.map(
+		const augmentedProviderConfigs: ProviderConfig[] = providerConfigs.map(
 			(config) => {
 				switch (config.type) {
 					case "openrouter":
@@ -43,14 +42,13 @@ export default function Providers() {
 							config.id,
 						);
 					default:
-						// Unexpected provider config type.
 						return config;
 				}
 			},
 		);
 
-		setProviderConfigs(augmentedProviderConfigs);
-	}, [rawProviderConfigs]);
+		setProviderConfigsState(augmentedProviderConfigs);
+	}, [providerConfigs]);
 
 	const agentsLink = (
 		<Anchor onClick={() => navigate("/options/agents")}>Agents</Anchor>
@@ -79,7 +77,7 @@ export default function Providers() {
 				</Stack>
 			</Alert>
 			<Grid gutter="xl">
-				{providerConfigs.map((config) => (
+				{providerConfigsState.map((config) => (
 					<GridCol
 						key={`provider-config-input-${config.id || "error"}`}
 						span={{
@@ -152,7 +150,9 @@ function KeyInput(props: { providerConfig?: ProviderConfig }) {
 			setIsTesting(true);
 			void newConfig.test().then((result) => {
 				if (result) {
-					alert("Configuration saved and test successful!");
+					alert(
+						`Configuration saved and test successful! LLM said:\n\n${result}`,
+					);
 				} else {
 					alert(
 						"Configuration saved, but test failed. Please check your API key and configuration.",
@@ -238,7 +238,7 @@ function KeyInput(props: { providerConfig?: ProviderConfig }) {
 
 							const result = await providerConfig.test();
 							if (result) {
-								alert("Test successful!");
+								alert(`Test successful! LLM said:\n\n${result}`);
 							} else {
 								alert(
 									"Test failed. Please check your API key and configuration.",

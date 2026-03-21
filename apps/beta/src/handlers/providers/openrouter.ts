@@ -37,16 +37,21 @@ export class OpenRouterConfig implements ProviderConfig {
 
 	async test() {
 		const response = await this.call({
-			messages: [{ role: "user", content: "Reply 'OK'." }],
+			messages: [
+				{
+					role: "user",
+					content: "This is a test. Reply with anything, but keep it short.",
+				},
+			],
 			stream: false,
 		});
 
 		if (!response.ok) {
-			return false;
+			return null;
 		}
 
 		const data = await response.json();
 
-		return !!data;
+		return data.choices?.[0]?.message?.content || null;
 	}
 }
