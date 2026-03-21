@@ -2,7 +2,7 @@ import "@mantine/core/styles.css";
 import "./App.css";
 
 import { Route, Routes } from "react-router";
-import Game from "./pages/Game.tsx";
+import Game from "./pages/options/Game";
 import AppShellLayout from "./layouts/AppShellLayout.tsx";
 import Providers from "./pages/options/Providers";
 import Agents from "./pages/options/Agents";
