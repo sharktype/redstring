@@ -19,36 +19,14 @@ import { useProviderConfigs } from "../../db/hooks/useProviderConfigs.ts";
 import type ProviderConfig from "../../models/ProviderConfig.ts";
 import { AVAILABLE_PROVIDER_TYPES } from "../../models/ProviderConfig.ts";
 import { BiTrash } from "react-icons/bi";
-import { useEffect, useRef, useState } from "react";
+import { useRef, useState } from "react";
 import { BsLightbulb } from "react-icons/bs";
-import { OpenRouterConfig } from "../../handlers/providers/openrouter.ts";
+import useGameContext from "../../context/hooks/useGameContext.tsx";
 
 export default function Providers() {
 	const navigate = useNavigate();
 
-	const { providerConfigs } = useProviderConfigs();
-	const [providerConfigsState, setProviderConfigsState] =
-		useState<ProviderConfig[]>(providerConfigs);
-
-	useEffect(() => {
-		const augmentedProviderConfigs: ProviderConfig[] = providerConfigs.map(
-			(config) => {
-				switch (config.type) {
-					case "openrouter":
-						return new OpenRouterConfig(
-							config.name,
-							config.apiKey,
-							config.model,
-							config.id,
-						);
-					default:
-						return config;
-				}
-			},
-		);
-
-		setProviderConfigsState(augmentedProviderConfigs);
-	}, [providerConfigs]);
+	const { providerConfigs } = useGameContext();
 
 	const agentsLink = (
 		<Anchor onClick={() => navigate("/options/agents")}>Agents</Anchor>
@@ -77,7 +55,7 @@ export default function Providers() {
 				</Stack>
 			</Alert>
 			<Grid gutter="xl">
-				{providerConfigsState.map((config) => (
+				{providerConfigs.map((config) => (
 					<GridCol
 						key={`provider-config-input-${config.id || "error"}`}
 						span={{
@@ -124,43 +102,17 @@ function KeyInput(props: { providerConfig?: ProviderConfig }) {
 		const model = modelRef.current?.value || "";
 		const apiKey = apiKeyRef.current?.value || "";
 
-		let newConfig: ProviderConfig | null = null;
-		switch (type) {
-			case "openrouter":
-				newConfig = new OpenRouterConfig(
-					name,
-					apiKey,
-					model,
-					providerConfig?.id,
-				);
-				break;
-			default:
-				// Unexpected provider config type.
+		if (providerConfig && providerConfig.id !== undefined) {
+			// This update will also re-augment the values in context which we use for testing.
 
-				return;
-		}
-
-		if (newConfig) {
-			if (providerConfig && providerConfig.id !== undefined) {
-				void updateProviderConfig(providerConfig.id, newConfig);
-			} else {
-				void addProviderConfig(newConfig);
-			}
-
-			setIsTesting(true);
-			void newConfig.test().then((result) => {
-				if (result) {
-					alert(
-						`Configuration saved and test successful! LLM said:\n\n${result}`,
-					);
-				} else {
-					alert(
-						"Configuration saved, but test failed. Please check your API key and configuration.",
-					);
-				}
-
-				setIsTesting(false);
+			void updateProviderConfig(providerConfig.id, {
+				name,
+				type,
+				model,
+				apiKey,
 			});
+		} else {
+			void addProviderConfig({ name, type, model, apiKey });
 		}
 
 		setIsDirtyNaive(false);
@@ -191,6 +143,7 @@ function KeyInput(props: { providerConfig?: ProviderConfig }) {
 				<TextInput
 					ref={nicknameRef}
 					label="Nickname"
+					placeholder="e.g., deepseek-v3.2"
 					defaultValue={providerConfig?.name}
 					disabled={isTesting}
 					onChange={() => setIsDirtyNaive(true)}
@@ -207,6 +160,7 @@ function KeyInput(props: { providerConfig?: ProviderConfig }) {
 			<TextInput
 				ref={modelRef}
 				label="Model"
+				placeholder="e.g., deepseek/deepseek-v3.2"
 				defaultValue={providerConfig?.model}
 				disabled={isTesting}
 				onChange={() => setIsDirtyNaive(true)}
@@ -214,6 +168,7 @@ function KeyInput(props: { providerConfig?: ProviderConfig }) {
 			<TextInput
 				ref={apiKeyRef}
 				label="API Key"
+				placeholder="e.g., sk-xxx..."
 				defaultValue={providerConfig?.apiKey}
 				disabled={isTesting}
 				onChange={() => setIsDirtyNaive(true)}
@@ -222,11 +177,15 @@ function KeyInput(props: { providerConfig?: ProviderConfig }) {
 				<Button
 					variant="outline"
 					color={providerConfig ? "yellow" : "green"}
-					disabled={(providerConfig && !isDirtyNaive) || isTesting}
+					disabled={!isDirtyNaive || isTesting}
 					onClick={saveAction}
 					flex={1}
 				>
-					{providerConfig ? "Update" : "Add"}
+					{providerConfig
+						? "Update"
+						: isDirtyNaive
+							? "Add (changes unsaved)"
+							: "Edit above to add a new provider"}
 				</Button>
 				{providerConfig && (
 					<Button
@@ -238,10 +197,10 @@ function KeyInput(props: { providerConfig?: ProviderConfig }) {
 
 							const result = await providerConfig.test();
 							if (result) {
-								alert(`Test successful! LLM said:\n\n${result}`);
+								alert(`Provider test successful! LLM said:\n\n${result}`);
 							} else {
 								alert(
-									"Test failed. Please check your API key and configuration.",
+									"Provider test failed. Please check your API key and configuration.",
 								);
 							}
 

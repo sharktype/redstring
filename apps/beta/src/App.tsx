@@ -7,20 +7,23 @@ import AppShellLayout from "./layouts/AppShellLayout.tsx";
 import Providers from "./pages/options/Providers.tsx";
 import Agents from "./pages/options/Agents.tsx";
 import { MantineProvider } from "@mantine/core";
+import GameProvider from "./context/GameContext/GameProvider.tsx";
 
 function App() {
 	return (
 		<MantineProvider defaultColorScheme="dark">
-			<Routes>
-				<Route element={<AppShellLayout />}>
-					<Route index element={<Game />} />
-					<Route path="/options">
-						<Route index element={<Providers />} />
-						<Route path="/options/providers" element={<Providers />} />
-						<Route path="/options/agents" element={<Agents />} />
+			<GameProvider>
+				<Routes>
+					<Route element={<AppShellLayout />}>
+						<Route index element={<Game />} />
+						<Route path="/options">
+							<Route index element={<Providers />} />
+							<Route path="/options/providers" element={<Providers />} />
+							<Route path="/options/agents" element={<Agents />} />
+						</Route>
 					</Route>
-				</Route>
-			</Routes>
+				</Routes>
+			</GameProvider>
 		</MantineProvider>
 	);
 }

@@ -17,14 +17,14 @@ import {
 import { useDisclosure } from "@mantine/hooks";
 import { CgInfo } from "react-icons/cg";
 import { AiFillWarning } from "react-icons/ai";
-import { BiEdit, BiSave } from "react-icons/bi";
+import { BiEdit, BiPlay, BiSave } from "react-icons/bi";
 import { useNavigate } from "react-router";
-import { useProviderConfigs } from "../../db/hooks/useProviderConfigs.ts";
+import useGameContext from "../../context/hooks/useGameContext.tsx";
 import {
 	useAgentConfigs,
 	useAgentConfig,
 } from "../../db/hooks/useAgentConfigs.ts";
-import type AgentConfig from "../../models/AgentConfig.ts";
+import type { StoredAgentConfig } from "../../models/AgentConfig.ts";
 import {
 	DEFAULT_STORYTELLER_PROMPT,
 	DEFAULT_SUMMARIZER_PROMPT,
@@ -125,7 +125,7 @@ export default function Agents() {
 }
 
 interface AgentInputProps {
-	agentConfig?: AgentConfig;
+	agentConfig?: StoredAgentConfig;
 	description: React.ReactNode;
 	numericalFields?: Record<string, number>;
 }
@@ -136,6 +136,7 @@ function AgentInput({
 	numericalFields,
 }: AgentInputProps) {
 	const [isSaving, setIsSaving] = useState(false);
+	const [isTesting, setIsTesting] = useState(false);
 
 	// PROMPT
 
@@ -153,7 +154,7 @@ function AgentInput({
 
 	// PROVIDER
 
-	const { providerConfigs } = useProviderConfigs();
+	const { providerConfigs, agentConfigs } = useGameContext();
 	const providerOptions = providerConfigs.map((config) => ({
 		value: config.id?.toString() ?? "",
 		label: config.name,
@@ -247,6 +248,10 @@ function AgentInput({
 		});
 	};
 
+	const savedAgentConfig = agentConfigs.find(
+		(config) => config.id === agentConfig?.id,
+	);
+
 	const label =
 		(agentConfig?.type.charAt(0).toUpperCase() ?? "") +
 		(agentConfig?.type.slice(1) ?? "");
@@ -258,7 +263,7 @@ function AgentInput({
 			</Alert>
 			<Group>
 				<Select
-					label={label}
+					label={label + (isDirty ? "*" : "")}
 					data={providerOptions}
 					value={selectedProvider}
 					onChange={setSelectedProvider}
@@ -290,24 +295,61 @@ function AgentInput({
 							disabled={isSaving}
 						/>
 					))}
-				<Group gap="xs" mt="lg" pt={2}>
+				<Group gap={6} mt="lg" pt={2}>
 					<ActionIcon
 						variant="outline"
 						size="sm"
 						color="green"
 						onClick={handleSave}
-						disabled={!isDirty || isSaving}
-						loading={isSaving}
+						disabled={!isDirty || isSaving || isTesting}
+						loading={isSaving || isTesting}
 					>
 						<BiSave />
 					</ActionIcon>
 					<ActionIcon
 						variant="outline"
 						size="sm"
-						disabled={isSaving}
 						onClick={openPromptEdit}
+						disabled={isSaving || isTesting}
+						loading={isSaving || isTesting}
 					>
 						<BiEdit />
+					</ActionIcon>
+					<ActionIcon
+						variant="outline"
+						size="sm"
+						color="yellow"
+						onClick={async () => {
+							setIsTesting(true);
+
+							if (!savedAgentConfig) {
+								throw new Error("agent config not found");
+
+								setIsTesting(false);
+
+								return;
+							}
+
+							const result = await savedAgentConfig.test();
+							if (result) {
+								alert(`Agent test successful! LLM said:\n\n${result}`);
+							} else {
+								alert(
+									"Agent test failed. Please check your agent and provider configurations.",
+								);
+							}
+
+							setIsTesting(false);
+						}}
+						disabled={
+							isDirty ||
+							isTesting ||
+							isSaving ||
+							!savedAgentConfig?.providerConfigId
+						}
+						loading={isTesting}
+					>
+						<BiPlay />
 					</ActionIcon>
 				</Group>
 			</Group>
@@ -372,7 +414,7 @@ function AgentEditModal({
 					onClick={handleReset}
 				>
 					{showConfirmation
-						? "Are you sure you want to reset to the default prompt?"
+						? "Click again if you're sure you want to reset to the default prompt!"
 						: "Reset to default prompt"}
 				</Button>
 			</Stack>

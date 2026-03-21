@@ -1,20 +1,20 @@
 import { useLiveQuery } from "dexie-react-hooks";
 import { db } from "../database.ts";
-import type ProviderConfig from "../../models/ProviderConfig.ts";
+import type { StoredProviderConfig } from "../../models/ProviderConfig.ts";
 
 export function useProviderConfigs() {
-	// Note that these configs do not include methods.
-
 	const providerConfigs =
 		useLiveQuery(() => db.providerConfigs.toArray(), []) ?? [];
 
-	const addProviderConfig = async (config: Omit<ProviderConfig, "id">) => {
+	const addProviderConfig = async (
+		config: Omit<StoredProviderConfig, "id">,
+	) => {
 		return db.providerConfigs.add(config);
 	};
 
 	const updateProviderConfig = async (
 		id: number,
-		updates: Partial<ProviderConfig>,
+		updates: Partial<StoredProviderConfig>,
 	) => {
 		return db.providerConfigs.update(id, updates);
 	};

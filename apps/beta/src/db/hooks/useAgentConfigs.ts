@@ -1,7 +1,7 @@
 import { useEffect } from "react";
 import { useLiveQuery } from "dexie-react-hooks";
 import { db } from "../database.ts";
-import type AgentConfig from "../../models/AgentConfig.ts";
+import type { StoredAgentConfig } from "../../models/AgentConfig.ts";
 import {
 	AVAILABLE_AGENT_TYPES,
 	DEFAULT_STORYTELLER_PROMPT,
@@ -18,13 +18,13 @@ const DEFAULT_PROMPTS: Record<string, string> = {
 export function useAgentConfigs() {
 	const agentConfigs = useLiveQuery(() => db.agentConfigs.toArray(), []) ?? [];
 
-	const addAgentConfig = async (config: Omit<AgentConfig, "id">) => {
+	const addAgentConfig = async (config: Omit<StoredAgentConfig, "id">) => {
 		return db.agentConfigs.add(config);
 	};
 
 	const updateAgentConfig = async (
 		id: number,
-		updates: Partial<AgentConfig>,
+		updates: Partial<StoredAgentConfig>,
 	) => {
 		return db.agentConfigs.update(id, updates);
 	};
@@ -56,6 +56,7 @@ export function useAgentConfig(type: (typeof AVAILABLE_AGENT_TYPES)[number]) {
 			const count = await db.agentConfigs.where({ type }).count();
 			if (count === 0) {
 				console.debug("no config found for type", type, "creating default");
+
 				await db.agentConfigs.add({
 					type,
 					prompt: DEFAULT_PROMPTS[type] ?? "",

@@ -1,10 +1,10 @@
 import Dexie, { type Table } from "dexie";
-import type ProviderConfig from "../models/ProviderConfig.ts";
-import type AgentConfig from "../models/AgentConfig.ts";
+import type { StoredProviderConfig } from "../models/ProviderConfig.ts";
+import type { StoredAgentConfig } from "../models/AgentConfig.ts";
 
 class Database extends Dexie {
-	providerConfigs!: Table<ProviderConfig>;
-	agentConfigs!: Table<AgentConfig>;
+	providerConfigs!: Table<StoredProviderConfig>;
+	agentConfigs!: Table<StoredAgentConfig>;
 
 	constructor() {
 		super("staircase-db");
