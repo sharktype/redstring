@@ -20,3 +20,4 @@ FOSS LLM-powered opinionated story/scenario player based on a specific RPG philo
 - "Question answering bot" for the LLM: the LLM might directly ask you questions to clarify and build your world as you
   go along, rather than upfront massive walls of text.
 - A "module" is a collection of default injections into either the system prompt, the pre-prompt, and so on.
+- The right side of the screen during the game should be visible even if it's not messages mode.
