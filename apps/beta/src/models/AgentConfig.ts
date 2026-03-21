@@ -2,6 +2,7 @@ export default interface AgentConfig {
 	type: (typeof AVAILABLE_AGENT_TYPES)[number];
 
 	id?: number;
+	providerConfigId?: number;
 	prompt: {
 		base: string;
 		current: string;

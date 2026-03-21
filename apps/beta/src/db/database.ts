@@ -10,7 +10,7 @@ class Database extends Dexie {
 		super("staircase-db");
 		this.version(1).stores({
 			providerConfigs: "++id, type, name, apiKey, model",
-			agentConfigs: "++id, type, prompt, parameters",
+			agentConfigs: "++id, type, providerConfigId, prompt, parameters",
 		});
 	}
 }
