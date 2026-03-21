@@ -2,7 +2,6 @@ import { Box, Button, Stack, Text, Flex } from "@mantine/core";
 import type { ReactNode } from "react";
 import { GiBackpack, GiSkills } from "react-icons/gi";
 import { FaScroll, FaMap } from "react-icons/fa";
-import { BsBook } from "react-icons/bs";
 
 export default function Status() {
 	return (
@@ -19,10 +18,9 @@ export default function Status() {
 			</Stack>
 			<Stack gap="xs">
 				<StatusItem label="Inventory" icon={<GiBackpack />} />
-				<StatusItem label="Quests" icon={<FaScroll />} />
+				<StatusItem label="Journal" icon={<FaScroll />} />
 				<StatusItem label="Map" icon={<FaMap />} />
 				<StatusItem label="Skills" icon={<GiSkills />} />
-				<StatusItem label="Codex" icon={<BsBook />} />
 			</Stack>
 		</Flex>
 	);
