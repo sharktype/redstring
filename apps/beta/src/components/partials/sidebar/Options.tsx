@@ -46,6 +46,7 @@ export default function Options() {
 					<Stack gap="xs">
 						<OptionsItem label="Rules" icon={<GiWorld />} />
 						<OptionsItem label="Reinforcement" icon={<GiWorld />} />
+						<OptionsItem label="Chargen" icon={<GiWorld />} />
 					</Stack>
 				</Box>
 				<Box>
