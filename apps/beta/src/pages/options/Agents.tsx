@@ -7,7 +7,7 @@
 // - Character generator LLM - as above but with characters.
 //   - Called manually via UI.
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
 	ActionIcon,
 	Alert,
@@ -92,12 +92,10 @@ export default function Agents() {
 							</Text>
 						</>
 					}
-					additionalParams={
-						<>
-							<NumberInput label="N" defaultValue={48} miw="64px" maw="128px" />
-							<NumberInput label="M" defaultValue={24} miw="64px" maw="128px" />
-						</>
-					}
+					numericalFields={{
+						N: 48,
+						M: 24,
+					}}
 				/>
 				<AgentInput
 					agentConfig={hypebot}
@@ -122,13 +120,13 @@ export default function Agents() {
 interface AgentInputProps {
 	agentConfig?: AgentConfig;
 	description: React.ReactNode;
-	additionalParams?: React.ReactNode;
+	numericalFields?: Record<string, number>;
 }
 
 function AgentInput({
 	agentConfig,
 	description,
-	additionalParams,
+	numericalFields,
 }: AgentInputProps) {
 	const [isSaving, setIsSaving] = useState(false);
 
@@ -138,23 +136,80 @@ function AgentInput({
 		label: config.name,
 	}));
 
+	const savedProvider = agentConfig?.providerConfigId?.toString() ?? null;
 	const [selectedProvider, setSelectedProvider] = useState<string | null>(
-		agentConfig?.providerConfigId?.toString() ?? null,
+		savedProvider,
 	);
+
+	useEffect(() => {
+		setSelectedProvider(savedProvider);
+	}, [savedProvider]);
+
+	const savedNumerical = agentConfig?.parameters?.numerical ?? {};
+	const [numericalParams, setNumericalParams] = useState<
+		Record<string, number>
+	>(() => {
+		if (!numericalFields) return {};
+		return Object.fromEntries(
+			Object.entries(numericalFields).map(([k, defaultVal]) => [
+				k,
+				savedNumerical[k]?.value ?? defaultVal,
+			]),
+		);
+	});
+
+	useEffect(() => {
+		if (numericalFields) {
+			const numerical = agentConfig?.parameters?.numerical ?? {};
+			setNumericalParams(
+				Object.fromEntries(
+					Object.entries(numericalFields).map(([k, defaultVal]) => [
+						k,
+						numerical[k]?.value ?? defaultVal,
+					]),
+				),
+			);
+		}
+	}, [agentConfig?.parameters?.numerical, numericalFields]);
+
+	const isProviderDirty = selectedProvider !== savedProvider;
+	const isNumericalDirty = Object.entries(numericalParams).some(
+		([key, value]) =>
+			value !== (savedNumerical[key]?.value ?? numericalFields?.[key]),
+	);
+	const isDirty = isProviderDirty || isNumericalDirty;
 
 	const { updateAgentConfig } = useAgentConfigs();
 
 	const handleSave = () => {
 		setIsSaving(true);
-		if (agentConfig?.id) {
-			updateAgentConfig(agentConfig.id, {
-				providerConfigId: selectedProvider
-					? parseInt(selectedProvider)
-					: undefined,
-			}).then(() => {
-				setIsSaving(false);
-			});
+
+		if (!agentConfig?.id) {
+			alert("Agent config not found. Please refresh the page and try again.");
+			setIsSaving(false);
+			return;
 		}
+
+		const updatedNumerical: Record<string, { value: number; default: number }> =
+			{};
+		Object.entries(numericalParams).forEach(([key, value]) => {
+			updatedNumerical[key] = {
+				value,
+				default: numericalFields?.[key] ?? value,
+			};
+		});
+
+		updateAgentConfig(agentConfig.id, {
+			providerConfigId: selectedProvider
+				? parseInt(selectedProvider)
+				: undefined,
+			parameters: {
+				...agentConfig.parameters,
+				numerical: updatedNumerical,
+			},
+		}).then(() => {
+			setIsSaving(false);
+		});
 	};
 
 	const label =
@@ -173,18 +228,40 @@ function AgentInput({
 					value={selectedProvider}
 					onChange={setSelectedProvider}
 					flex={1}
-					disabled={isSaving}
+					disabled={isSaving || providerOptions.length === 0}
+					placeholder={
+						providerOptions.length === 0
+							? "No providers configured. Please configure them in the Providers form."
+							: "Please select a provider configuration for this agent."
+					}
 					clearable
 					searchable
 				/>
-				{additionalParams}
+				{numericalFields &&
+					Object.entries(numericalFields).map(([key, defaultValue]) => (
+						<NumberInput
+							key={key}
+							label={key}
+							value={numericalParams[key] ?? defaultValue}
+							onChange={(val) => {
+								if (typeof val === "number") {
+									setNumericalParams((previous) => ({
+										...previous,
+										[key]: val,
+									}));
+								}
+							}}
+							maw="64px"
+							disabled={isSaving}
+						/>
+					))}
 				<Group gap="xs" mt="lg" pt={2}>
 					<ActionIcon
 						variant="outline"
 						size="sm"
 						color="green"
 						onClick={handleSave}
-						disabled={isSaving}
+						disabled={!isDirty || isSaving}
 						loading={isSaving}
 					>
 						<BiSave />
