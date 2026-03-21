@@ -1,87 +1,20 @@
+import { useRef, useState } from "react";
 import {
 	ActionIcon,
-	Alert,
-	Anchor,
 	Button,
-	Container,
-	Grid,
-	GridCol,
 	Group,
 	NativeSelect,
 	Stack,
 	Text,
 	TextInput,
-	Title,
 } from "@mantine/core";
-import { CgInfo } from "react-icons/cg";
-import { useNavigate } from "react-router";
-import { useProviderConfigs } from "../../db/hooks/useProviderConfigs.ts";
-import type ProviderConfig from "../../models/ProviderConfig.ts";
-import { AVAILABLE_PROVIDER_TYPES } from "../../models/ProviderConfig.ts";
 import { BiTrash } from "react-icons/bi";
-import { useRef, useState } from "react";
 import { BsLightbulb } from "react-icons/bs";
-import useGameContext from "../../context/hooks/useGameContext.tsx";
+import { useProviderConfigs } from "../../../db/hooks/useProviderConfigs.ts";
+import type ProviderConfig from "../../../models/ProviderConfig.ts";
+import { AVAILABLE_PROVIDER_TYPES } from "../../../models/ProviderConfig.ts";
 
-export default function Providers() {
-	const navigate = useNavigate();
-
-	const { providerConfigs } = useGameContext();
-
-	const agentsLink = (
-		<Anchor onClick={() => navigate("/options/agents")}>Agents</Anchor>
-	);
-
-	return (
-		<Container>
-			<Title mb="md">LLM Providers</Title>
-			<Alert
-				title="Define your LLM providers"
-				icon={<CgInfo />}
-				pb="lg"
-				mb="xl"
-			>
-				<Stack>
-					<Text>You can define an unlimited number of LLM providers here.</Text>
-					<Text>
-						Please note that in order to use these LLM configurations in the
-						game engine, you will need to point functionality to the agent
-						mappings in the {agentsLink} page.
-					</Text>
-					<Text>
-						Your LLM API keys are stored locally in your browser's local
-						database (IndexDB).
-					</Text>
-				</Stack>
-			</Alert>
-			<Grid gutter="xl">
-				{providerConfigs.map((config) => (
-					<GridCol
-						key={`provider-config-input-${config.id || "error"}`}
-						span={{
-							base: 12,
-							md: 6,
-							lg: 4,
-						}}
-					>
-						<KeyInput providerConfig={config} />
-					</GridCol>
-				))}
-				<GridCol
-					span={{
-						base: 12,
-						md: 6,
-						lg: 4,
-					}}
-				>
-					<KeyInput />
-				</GridCol>
-			</Grid>
-		</Container>
-	);
-}
-
-function KeyInput(props: { providerConfig?: ProviderConfig }) {
+export default function KeyInput(props: { providerConfig?: ProviderConfig }) {
 	const { providerConfig } = props;
 
 	const [isDirtyNaive, setIsDirtyNaive] = useState(false);

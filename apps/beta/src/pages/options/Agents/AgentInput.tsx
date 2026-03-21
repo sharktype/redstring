@@ -2,34 +2,23 @@ import { useEffect, useState } from "react";
 import {
 	ActionIcon,
 	Alert,
-	Anchor,
-	Button,
-	Container,
 	Group,
-	Modal,
 	NumberInput,
 	Select,
 	Stack,
-	Text,
-	Textarea,
-	Title,
 } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
-import { CgInfo } from "react-icons/cg";
 import { AiFillWarning } from "react-icons/ai";
 import { BiEdit, BiPlay, BiSave } from "react-icons/bi";
-import { useNavigate } from "react-router";
-import useGameContext from "../../context/hooks/useGameContext.tsx";
-import {
-	useAgentConfigs,
-	useAgentConfig,
-} from "../../db/hooks/useAgentConfigs.ts";
-import type { StoredAgentConfig } from "../../models/AgentConfig.ts";
+import useGameContext from "../../../context/hooks/useGameContext.tsx";
+import { useAgentConfigs } from "../../../db/hooks/useAgentConfigs.ts";
+import type { StoredAgentConfig } from "../../../models/AgentConfig.ts";
 import {
 	DEFAULT_STORYTELLER_PROMPT,
 	DEFAULT_SUMMARIZER_PROMPT,
 	DEFAULT_HYPEBOT_PROMPT,
-} from "../../models/AgentConfig.ts";
+} from "../../../models/AgentConfig.ts";
+import AgentEditModal from "./AgentEditModal.tsx";
 
 const DEFAULT_PROMPTS: Record<string, string> = {
 	storyteller: DEFAULT_STORYTELLER_PROMPT,
@@ -37,100 +26,13 @@ const DEFAULT_PROMPTS: Record<string, string> = {
 	hypebot: DEFAULT_HYPEBOT_PROMPT,
 };
 
-export default function Agents() {
-	const navigate = useNavigate();
-
-	const storyteller = useAgentConfig("storyteller");
-	const summarizer = useAgentConfig("summarizer");
-	const hypebot = useAgentConfig("hypebot");
-
-	const providersLink = (
-		<Anchor onClick={() => navigate("/options/providers")}>Providers</Anchor>
-	);
-
-	return (
-		<Container>
-			<Title mb="md">Agents</Title>
-			<Alert title="Set your agent configs" icon={<CgInfo />} pb="lg" mb="xl">
-				<Stack>
-					<Text>
-						LLM agent mappings determine which configurations are used for which
-						purposes.
-					</Text>
-					<Text>
-						Configure LLM provider keys in the {providersLink} page first, and
-						make sure to test them before coming here!
-					</Text>
-				</Stack>
-			</Alert>
-			<Stack gap="xl">
-				<AgentInput
-					agentConfig={storyteller}
-					description={
-						<>
-							<Text>
-								This LLM does the bulk of the storytelling and is called every
-								single message with full context.
-							</Text>
-							<Text>
-								It is strongly recommended to use as powerful of an LLM as
-								budget allows for this agent.
-							</Text>
-						</>
-					}
-				/>
-				<AgentInput
-					agentConfig={summarizer}
-					description={
-						<>
-							<Text>This agent summarises M messages every N messages.</Text>
-							<Text>
-								You should set N &gt;= M; anything else is done at your own
-								risk. A setting of <code>M=24</code> and <code>N=48</code> is a
-								solid default.
-							</Text>
-							<Text>
-								The quality of summaries greatly affects the storytelling LLM's
-								ability to maintain context over long stories.
-							</Text>
-							<Text>
-								It is recommended to use as capable of an LLM as budget allows
-								for this agent.
-							</Text>
-						</>
-					}
-					numericalFields={{
-						N: 48,
-						M: 24,
-					}}
-				/>
-				<AgentInput
-					agentConfig={hypebot}
-					description={
-						<>
-							<Text>
-								Hypebot is just a fun extra bot, but it makes a call every
-								message.
-							</Text>
-							<Text>The storyteller never sees Hypebot's output.</Text>
-							<Text>
-								It is recommended to use a cheap and fast LLM for this agent.
-							</Text>
-						</>
-					}
-				/>
-			</Stack>
-		</Container>
-	);
-}
-
 interface AgentInputProps {
 	agentConfig?: StoredAgentConfig;
 	description: React.ReactNode;
 	numericalFields?: Record<string, number>;
 }
 
-function AgentInput({
+export default function AgentInput({
 	agentConfig,
 	description,
 	numericalFields,
@@ -323,8 +225,9 @@ function AgentInput({
 							setIsTesting(true);
 
 							if (!savedAgentConfig) {
-								throw new Error("agent config not found");
-
+								alert(
+									"Agent config not found. Please save the agent before testing.",
+								);
 								setIsTesting(false);
 
 								return;
@@ -362,62 +265,5 @@ function AgentInput({
 				setPrompt={setPrompt}
 			/>
 		</Stack>
-	);
-}
-
-interface AgentEditModalProps {
-	opened: boolean;
-	onClose: () => void;
-	title: string;
-	value: string;
-	setPrompt: (value: string) => void;
-	defaultPrompt: string;
-}
-
-function AgentEditModal({
-	opened,
-	onClose,
-	title,
-	value,
-	setPrompt,
-	defaultPrompt,
-}: AgentEditModalProps) {
-	const [showConfirmation, setShowConfirmation] = useState(false);
-
-	const handleReset = () => {
-		if (showConfirmation) {
-			setPrompt(defaultPrompt);
-			setShowConfirmation(false);
-		} else {
-			setShowConfirmation(true);
-		}
-	};
-
-	return (
-		<Modal
-			opened={opened}
-			onClose={onClose}
-			title={`Edit ${title} Prompt`}
-			size="lg"
-		>
-			<Stack>
-				<Textarea
-					autosize
-					minRows={4}
-					value={value}
-					placeholder={`Prompt given to the ${title.toLowerCase()} agent.`}
-					onChange={(e) => setPrompt(e.currentTarget.value)}
-				/>
-				<Button
-					variant="outline"
-					color={showConfirmation ? "red" : undefined}
-					onClick={handleReset}
-				>
-					{showConfirmation
-						? "Click again if you're sure you want to reset to the default prompt!"
-						: "Reset to default prompt"}
-				</Button>
-			</Stack>
-		</Modal>
 	);
 }

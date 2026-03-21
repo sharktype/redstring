@@ -1,7 +1,7 @@
 import { useMemo } from "react";
 import { useProviderConfigs } from "../../db/hooks/useProviderConfigs.ts";
 import { useAgentConfigs } from "../../db/hooks/useAgentConfigs.ts";
-import GameContext from "./index.ts";
+import GameContext from "./index";
 import type ProviderConfig from "../../models/ProviderConfig.ts";
 import Agent from "../../handlers/agents.ts";
 import { OpenRouterConfig } from "../../handlers/providers/openrouter.ts";

@@ -4,8 +4,8 @@ import "./App.css";
 import { Route, Routes } from "react-router";
 import Game from "./pages/Game.tsx";
 import AppShellLayout from "./layouts/AppShellLayout.tsx";
-import Providers from "./pages/options/Providers.tsx";
-import Agents from "./pages/options/Agents.tsx";
+import Providers from "./pages/options/Providers";
+import Agents from "./pages/options/Agents";
 import { MantineProvider } from "@mantine/core";
 import GameProvider from "./context/GameContext/GameProvider.tsx";
 
