@@ -35,20 +35,8 @@ export default function Options() {
 					</Title>
 					<Stack gap="xs">
 						<OptionsItem label="Locations" icon={<GiWorld />} />
-						<OptionsItem label="Lorebooks" icon={<GiWorld />} />
-						<OptionsItem label="Economy" icon={<GiWorld />} />
 						<OptionsItem label="Items" icon={<GiWorld />} />
-					</Stack>
-				</Box>
-				<Box>
-					<Title order={4} mb="md">
-						Storyline
-					</Title>
-					<Stack gap="xs">
 						<OptionsItem label="Characters" icon={<GiWorld />} />
-						<OptionsItem label="Questlines" icon={<GiWorld />} />
-						<OptionsItem label="Timeline" icon={<GiWorld />} />
-						<OptionsItem label="Entities" icon={<GiWorld />} />
 					</Stack>
 				</Box>
 				<Box>
@@ -57,6 +45,7 @@ export default function Options() {
 					</Title>
 					<Stack gap="xs">
 						<OptionsItem label="Rules" icon={<GiWorld />} />
+						<OptionsItem label="Reinforcement" icon={<GiWorld />} />
 					</Stack>
 				</Box>
 				<Box>
@@ -65,9 +54,9 @@ export default function Options() {
 					</Title>
 					<Stack gap="xs">
 						<OptionsItem label="Import Options" icon={<GiWorld />} />
-						<OptionsItem label="Import Messages" icon={<GiWorld />} />
+						<OptionsItem label="Import Game" icon={<GiWorld />} />
 						<OptionsItem label="Export Options" icon={<GiWorld />} />
-						<OptionsItem label="Export Messages" icon={<GiWorld />} />
+						<OptionsItem label="Export Game" icon={<GiWorld />} />
 					</Stack>
 				</Box>
 				<Box>
