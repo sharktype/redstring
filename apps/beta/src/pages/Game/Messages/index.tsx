@@ -1,7 +1,7 @@
 import { Box, Button, Container, Flex, Textarea } from "@mantine/core";
 import { useCallback, useEffect, useRef } from "react";
 import { BiSend } from "react-icons/bi";
-import { useMessages } from "../../../../db/hooks/useMessages";
+import { useMessages } from "../../../db/hooks/useMessages";
 import MessageBox from "./MessageBox";
 
 const SCROLL_THRESHOLD_PIXELS = 88;
