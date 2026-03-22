@@ -22,7 +22,7 @@ export default function AppShellLayout() {
 
 	return (
 		<AppShell
-			navbar={{ width: 256, breakpoint: "sm", collapsed: { mobile: !opened } }}
+			navbar={{ width: 288, breakpoint: "sm", collapsed: { mobile: !opened } }}
 		>
 			<Group p="md" hiddenFrom="sm">
 				<Burger
