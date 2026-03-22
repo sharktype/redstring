@@ -8,7 +8,7 @@ import Providers from "./pages/options/Providers";
 import Agents from "./pages/options/Agents";
 import { MantineProvider } from "@mantine/core";
 import GameProvider from "./context/GameContext/GameProvider.tsx";
-import Locations from "./pages/options/Locations/index.tsx";
+import Locations from "./pages/options/Map/index.tsx";
 
 function App() {
 	return (
@@ -21,7 +21,7 @@ function App() {
 							<Route index element={<Providers />} />
 							<Route path="/options/providers" element={<Providers />} />
 							<Route path="/options/agents" element={<Agents />} />
-							<Route path="/options/locations" element={<Locations />} />
+							<Route path="/options/map" element={<Locations />} />
 						</Route>
 					</Route>
 				</Routes>

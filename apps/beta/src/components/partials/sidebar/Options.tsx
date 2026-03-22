@@ -34,11 +34,7 @@ export default function Options() {
 						World
 					</Title>
 					<Stack gap="xs">
-						<OptionsItem
-							label="Locations"
-							href="/options/locations"
-							icon={<GiWorld />}
-						/>
+						<OptionsItem label="Map" href="/options/map" icon={<GiWorld />} />
 						<OptionsItem label="Items" icon={<GiWorld />} />
 						<OptionsItem label="Characters" icon={<GiWorld />} />
 					</Stack>
