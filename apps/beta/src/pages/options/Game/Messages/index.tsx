@@ -2,6 +2,7 @@ import { Box, Button, Container, Flex, Textarea } from "@mantine/core";
 import { useCallback, useEffect, useRef } from "react";
 import { BiSend } from "react-icons/bi";
 import { useMessages } from "../../../../db/hooks/useMessages";
+import MessageBox from "./MessageBox";
 
 const SCROLL_THRESHOLD_PIXELS = 88;
 
@@ -59,7 +60,7 @@ export default function Messages() {
 		if (!isUserScrolledUpRef.current) {
 			scrollToBottom();
 		}
-	}, [scrollToBottom]);
+	}, [messages, scrollToBottom]);
 
 	useEffect(() => {
 		textareaRef.current?.focus();
@@ -82,6 +83,8 @@ export default function Messages() {
 		if (textareaRef.current) {
 			textareaRef.current.value = "";
 		}
+
+		isUserScrolledUpRef.current = false;
 	}, [addMessage]);
 
 	useEffect(() => {
@@ -121,8 +124,11 @@ export default function Messages() {
 						>
 							<h1>Your story awaits...</h1>
 
-							{messages.map((message, index) => (
-								<p key={index}>{message.content}</p>
+							{messages.map((message) => (
+								<MessageBox
+									key={`message-${message.role}-${message.id}-${message.sentAt.toISOString()}`}
+									message={message}
+								/>
 							))}
 
 							<Box ref={messagesEndRef} />
