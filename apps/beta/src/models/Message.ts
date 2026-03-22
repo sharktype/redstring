@@ -6,6 +6,7 @@ export default interface Message {
 	sentAt: Date;
 	editedAt?: Date;
 	rerolledAt?: Date;
-
 	rerollCount?: number;
+
+	locationId?: number;
 }
