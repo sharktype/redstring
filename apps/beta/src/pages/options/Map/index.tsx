@@ -20,6 +20,7 @@ import { useGameState } from "../../../db/hooks/useGameState";
 import type { Region } from "../../../models/Location";
 import MapNode from "./MapNode";
 import MapEdge from "./MapEdge";
+import TravelCalculator from "./TravelCalculator";
 import humanizeDistance from "./humanizeDistance";
 
 export default function Map() {
@@ -298,6 +299,9 @@ export default function Map() {
 							setIsDirty(true);
 						}}
 					/>
+				</Panel>
+				<Panel position="bottom-left">
+					<TravelCalculator />
 				</Panel>
 			</ReactFlow>
 		</Flex>
