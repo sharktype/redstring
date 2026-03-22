@@ -12,6 +12,7 @@ const DEFAULT_PLAYER_STATE: Omit<StoredPlayerState, "id"> = {
 	location: {
 		region: {
 			name: "",
+			type: "other",
 			description: "",
 			buildings: {},
 			position: { x: 0, y: 0 },

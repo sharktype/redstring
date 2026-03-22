@@ -3,6 +3,7 @@ import { useProviderConfigs } from "../../db/hooks/useProviderConfigs.ts";
 import { useAgentConfigs } from "../../db/hooks/useAgentConfigs.ts";
 import { useMessages } from "../../db/hooks/useMessages.ts";
 import { usePlayerState } from "../../db/hooks/usePlayerState.ts";
+import { useGameState } from "../../db/hooks/useGameState.ts";
 import GameContext from "./index";
 import type ProviderConfig from "../../models/ProviderConfig.ts";
 import Agent from "../../handlers/agents.ts";
@@ -12,6 +13,7 @@ import type PlayerState from "../../models/PlayerState.ts";
 export default function GameProvider({ children }: PropsWithChildren) {
 	const { messages } = useMessages();
 	const { playerState } = usePlayerState();
+	const { gameState } = useGameState();
 	const { providerConfigs } = useProviderConfigs();
 	const { agentConfigs } = useAgentConfigs();
 
@@ -66,6 +68,7 @@ export default function GameProvider({ children }: PropsWithChildren) {
 		<GameContext.Provider
 			value={{
 				player: augmentedPlayerState,
+				gameState,
 				messages,
 				providerConfigs: augmentedProviderConfigs,
 				agentConfigs: augmentedAgentConfigs,
