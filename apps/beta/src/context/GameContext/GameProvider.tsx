@@ -1,16 +1,14 @@
-import { useMemo } from "react";
+import { useMemo, type PropsWithChildren } from "react";
 import { useProviderConfigs } from "../../db/hooks/useProviderConfigs.ts";
 import { useAgentConfigs } from "../../db/hooks/useAgentConfigs.ts";
+import { useMessages } from "../../db/hooks/useMessages.ts";
 import GameContext from "./index";
 import type ProviderConfig from "../../models/ProviderConfig.ts";
 import Agent from "../../handlers/agents.ts";
 import { OpenRouterConfig } from "../../handlers/providers/openrouter.ts";
 
-export default function GameProvider({
-	children,
-}: {
-	children: React.ReactNode;
-}) {
+export default function GameProvider({ children }: PropsWithChildren) {
+	const { messages } = useMessages();
 	const { providerConfigs } = useProviderConfigs();
 	const { agentConfigs } = useAgentConfigs();
 
@@ -49,6 +47,7 @@ export default function GameProvider({
 	return (
 		<GameContext.Provider
 			value={{
+				messages,
 				providerConfigs: augmentedProviderConfigs,
 				agentConfigs: augmentedAgentConfigs,
 			}}

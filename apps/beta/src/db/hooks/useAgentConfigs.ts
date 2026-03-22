@@ -55,8 +55,6 @@ export function useAgentConfig(type: (typeof AVAILABLE_AGENT_TYPES)[number]) {
 		db.transaction("rw", db.agentConfigs, async () => {
 			const count = await db.agentConfigs.where({ type }).count();
 			if (count === 0) {
-				console.debug("no config found for type", type, "creating default");
-
 				await db.agentConfigs.add({
 					type,
 					prompt: DEFAULT_PROMPTS[type] ?? "",

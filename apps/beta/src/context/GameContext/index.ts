@@ -1,8 +1,10 @@
 import { createContext } from "react";
 import type ProviderConfig from "../../models/ProviderConfig.ts";
 import type AgentConfig from "../../models/AgentConfig.ts";
+import type Message from "../../models/Message.ts";
 
 export interface GameContextType {
+	messages: Message[];
 	providerConfigs: ProviderConfig[];
 	agentConfigs: AgentConfig[];
 }
