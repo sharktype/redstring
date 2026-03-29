@@ -21,7 +21,7 @@ import type { Region } from "../../../models/Location";
 import MapNode from "./MapNode";
 import MapEdge from "./MapEdge";
 import TravelCalculator from "./TravelCalculator";
-import humanizeDistance from "./humanizeDistance";
+import { getDistance, humanizeDistance } from "../../../utils/distance";
 
 export default function Map() {
 	const { regions, bulkSaveRegions } = useRegions();
@@ -106,10 +106,19 @@ export default function Map() {
 					return { ...edge, data: { distance: "" } };
 				}
 
-				const dx = source.position.x - target.position.x;
-				const dy = source.position.y - target.position.y;
+				const sourceRegion = regions.find(
+					(r) => String(r.id) === edge.source,
+				);
+				const targetRegion = regions.find(
+					(r) => String(r.id) === edge.target,
+				);
+
+				if (!sourceRegion || !targetRegion) {
+					return { ...edge, data: { distance: "" } };
+				}
+
 				const dist = humanizeDistance(
-					Math.round(Math.sqrt(dx * dx + dy * dy) * scale),
+					Math.round(getDistance(sourceRegion, targetRegion) * scale),
 				);
 
 				return {
@@ -117,7 +126,7 @@ export default function Map() {
 					data: { distance: dist },
 				};
 			}),
-		[nodes, edges, scale],
+		[nodes, edges, scale, regions],
 	);
 
 	// Define behaviour when nodes or edges are changed.

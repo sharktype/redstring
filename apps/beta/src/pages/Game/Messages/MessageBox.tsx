@@ -1,7 +1,7 @@
 import { Anchor, Badge, Text, Card, Flex, Textarea } from "@mantine/core";
-import type Message from "../../../models/Message";
 import { useDisclosure } from "@mantine/hooks";
 import { useState } from "react";
+import type Message from "../../../models/Message";
 import { useMessages } from "../../../db/hooks/useMessages";
 
 export default function MessageBox({ message }: { message: Message }) {

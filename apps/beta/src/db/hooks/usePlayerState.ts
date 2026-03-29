@@ -41,7 +41,18 @@ export function usePlayerState() {
 		});
 	}, [playerState]);
 
+	const updatePlayerState = async (
+		updates: Partial<Omit<StoredPlayerState, "id">>,
+	) => {
+		if (playerState?.id == null) {
+			return;
+		}
+
+		await db.playerState.update(playerState.id, updates);
+	};
+
 	return {
 		playerState: playerState ?? null,
+		updatePlayerState,
 	};
 }

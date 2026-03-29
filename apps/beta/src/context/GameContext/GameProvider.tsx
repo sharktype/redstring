@@ -1,9 +1,10 @@
-import { useMemo, type PropsWithChildren } from "react";
+import { useCallback, useMemo, type PropsWithChildren } from "react";
 import { useProviderConfigs } from "../../db/hooks/useProviderConfigs.ts";
 import { useAgentConfigs } from "../../db/hooks/useAgentConfigs.ts";
 import { useMessages } from "../../db/hooks/useMessages.ts";
 import { usePlayerState } from "../../db/hooks/usePlayerState.ts";
 import { useGameState } from "../../db/hooks/useGameState.ts";
+import { useRegions } from "../../db/hooks/useRegions.ts";
 import GameContext from "./index";
 import type ProviderConfig from "../../models/ProviderConfig.ts";
 import Agent from "../../handlers/agents.ts";
@@ -12,25 +13,40 @@ import type PlayerState from "../../models/PlayerState.ts";
 
 export default function GameProvider({ children }: PropsWithChildren) {
 	const { messages } = useMessages();
-	const { playerState } = usePlayerState();
+	const { playerState, updatePlayerState } = usePlayerState();
 	const { gameState } = useGameState();
 	const { providerConfigs } = useProviderConfigs();
 	const { agentConfigs } = useAgentConfigs();
+	const { regions } = useRegions();
+
+	const move = useCallback(
+		(locationId: number) => {
+			const region = regions.find((r) => r.id === locationId);
+			if (!region) {
+				return false;
+			}
+
+			updatePlayerState({
+				location: { region, building: null },
+			});
+
+			return true;
+		},
+		[regions, updatePlayerState],
+	);
 
 	const augmentedPlayerState: PlayerState | null = useMemo(() => {
 		if (!playerState) {
 			return null;
 		}
 
-		// TODO: These aren't used yet.
-
 		return {
 			...playerState,
-			move: (locationId: number) => true,
+			move,
 			enter: (buildingSlug: string) => true,
 			exit: () => true,
 		};
-	}, [playerState]);
+	}, [playerState, move]);
 
 	// Note: Augmented provider is rarely called versus the agents.
 
