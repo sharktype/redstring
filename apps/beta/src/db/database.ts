@@ -18,8 +18,8 @@ class Database extends Dexie {
 		super("staircase-db");
 		this.version(1).stores({
 			providerConfigs: "++id",
-			agentConfigs: "++id",
-			messages: "++id",
+			agentConfigs: "++id, type",
+			messages: "++id, sentAt",
 			playerState: "++id",
 			gameState: "++id",
 			regions: "++id",
