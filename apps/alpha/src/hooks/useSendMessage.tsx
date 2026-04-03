@@ -3,7 +3,6 @@ import { useLocalStorage } from "@mantine/hooks";
 import type MessageData from "../models/Message.ts";
 import { useLlmContext } from "../context/LlmContext.tsx";
 import { useCallback } from "react";
-import systemPrompt from "../text/prompt-world-system.txt?raw";
 import useCreateOpenAiClient from "./useCreateOpenAiClient.tsx";
 
 export default function useSendMessage() {
@@ -51,7 +50,7 @@ export default function useSendMessage() {
 
       const stream = await actualOpenAiClient.chat.completions.create({
         model: openAiModel,
-        messages: [{ role: "system", content: systemPrompt }, ...createMessage(messages)],
+        messages: createMessage(messages),
         stream: true,
       });
 
