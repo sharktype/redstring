@@ -12,7 +12,16 @@ import {
 	type Connection,
 } from "@xyflow/react";
 import "@xyflow/react/dist/style.css";
-import { Button, Flex, Group, NumberInput, Stack, Text } from "@mantine/core";
+import {
+	Button,
+	Center,
+	Flex,
+	Group,
+	List,
+	ListItem,
+	NumberInput,
+	Text,
+} from "@mantine/core";
 import { useRegions } from "../../../db/hooks/useRegions";
 import { useGameState } from "../../../db/hooks/useGameState";
 import type { Region } from "../../../models/Location";
@@ -287,6 +296,13 @@ export default function Map() {
 				proOptions={{ hideAttribution: true }}
 				fitView
 			>
+				{nodes.length === 0 && (
+					<Center style={{ width: "100%", height: "100%" }}>
+						<Text size="xl" c="dimmed">
+							No nodes.
+						</Text>
+					</Center>
+				)}
 				<Panel position="top-left">
 					<Group gap="xs">
 						<Button variant="default" size="xs" onClick={addNode}>
@@ -313,14 +329,14 @@ export default function Map() {
 							setIsDirty(true);
 						}}
 					/>
-					<Stack gap="xs" mt="xs" c="dimmed">
-						<Text size="xs">
+					<List size="xs" mt="md">
+						<ListItem>
 							Select and press Delete to remove nodes or connections.
-						</Text>
-						<Text size="xs">
+						</ListItem>
+						<ListItem>
 							Disable the map feature by leaving one or zero nodes.
-						</Text>
-					</Stack>
+						</ListItem>
+					</List>
 				</Panel>
 				<Panel position="bottom-left">
 					<TravelCalculator />

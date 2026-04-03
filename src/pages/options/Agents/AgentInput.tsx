@@ -192,7 +192,7 @@ export default function AgentInput({
 								}
 							}}
 							maw="64px"
-							disabled={isSaving}
+							disabled={isSaving || providerOptions.length === 0}
 						/>
 					))}
 				<Group gap={6} mt="lg" pt={2}>
