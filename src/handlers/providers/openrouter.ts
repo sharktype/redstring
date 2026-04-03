@@ -44,15 +44,27 @@ type ApiMessage = RegularMessage | AssistantToolCallMessage | ToolMessage;
 // Note that all providers should always have access to all tools. Since providers may have different requirements for
 // defining how to call tools, there is currently no mechanism to define all tools once for use across providers.
 
+// TODO: I think we can do better than that.
+
 const TOOLS: ToolDefinition[] = [
 	{
 		type: "function",
 		function: {
 			name: "roll_d20",
-			description: "Generate a random number between 0 and 20.",
+			description: "Roll one or more d20 dice with an optional modifier.",
 			parameters: {
 				type: "object",
-				properties: {},
+				properties: {
+					die_count: {
+						type: "number",
+						description: "The number of d20 dice to roll. Defaults to 1.",
+					},
+					modifier: {
+						type: "number",
+						description:
+							"A fixed modifier to add to the total roll. Defaults to 0.",
+					},
+				},
 			},
 		},
 	},
@@ -81,8 +93,18 @@ const exprParser = new Parser();
 
 function executeToolCall(toolCall: ToolCall): string {
 	switch (toolCall.function.name) {
-		case "roll_d20":
-			return JSON.stringify({ result: Math.floor(Math.random() * 21) });
+		case "roll_d20": {
+			const args = JSON.parse(toolCall.function.arguments || "{}");
+			const count = args.die_count ?? 1;
+			const modifier = args.modifier ?? 0;
+			const rolls = Array.from(
+				{ length: count },
+				() => Math.floor(Math.random() * 20) + 1,
+			);
+			const total = rolls.reduce((sum, r) => sum + r, 0) + modifier;
+
+			return JSON.stringify({ result: { rolls, modifier, total } });
+		}
 		case "arithmetic": {
 			try {
 				const { expression } = JSON.parse(toolCall.function.arguments);
@@ -270,16 +292,20 @@ export class OpenRouterConfig implements ProviderConfig {
 						});
 
 						toolCallsArray.forEach((tc) => {
-							const result = executeToolCall(tc);
+							const rawResult = executeToolCall(tc);
 
-							controller.enqueue(
-								`<system>Tool call: ${tc.function.name} with args: ${tc.function.arguments} \nResult: ${result}</system>`,
-							);
+							let resultContent = "<system ";
+
+							resultContent += `callable="${tc.function.name}" `;
+							resultContent += `args="${tc.function.arguments.replaceAll('"', "&quot;")}"`;
+							resultContent += `>${rawResult}</system>\n`;
+
+							controller.enqueue(resultContent);
 
 							apiMessages.push({
 								role: "tool",
 								tool_call_id: tc.id,
-								content: result,
+								content: rawResult,
 							});
 						});
 					}
