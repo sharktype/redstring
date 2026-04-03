@@ -15,7 +15,7 @@ export default function Agents() {
 	);
 
 	return (
-		<Container>
+		<Container pt="xl">
 			<Title mb="md">Agents</Title>
 			<Alert title="Set your agent configs" icon={<CgInfo />} pb="lg" mb="xl">
 				<Stack>

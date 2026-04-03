@@ -23,7 +23,7 @@ export default function Providers() {
 	);
 
 	return (
-		<Container>
+		<Container pt="xl">
 			<Title mb="md">LLM Providers</Title>
 			<Alert
 				title="Define your LLM providers"
