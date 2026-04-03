@@ -112,22 +112,16 @@ export default function Messages() {
 	return (
 		<Container id="messages" size="lg" flex={1} h="100%">
 			<Container h="100%">
-				<Flex
-					id="outer-messages-flex"
-					direction="column"
-					flex={1}
-					h="100%"
-					mx="md"
-					px="lg"
-				>
+				<Flex id="outer-messages-flex" direction="column" flex={1} h="100%">
 					<Box
 						id="message-history"
 						ref={scrollContainerRef}
 						flex={1}
+						px="md"
 						style={{ overflowY: "auto" }}
 						mt="md"
 					>
-						<h1>Your story awaits...</h1>
+						{messages.length === 0 && <h1>Your story awaits...</h1>}
 
 						{messages.map((message) => (
 							<MessageBox
@@ -145,6 +139,7 @@ export default function Messages() {
 							placeholder="Type your command here..."
 							minRows={5}
 							maxRows={16}
+							mx="md"
 							autosize
 						/>
 						<Button

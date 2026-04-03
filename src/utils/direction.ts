@@ -13,26 +13,26 @@ export function getDirection(from: Region, to: Region): string {
 	const bearing = (90 - angle + 360) % 360;
 
 	if (bearing < 22.5 || bearing >= 337.5) {
-		return "North ↑";
+		return "North";
 	}
 	if (bearing < 67.5) {
-		return "Northeast ↗";
+		return "Northeast";
 	}
 	if (bearing < 112.5) {
-		return "East →";
+		return "East";
 	}
 	if (bearing < 157.5) {
-		return "Southeast ↘";
+		return "Southeast";
 	}
 	if (bearing < 202.5) {
-		return "South ↓";
+		return "South";
 	}
 	if (bearing < 247.5) {
-		return "Southwest ↙";
+		return "Southwest";
 	}
 	if (bearing < 292.5) {
-		return "West ←";
+		return "West";
 	}
 
-	return "Northwest ↖";
+	return "Northwest";
 }

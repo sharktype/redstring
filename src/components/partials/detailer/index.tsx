@@ -34,7 +34,7 @@ export default function Detailer() {
 
 	if (player == null) {
 		return (
-			<Box h="100%" w="calc(var(--app-shell-navbar-width) * 2)">
+			<Box h="100%" w="calc(var(--app-shell-navbar-width) * 1.5)">
 				<Center
 					h="100%"
 					bg="var(--mantine-color-body)"
@@ -54,7 +54,7 @@ export default function Detailer() {
 	}
 
 	return (
-		<Box h="100%" w="calc(var(--app-shell-navbar-width) * 2)">
+		<Box h="100%" w="calc(var(--app-shell-navbar-width) * 1.5)">
 			<Box
 				h="100%"
 				bg="var(--mantine-color-body)"
