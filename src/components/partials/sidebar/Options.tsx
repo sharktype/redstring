@@ -1,11 +1,22 @@
-import { Box, Button, Stack, Title } from "@mantine/core";
+import { Box, Button, Group, Modal, Stack, Text, Title } from "@mantine/core";
+import { useDisclosure } from "@mantine/hooks";
 import { FiKey } from "react-icons/fi";
 import { FaMap } from "react-icons/fa";
 import { GiWorld } from "react-icons/gi";
 import type { ReactNode } from "react";
 import { useNavigate } from "react-router";
+import { useMessages } from "../../../db/hooks/useMessages.ts";
 
 export default function Options() {
+	const [resetOpened, { open: openResetMessages, close: closeResetMessages }] =
+		useDisclosure(false);
+	const { clearMessages } = useMessages();
+
+	const handleResetMessages = async () => {
+		await clearMessages();
+		closeResetMessages();
+	};
+
 	return (
 		<Box my="lg" h="90vh" style={{ overflowY: "auto" }}>
 			<Title order={2} mb="lg">
@@ -67,8 +78,32 @@ export default function Options() {
 					</Title>
 					<Stack gap="xs">
 						<OptionsItem label="Reset Options" icon={<GiWorld />} isDanger />
-						<OptionsItem label="Reset Messages" icon={<GiWorld />} isDanger />
+						<OptionsItem
+							label="Reset Messages"
+							onClick={openResetMessages}
+							icon={<GiWorld />}
+							isDanger
+						/>
 					</Stack>
+					<Modal
+						opened={resetOpened}
+						onClose={closeResetMessages}
+						title="Reset Messages"
+						centered
+					>
+						<Text mb="lg">
+							Are you sure you want to reset all messages? This cannot be
+							undone.
+						</Text>
+						<Group justify="flex-end">
+							<Button variant="default" onClick={closeResetMessages}>
+								No
+							</Button>
+							<Button color="red" onClick={handleResetMessages}>
+								Yes
+							</Button>
+						</Group>
+					</Modal>
 				</Box>
 			</Stack>
 		</Box>
@@ -79,9 +114,13 @@ function OptionsItem(props: {
 	label: string;
 	icon: ReactNode;
 	href?: string;
+	onClick?: () => void;
 	isDanger?: boolean;
 }) {
 	const navigate = useNavigate();
+
+	const isDisabled = !props.href && !props.onClick;
+
 	return (
 		<Button
 			variant={props.isDanger ? "subtle" : "default"}
@@ -89,9 +128,15 @@ function OptionsItem(props: {
 			size="xs"
 			leftSection={props.icon}
 			justify="flex-start"
-			onClick={() => props.href && navigate(props.href)}
-			disabled={!props.href}
-			style={{ cursor: props.href ? undefined : "not-allowed" }}
+			onClick={() => {
+				if (props.href) {
+					navigate(props.href);
+				} else if (props.onClick) {
+					props.onClick();
+				}
+			}}
+			disabled={isDisabled}
+			style={{ cursor: isDisabled ? "not-allowed" : undefined }}
 		>
 			{props.label}
 		</Button>
