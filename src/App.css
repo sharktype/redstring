@@ -1,0 +1,13 @@
+/* Render edges and edge labels above nodes */
+.react-flow__edges {
+	z-index: 1 !important;
+}
+
+.react-flow__edgelabel-renderer {
+	z-index: 2 !important;
+}
+
+/* Selected nodes sit above edges and labels */
+.react-flow__node.selected {
+	z-index: 1000 !important;
+}

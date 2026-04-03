@@ -16,7 +16,6 @@ FOSS LLM-powered opinionated story/scenario player based on a specific RPG philo
 - Implement time, date, and weather via non-LLM "game setting" forms.
 - A non-map node based location editor that allows selecting the current location.
 - Overlap the connection nodes on nodes to make them easier to connect.
-- Make the lines for connections go over nodes (z-index).
 
 ### Future Goals
 
