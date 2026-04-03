@@ -9,7 +9,6 @@ interface ClearProps {
 
 export default function Clear(props: ClearProps) {
   const [_a, setMessages] = useLocalStorage<MessageData[]>({ key: "messages", defaultValue: [] });
-  const [_b, setHypebotResponse] = useLocalStorage({ key: "hypebot-response", defaultValue: "" });
   return (
     <Modal opened={props.isOpened} onClose={() => props.close()} withCloseButton={false} centered>
       <Box mb="lg">
@@ -23,7 +22,6 @@ export default function Clear(props: ClearProps) {
           color="red"
           onClick={() => {
             setMessages([]);
-            setHypebotResponse("");
 
             props.close();
           }}

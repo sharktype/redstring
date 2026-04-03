@@ -9,7 +9,6 @@ export default function Agents() {
 
 	const storyteller = useAgentConfig("storyteller");
 	const summarizer = useAgentConfig("summarizer");
-	const hypebot = useAgentConfig("hypebot");
 
 	const providersLink = (
 		<Anchor onClick={() => navigate("/options/providers")}>Providers</Anchor>
@@ -70,21 +69,6 @@ export default function Agents() {
 						N: 48,
 						M: 24,
 					}}
-				/>
-				<AgentInput
-					agentConfig={hypebot}
-					description={
-						<>
-							<Text>
-								Hypebot is just a fun extra bot, but it makes a call every
-								message.
-							</Text>
-							<Text>The storyteller never sees Hypebot's output.</Text>
-							<Text>
-								It is recommended to use a cheap and fast LLM for this agent.
-							</Text>
-						</>
-					}
 				/>
 			</Stack>
 		</Container>

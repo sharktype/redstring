@@ -16,14 +16,12 @@ import type { StoredAgentConfig } from "../../../models/AgentConfig.ts";
 import {
 	DEFAULT_STORYTELLER_PROMPT,
 	DEFAULT_SUMMARIZER_PROMPT,
-	DEFAULT_HYPEBOT_PROMPT,
 } from "../../../models/AgentConfig.ts";
 import AgentEditModal from "./AgentEditModal.tsx";
 
 const DEFAULT_PROMPTS: Record<string, string> = {
 	storyteller: DEFAULT_STORYTELLER_PROMPT,
 	summarizer: DEFAULT_SUMMARIZER_PROMPT,
-	hypebot: DEFAULT_HYPEBOT_PROMPT,
 };
 
 interface AgentInputProps {

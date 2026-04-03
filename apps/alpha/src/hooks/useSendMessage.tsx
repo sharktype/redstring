@@ -5,7 +5,6 @@ import { useLlmContext } from "../context/LlmContext.tsx";
 import { useCallback } from "react";
 import systemPrompt from "../text/prompt-world-system.txt?raw";
 import useCreateOpenAiClient from "./useCreateOpenAiClient.tsx";
-import useSendHype from "./useSendHype.tsx";
 
 export default function useSendMessage() {
   const [_, setMessages] = useLocalStorage<MessageData[]>({ key: "messages", defaultValue: [] });
@@ -15,8 +14,6 @@ export default function useSendMessage() {
 
   const createOpenAiClient = useCreateOpenAiClient();
   const createMessage = useCreateMessage();
-
-  const sendHype = useSendHype();
 
   return useCallback(
     async (messages: MessageData[]) => {
@@ -78,12 +75,6 @@ export default function useSendMessage() {
       setMessages((currentMessages) => {
         return [...currentMessages, { role: "assistant", content: fullResponse }];
       });
-
-      // Then we evoke Hypebot.
-
-      console.log("INFO - invoking Hypebot after LLM response");
-
-      void sendHype([...messages, { role: "assistant", content: fullResponse }]);
     },
     [
       openAiClient,
@@ -94,7 +85,6 @@ export default function useSendMessage() {
       createMessage,
       createOpenAiClient,
       setOpenAiClient,
-      sendHype,
     ],
   );
 }

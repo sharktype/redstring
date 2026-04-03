@@ -6,13 +6,11 @@ import {
 	AVAILABLE_AGENT_TYPES,
 	DEFAULT_STORYTELLER_PROMPT,
 	DEFAULT_SUMMARIZER_PROMPT,
-	DEFAULT_HYPEBOT_PROMPT,
 } from "../../models/AgentConfig.ts";
 
 const DEFAULT_PROMPTS: Record<string, string> = {
 	storyteller: DEFAULT_STORYTELLER_PROMPT,
 	summarizer: DEFAULT_SUMMARIZER_PROMPT,
-	hypebot: DEFAULT_HYPEBOT_PROMPT,
 };
 
 export function useAgentConfigs() {

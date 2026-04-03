@@ -24,7 +24,6 @@ export type StoredAgentConfig = Omit<AgentConfig, "call" | "test">;
 export const AVAILABLE_AGENT_TYPES = [
 	"storyteller",
 	"summarizer",
-	"hypebot",
 ] as const;
 
 // TODO: These are placeholders for now. They should read from files.
@@ -32,5 +31,3 @@ export const AVAILABLE_AGENT_TYPES = [
 export const DEFAULT_STORYTELLER_PROMPT = "You are a creative storyteller.";
 
 export const DEFAULT_SUMMARIZER_PROMPT = "You are a summarization agent.";
-
-export const DEFAULT_HYPEBOT_PROMPT = "You are Hypebot, a commentator.";

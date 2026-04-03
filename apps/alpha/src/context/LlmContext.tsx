@@ -6,8 +6,6 @@ interface LlmData {
   setIsStreaming: Dispatch<SetStateAction<boolean>>;
   streamingMessage: string;
   setStreamingMessage: Dispatch<SetStateAction<string>>;
-  isHypebotThinking: boolean;
-  setIsHypebotThinking: Dispatch<SetStateAction<boolean>>;
 
   openAiClient?: OpenAI;
   setOpenAiClient: Dispatch<SetStateAction<OpenAI | undefined>>;
@@ -18,8 +16,6 @@ const LlmContext = createContext<LlmData>({
   setIsStreaming: () => {},
   streamingMessage: "",
   setStreamingMessage: () => {},
-  isHypebotThinking: false,
-  setIsHypebotThinking: () => {},
   openAiClient: undefined,
   setOpenAiClient: () => {},
 });

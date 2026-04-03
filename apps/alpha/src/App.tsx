@@ -12,7 +12,6 @@ import { useLocalStorage } from "@mantine/hooks";
 function App() {
   const [isLlmStreaming, setIsLlmStreaming] = useState(false);
   const [streamingMessage, setStreamingMessage] = useState("");
-  const [isHypebotThinking, setIsHypebotThinking] = useState(false);
 
   const [openAiClient, setOpenAiClient] = useState<OpenAI | undefined>(undefined);
 
@@ -42,8 +41,6 @@ function App() {
           setIsStreaming: setIsLlmStreaming,
           streamingMessage: streamingMessage,
           setStreamingMessage: setStreamingMessage,
-          isHypebotThinking: isHypebotThinking,
-          setIsHypebotThinking: setIsHypebotThinking,
           openAiClient: openAiClient,
           setOpenAiClient: setOpenAiClient,
         }}

@@ -2,20 +2,17 @@ import { Box, Button, type DefaultMantineColor, Flex, Text, Title } from "@manti
 import { type ReactNode } from "react";
 import {
   GiExplosionRays,
-  GiPartyHat,
   GiScrollUnfurled,
 } from "react-icons/gi";
 import { FaRobot } from "react-icons/fa";
 import { useDisclosure } from "@mantine/hooks";
 import Instructions from "./Modals/Instructions.tsx";
 import Agent from "./Modals/Agent.tsx";
-import Hypebot from "./Modals/Hypebot.tsx";
 import Clear from "./Modals/Clear.tsx";
 
 export default function Sidebar() {
   const [isInstructionsModalOpened, { open: openInstructionsModal, close: closeInstructionsModal }] = useDisclosure(false);
   const [isAgentModalOpened, { open: openAgentModal, close: closeAgentModal }] = useDisclosure(false);
-  const [isHypebotModalOpened, { open: openHypebotModal, close: closeHypebotModal }] = useDisclosure(false);
   const [isClearOpened, { open: openClearModal, close: closeClearModal }] = useDisclosure(false);
 
   return (
@@ -40,13 +37,6 @@ export default function Sidebar() {
             color="grape"
             modal={<Agent isOpened={isAgentModalOpened} close={closeAgentModal} />}
             open={openAgentModal}
-          />
-          <ModalButton
-            label="Hypebot"
-            icon={<GiPartyHat />}
-            color="grape"
-            modal={<Hypebot isOpened={isHypebotModalOpened} close={closeHypebotModal} />}
-            open={openHypebotModal}
           />
         </Flex>
         <Flex direction="column" mb="xl" gap="sm">

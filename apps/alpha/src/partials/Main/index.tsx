@@ -4,7 +4,6 @@ import Inventory from "./Inventory.tsx";
 import Stats from "./Stats.tsx";
 import Memory from "./Memory.tsx";
 import Chat from "./Chat";
-import Hypebot from "./Hypebot.tsx";
 
 export default function Main() {
   return (
@@ -19,7 +18,6 @@ export default function Main() {
           <Stats />
           <Memory />
         </Flex>
-        <Hypebot />
       </Flex>
     </Flex>
   );
