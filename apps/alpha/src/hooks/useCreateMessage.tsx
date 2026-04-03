@@ -10,8 +10,6 @@ export default function useCreateMessage() {
 function createMessage(messages: MessageData[]): MessageData[] {
   // More transient.
 
-  const equips = localStorage.getItem("equips") || "";
-  const inventory = localStorage.getItem("inventory") || "";
   const stats = localStorage.getItem("stats") || "";
   const memory = localStorage.getItem("memory") || "";
 
@@ -40,8 +38,6 @@ function createMessage(messages: MessageData[]): MessageData[] {
     `RNG 7/8\n${rng07}/100.0`,
     `RNG 8/8\n${rng08}/100.0`,
     `INSTRUCTIONS:\n${instructions}`,
-    `EQUIPS:\n${equips}`,
-    `INVENTORY:\n${inventory}`,
     `STATS:\n${stats}`,
     `MEMORY:\n${memory}`,
   ];

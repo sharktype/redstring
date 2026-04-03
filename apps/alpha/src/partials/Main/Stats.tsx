@@ -13,8 +13,8 @@ export default function Stats() {
         value={value}
         onChange={(e) => setValue(e.currentTarget.value)}
         flex={1}
-        minRows={16}
-        maxRows={16}
+        minRows={48}
+        maxRows={48}
         autosize
       />
     </Box>

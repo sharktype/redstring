@@ -1,9 +1,6 @@
 import { Box, Button, type DefaultMantineColor, Flex, Text, Title } from "@mantine/core";
 import { type ReactNode } from "react";
-import {
-  GiExplosionRays,
-  GiScrollUnfurled,
-} from "react-icons/gi";
+import { GiExplosionRays, GiScrollUnfurled } from "react-icons/gi";
 import { FaRobot } from "react-icons/fa";
 import { useDisclosure } from "@mantine/hooks";
 import Instructions from "./Modals/Instructions.tsx";
@@ -11,7 +8,8 @@ import Agent from "./Modals/Agent.tsx";
 import Clear from "./Modals/Clear.tsx";
 
 export default function Sidebar() {
-  const [isInstructionsModalOpened, { open: openInstructionsModal, close: closeInstructionsModal }] = useDisclosure(false);
+  const [isInstructionsModalOpened, { open: openInstructionsModal, close: closeInstructionsModal }] =
+    useDisclosure(false);
   const [isAgentModalOpened, { open: openAgentModal, close: closeAgentModal }] = useDisclosure(false);
   const [isClearOpened, { open: openClearModal, close: closeClearModal }] = useDisclosure(false);
 
