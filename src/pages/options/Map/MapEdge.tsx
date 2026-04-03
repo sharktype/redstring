@@ -32,7 +32,6 @@ export default function MapEdge({
 				path={edgePath}
 				markerStart={markerStart}
 				markerEnd={markerEnd}
-				style={{ stroke: "var(--mantine-color-default-border)", opacity: 0.75 }}
 			/>
 			<EdgeLabelRenderer>
 				<div
@@ -47,7 +46,7 @@ export default function MapEdge({
 						fontSize: 10,
 						lineHeight: 1.4,
 						whiteSpace: "nowrap",
-						opacity: 0.85,
+						zIndex: 1001,
 					}}
 					className="nodrag nopan"
 				>

@@ -3,6 +3,7 @@ import {
 	ReactFlow,
 	Panel,
 	ConnectionLineType,
+	ConnectionMode,
 	MarkerType,
 	useNodesState,
 	useEdgesState,
@@ -384,6 +385,7 @@ export default function Map() {
 				nodeTypes={nodeTypes}
 				edgeTypes={edgeTypes}
 				defaultEdgeOptions={{ type: "map" }}
+				connectionMode={ConnectionMode.Loose}
 				connectionLineType={ConnectionLineType.Straight}
 				onNodesChange={onNodesChangeBase}
 				onEdgesChange={onEdgesChangeBase}

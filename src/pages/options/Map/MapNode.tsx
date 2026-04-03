@@ -22,7 +22,10 @@ import { useRegions } from "../../../db/hooks/useRegions";
 import { useGameState } from "../../../db/hooks/useGameState";
 import { usePlayerState } from "../../../db/hooks/usePlayerState";
 
-const regionTypes: Region["type"][] = [
+/**
+ * Subset of region types that can be assigned to a node.
+ */
+const REGION_TYPES: Region["type"][] = [
 	"city",
 	"town",
 	"village",
@@ -121,9 +124,10 @@ export default function MapNode({ id, data, selected }: NodeProps) {
 						? "0 0 0 2px var(--mantine-color-blue-5)"
 						: undefined,
 					minWidth: 180,
+					opacity: 0.9,
 				}}
 			>
-				<Handle type="target" position={Position.Top} />
+				<Handle type="source" position={Position.Top} />
 				<Box
 					py={4}
 					mb={4}
@@ -149,7 +153,7 @@ export default function MapNode({ id, data, selected }: NodeProps) {
 				<Select
 					size="xs"
 					label="Type"
-					data={regionTypes}
+					data={REGION_TYPES}
 					value={type}
 					onChange={(v) => v && setType(v as Region["type"])}
 					className="nodrag"
@@ -192,7 +196,6 @@ export default function MapNode({ id, data, selected }: NodeProps) {
 						Save
 					</Button>
 				</Group>
-				<Handle type="source" position={Position.Bottom} />
 			</Box>
 			<Modal
 				opened={editModalOpened}
