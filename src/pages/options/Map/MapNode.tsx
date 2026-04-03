@@ -14,6 +14,7 @@ import { useDisclosure } from "@mantine/hooks";
 import type { Region } from "../../../models/Location";
 import { useRegions } from "../../../db/hooks/useRegions";
 import { useGameState } from "../../../db/hooks/useGameState";
+import { usePlayerState } from "../../../db/hooks/usePlayerState";
 
 const regionTypes: Region["type"][] = [
 	"city",
@@ -32,6 +33,7 @@ export default function MapNode({ id, data, selected }: NodeProps) {
 
 	const { saveRegion } = useRegions();
 	const { gameState } = useGameState();
+	const { playerState, updatePlayerState } = usePlayerState();
 	const { updateNodeData } = useReactFlow();
 
 	const scale = gameState?.scale ?? 1;
@@ -83,6 +85,10 @@ export default function MapNode({ id, data, selected }: NodeProps) {
 	const handleSave = async () => {
 		const updated = { ...region, name, type, description };
 
+		if (updated.id == null) {
+			updated.id = Number(id);
+		}
+
 		await saveRegion(updated);
 
 		updateNodeData(id, updated);
@@ -119,7 +125,8 @@ export default function MapNode({ id, data, selected }: NodeProps) {
 					}}
 				>
 					<Text size="xs" c="dimmed">
-						⠿ (x: {Math.round(region.position.x * scale)}m, y:{" "}
+						⠿ {region.id == null && "🚧 "}(x:{" "}
+						{Math.round(region.position.x * scale)}m, y:{" "}
 						{Math.round(region.position.y * scale)}m) ⠿
 					</Text>
 				</Box>
@@ -149,6 +156,22 @@ export default function MapNode({ id, data, selected }: NodeProps) {
 					>
 						Edit
 					</Button>
+					{region.id != null && (
+						<Button
+							size="compact-xs"
+							variant="light"
+							color="violet"
+							onClick={() =>
+								updatePlayerState({
+									location: { region, building: null },
+								})
+							}
+							className="nodrag"
+							disabled={playerState?.location.region.id === region.id}
+						>
+							Move
+						</Button>
+					)}
 					<Button
 						size="compact-xs"
 						variant="outline"

@@ -229,8 +229,6 @@ export default function Map() {
 	}, [nodes.length, setNodes]);
 
 	const saveMap = useCallback(async () => {
-		// Start by collecting the connections since we need to put them onto the regions.
-
 		const connections: Record<string, number[]> = {};
 		for (const edge of edges) {
 			if (!connections[edge.source]) {
@@ -261,13 +259,13 @@ export default function Map() {
 		await bulkSaveRegions(updatedRegions);
 		await updateGameState({ scale: scaleInput });
 
-		// Stamp nodes with updated positions and a saveVersion so LocationNode resets dirty state.
 		const version = Date.now();
 		setNodes((prev) =>
 			prev.map((n) => ({
 				...n,
 				data: {
 					...n.data,
+					id: Number(n.id),
 					position: {
 						x: Math.round(n.position.x),
 						y: Math.round(n.position.y),
