@@ -4,8 +4,10 @@ import { useMessages } from "../../../../db/hooks/useMessages";
 import type Message from "../../../../models/Message";
 import EditModeForm from "./EditModeForm";
 import HoverableMeta from "./HoverableMeta";
+import useLlmContext from "../../../../context/hooks/useLlmContext";
 
 export default function AssistantMessageBox({ message }: { message: Message }) {
+	const { isStreaming } = useLlmContext();
 	const { updateMessage, deleteMessage } = useMessages();
 	const { colorScheme } = useMantineColorScheme();
 
@@ -13,10 +15,6 @@ export default function AssistantMessageBox({ message }: { message: Message }) {
 	const [temporaryEditMessage, setTemporaryEditMessage] = useState(
 		message.content,
 	);
-
-	if (!message.id) {
-		throw new Error("message must have an id to be editable or deletable");
-	}
 
 	const messageId = message.id;
 
@@ -30,6 +28,7 @@ export default function AssistantMessageBox({ message }: { message: Message }) {
 		>
 			<HoverableMeta
 				align="left"
+				isBeingStreamed={isStreaming && !messageId}
 				sentAt={message.sentAt}
 				editedAt={message.editedAt}
 				isEditMode={isEditMode}
@@ -37,13 +36,19 @@ export default function AssistantMessageBox({ message }: { message: Message }) {
 				temporaryEditMessage={temporaryEditMessage}
 				onToggleEditMode={() => setIsEditMode((prev) => !prev)}
 				onConfirmEdit={() => {
-					updateMessage(messageId, {
-						content: temporaryEditMessage,
-						editedAt: new Date(),
-					});
-					setIsEditMode(false);
+					if (messageId) {
+						updateMessage(messageId, {
+							content: temporaryEditMessage,
+							editedAt: new Date(),
+						});
+						setIsEditMode(false);
+					}
 				}}
-				onDelete={() => deleteMessage(messageId)}
+				onDelete={() => {
+					if (messageId) {
+						deleteMessage(messageId);
+					}
+				}}
 			/>
 			<Flex pos="relative" justify="flex-start" w="100%">
 				<Flex pos="absolute" top={-12} left={4} style={{ zIndex: 1 }}>
@@ -65,6 +70,7 @@ export default function AssistantMessageBox({ message }: { message: Message }) {
 						bg={colorScheme === "light" ? "white" : "black"}
 						shadow="sm"
 						p="md"
+						style={{ whiteSpace: "pre-wrap" }}
 					>
 						{message.content}
 					</Card>

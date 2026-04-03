@@ -12,7 +12,6 @@ export default function LlmProvider({ children }: PropsWithChildren) {
 
 	const stopStreaming = useCallback(() => {
 		setIsStreaming(false);
-		setStreamingMessage("");
 	}, []);
 
 	const value = useMemo(

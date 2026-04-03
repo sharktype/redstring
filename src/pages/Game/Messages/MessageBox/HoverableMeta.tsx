@@ -4,6 +4,8 @@ import { useState } from "react";
 interface HoverableMetaProps {
 	align?: "left" | "right";
 
+	isBeingStreamed?: boolean;
+
 	// Metadata information:
 
 	sentAt: Date;
@@ -30,6 +32,7 @@ interface HoverableMetaProps {
  */
 export default function HoverableMeta({
 	align = "right",
+	isBeingStreamed,
 	sentAt,
 	editedAt,
 	isEditMode,
@@ -45,6 +48,20 @@ export default function HoverableMeta({
 		isEditMode &&
 		temporaryEditMessage.trim() !== "" &&
 		temporaryEditMessage !== originalMessage;
+
+	if (isBeingStreamed) {
+		return (
+			<Text
+				size="xs"
+				mb="lg"
+				ta={align}
+				c="dimmed"
+				{...(align === "right" ? { mr: "xs" } : { ml: "xs" })}
+			>
+				Streaming...
+			</Text>
+		);
+	}
 
 	// data-edit-mode is used for the hover CSS.
 

@@ -54,7 +54,7 @@ export default function UserMessageBox({ message }: { message: Message }) {
 						onChange={setTemporaryEditMessage}
 					/>
 				) : (
-					<Card bg="blue" shadow="sm" p="md">
+					<Card bg="blue" shadow="sm" p="md" style={{ whiteSpace: "pre-wrap" }}>
 						{message.content}
 					</Card>
 				)}

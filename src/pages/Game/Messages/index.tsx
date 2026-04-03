@@ -5,10 +5,18 @@ import { useMessages } from "../../../db/hooks/useMessages";
 import MessageBox from "./MessageBox";
 import type Message from "../../../models/Message";
 import useSubmit from "../../../handlers/hooks/useSubmit";
+import useLlmContext from "../../../context/hooks/useLlmContext";
 
-const SCROLL_THRESHOLD_PIXELS = 88;
+// A balance needs to be struck with this number. If this number is too low and the agent streaming is too fast, the
+// scrolling behaviour might not actually work. If the number is too high, then the user cannot scroll up during
+// streaming without the auto-scroll kicking in.
+
+const SCROLL_THRESHOLD_PIXELS = 128;
+
+const UNCHANGING_ARBITRARY_DATE = new Date("2000-01-01T00:00:00Z");
 
 export default function Messages() {
+	const { isStreaming, streamingMessage } = useLlmContext();
 	const { messages, addMessage } = useMessages();
 	const submitToStoryteller = useSubmit();
 
@@ -34,8 +42,8 @@ export default function Messages() {
 		);
 	}, []);
 
-	const scrollToBottom = useCallback(() => {
-		messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+	const scrollToBottom = useCallback((behavior: ScrollBehavior = "smooth") => {
+		messagesEndRef.current?.scrollIntoView({ behavior });
 	}, []);
 
 	useEffect(() => {
@@ -58,12 +66,41 @@ export default function Messages() {
 	}, [isAtBottom]);
 
 	useEffect(() => {
-		// Auto-scroll only if the user is at the bottom when messages change.
+		// Auto-scroll when messages change.
 
 		if (!isUserScrolledUpRef.current) {
 			scrollToBottom();
 		}
 	}, [messages, scrollToBottom]);
+
+	useEffect(() => {
+		// Complex auto-scroll for quick streaming messages.
+
+		if (!isStreaming) {
+			return;
+		}
+
+		const container = scrollContainerRef.current;
+		if (!container) {
+			return;
+		}
+
+		const observer = new MutationObserver(() => {
+			if (!isUserScrolledUpRef.current) {
+				scrollToBottom("instant");
+			}
+		});
+
+		observer.observe(container, {
+			childList: true,
+			subtree: true,
+			characterData: true,
+		});
+
+		return () => {
+			observer.disconnect();
+		};
+	}, [isStreaming, scrollToBottom]);
 
 	useEffect(() => {
 		textareaRef.current?.focus();
@@ -128,6 +165,16 @@ export default function Messages() {
 								message={message}
 							/>
 						))}
+						{isStreaming && streamingMessage && (
+							<MessageBox
+								key={`message-assistant-streaming`}
+								message={{
+									role: "assistant",
+									content: streamingMessage,
+									sentAt: UNCHANGING_ARBITRARY_DATE,
+								}}
+							/>
+						)}
 
 						<Box ref={messagesEndRef} />
 					</Box>
@@ -139,11 +186,12 @@ export default function Messages() {
 							minRows={5}
 							maxRows={16}
 							mx="md"
+							disabled={isStreaming}
 							autosize
 						/>
 						<Button
 							pos="absolute"
-							right={12}
+							right={24}
 							bottom={12}
 							variant="light"
 							size="xs"
@@ -151,6 +199,7 @@ export default function Messages() {
 								e.preventDefault();
 								submit();
 							}}
+							disabled={isStreaming}
 						>
 							<BiSend />
 						</Button>

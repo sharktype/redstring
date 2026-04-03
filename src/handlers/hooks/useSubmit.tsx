@@ -21,13 +21,13 @@ export default function useSubmit() {
 				return;
 			}
 
+			startStreaming();
+
 			// Note to devs: this needs to be totally agnostic to the provider.
 
 			const readableStream = await storytellerAgent.submit(messages);
 			const reader = readableStream.getReader();
 			let fullResponse = "";
-
-			startStreaming();
 
 			try {
 				while (true) {
