@@ -2,7 +2,6 @@ import { Anchor, Text } from "@mantine/core";
 import { useState } from "react";
 
 interface HoverableMetaProps {
-	isHovered: boolean;
 	align?: "left" | "right";
 
 	// Metadata information:
@@ -30,7 +29,6 @@ interface HoverableMetaProps {
  * @param props {HoverableMetaProps} the props for the hoverable meta component
  */
 export default function HoverableMeta({
-	isHovered,
 	align = "right",
 	sentAt,
 	editedAt,
@@ -48,14 +46,17 @@ export default function HoverableMeta({
 		temporaryEditMessage.trim() !== "" &&
 		temporaryEditMessage !== originalMessage;
 
+	// data-edit-mode is used for the hover CSS.
+
 	return (
 		<Text
 			size="xs"
 			mb="lg"
 			ta={align}
 			c="dimmed"
-			opacity={isHovered || isEditMode ? 1 : 0}
 			{...(align === "right" ? { mr: "xs" } : { ml: "xs" })}
+			data-edit-mode={isEditMode}
+			className="hoverable-meta"
 		>
 			{(editedAt || sentAt).toLocaleDateString(undefined, {
 				hour: "2-digit",

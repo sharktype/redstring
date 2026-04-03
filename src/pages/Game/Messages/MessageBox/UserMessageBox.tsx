@@ -1,5 +1,4 @@
 import { Badge, Card, Flex } from "@mantine/core";
-import { useDisclosure } from "@mantine/hooks";
 import { useState } from "react";
 import { useMessages } from "../../../../db/hooks/useMessages";
 import type Message from "../../../../models/Message";
@@ -13,7 +12,6 @@ export default function UserMessageBox({ message }: { message: Message }) {
 	const [temporaryEditMessage, setTemporaryEditMessage] = useState(
 		message.content,
 	);
-	const [hovered, { open, close }] = useDisclosure(false);
 
 	if (!message.id) {
 		throw new Error("message must have an id to be editable or deletable");
@@ -27,11 +25,9 @@ export default function UserMessageBox({ message }: { message: Message }) {
 			justify="flex-end"
 			mb="md"
 			w="100%"
-			onMouseEnter={open}
-			onMouseLeave={close}
+			className="message-box"
 		>
 			<HoverableMeta
-				isHovered={hovered}
 				sentAt={message.sentAt}
 				editedAt={message.editedAt}
 				isEditMode={isEditMode}

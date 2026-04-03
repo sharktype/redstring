@@ -118,11 +118,10 @@ export default function Messages() {
 						ref={scrollContainerRef}
 						flex={1}
 						px="md"
+						mt="xl"
 						style={{ overflowY: "auto" }}
-						mt="md"
 					>
 						{messages.length === 0 && <h1>Your story awaits...</h1>}
-
 						{messages.map((message) => (
 							<MessageBox
 								key={`message-${message.role}-${message.id}-${message.sentAt.toISOString()}`}

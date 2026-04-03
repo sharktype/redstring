@@ -1,0 +1,8 @@
+.message-box .hoverable-meta {
+	opacity: 0;
+}
+
+.message-box:hover .hoverable-meta,
+.hoverable-meta[data-edit-mode="true"] {
+	opacity: 1;
+}
