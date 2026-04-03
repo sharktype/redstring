@@ -33,6 +33,6 @@ export function getDirection(from: Region, to: Region): string {
 	if (bearing < 292.5) {
 		return "West ←";
 	}
-    
+
 	return "Northwest ↖";
 }

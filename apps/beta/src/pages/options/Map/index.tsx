@@ -14,7 +14,7 @@ import {
 	type Connection,
 } from "@xyflow/react";
 import "@xyflow/react/dist/style.css";
-import { Button, Flex, Group, NumberInput } from "@mantine/core";
+import { Button, Flex, Group, NumberInput, Stack, Text } from "@mantine/core";
 import { useRegions } from "../../../db/hooks/useRegions";
 import { useGameState } from "../../../db/hooks/useGameState";
 import type { Region } from "../../../models/Location";
@@ -106,12 +106,8 @@ export default function Map() {
 					return { ...edge, data: { distance: "" } };
 				}
 
-				const sourceRegion = regions.find(
-					(r) => String(r.id) === edge.source,
-				);
-				const targetRegion = regions.find(
-					(r) => String(r.id) === edge.target,
-				);
+				const sourceRegion = regions.find((r) => String(r.id) === edge.source);
+				const targetRegion = regions.find((r) => String(r.id) === edge.target);
 
 				if (!sourceRegion || !targetRegion) {
 					return { ...edge, data: { distance: "" } };
@@ -308,6 +304,14 @@ export default function Map() {
 							setIsDirty(true);
 						}}
 					/>
+					<Stack gap="xs" mt="xs" c="dimmed">
+						<Text size="xs">
+							Select and press Delete to remove nodes or connections.
+						</Text>
+						<Text size="xs">
+							Disable the map feature by leaving one or zero nodes.
+						</Text>
+					</Stack>
 				</Panel>
 				<Panel position="bottom-left">
 					<TravelCalculator />

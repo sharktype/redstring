@@ -2,8 +2,11 @@ import { Box, Button, Stack, Text, Flex } from "@mantine/core";
 import type { ReactNode } from "react";
 import { GiBackpack, GiSkills } from "react-icons/gi";
 import { FaMap, FaScroll } from "react-icons/fa";
+import { useRegions } from "../../../db/hooks/useRegions.ts";
 
 export default function Status() {
+	const { regions } = useRegions();
+
 	return (
 		<Flex direction="column" h="100%">
 			<Stack flex={1}>
@@ -19,7 +22,7 @@ export default function Status() {
 			<Stack gap="xs">
 				<StatusItem label="Inventory" icon={<GiBackpack />} />
 				<StatusItem label="Skills/Spells" icon={<GiSkills />} />
-				<StatusItem label="Map" icon={<FaMap />} />
+				{regions.length > 1 && <StatusItem label="Map" icon={<FaMap />} />}
 				<StatusItem label="Notebook" icon={<FaScroll />} />
 			</Stack>
 		</Flex>

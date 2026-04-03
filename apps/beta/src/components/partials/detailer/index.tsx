@@ -48,10 +48,10 @@ export default function Detailer() {
 		);
 	}
 
-    let regionType: string = player.location.region.type;
-    if (!regionType || regionType === "other") {
-        regionType = "region";
-    } 
+	let regionType: string = player.location.region.type;
+	if (!regionType || regionType === "other") {
+		regionType = "region";
+	}
 
 	return (
 		<Box h="100%" w="calc(var(--app-shell-navbar-width) * 2)">
@@ -83,9 +83,9 @@ export default function Detailer() {
 					</Stack>
 				) : (
 					<Stack>
-                        <Text>
-                            You are in the <b>{regionType}</b> of:
-                        </Text>
+						<Text>
+							You are in the <b>{regionType}</b> of:
+						</Text>
 						<Title order={3}>{player.location.region.name}</Title>
 						<Text size="sm" c="dimmed">
 							{player.location.region.description}
