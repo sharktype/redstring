@@ -5,7 +5,6 @@ import {
   GiBookshelf,
   GiExplosionRays,
   GiFlowers,
-  GiMagnifyingGlass,
   GiPartyHat,
   GiRuleBook,
   GiVillage,
@@ -13,7 +12,7 @@ import {
 import { PiCoins } from "react-icons/pi";
 import { FaRobot } from "react-icons/fa";
 import Characters from "./Modals/Characters.tsx";
-import { useDisclosure, useLocalStorage } from "@mantine/hooks";
+import { useDisclosure } from "@mantine/hooks";
 import Setting from "./Modals/Setting.tsx";
 import Economy from "./Modals/Economy.tsx";
 import Plot from "./Modals/Plot.tsx";
@@ -22,9 +21,6 @@ import Rules from "./Modals/Rules.tsx";
 import Agent from "./Modals/Agent.tsx";
 import Hypebot from "./Modals/Hypebot.tsx";
 import Clear from "./Modals/Clear.tsx";
-import type MessageData from "../../models/Message";
-import useCreateMessage from "../../hooks/useCreateMessage.tsx";
-import Debug from "./Modals/Debug.tsx";
 
 export default function Sidebar() {
   const [isCharacterModalOpened, { open: openCharacterModal, close: closeCharacterModal }] = useDisclosure(false);
@@ -35,13 +31,7 @@ export default function Sidebar() {
   const [isRulesModalOpened, { open: openRulesModal, close: closeRulesModal }] = useDisclosure(false);
   const [isAgentModalOpened, { open: openAgentModal, close: closeAgentModal }] = useDisclosure(false);
   const [isHypebotModalOpened, { open: openHypebotModal, close: closeHypebotModal }] = useDisclosure(false);
-  const [isDebugPromptModalOpened, { open: openDebugPromptModal, close: closeDebugPromptModal }] = useDisclosure(false);
   const [isClearOpened, { open: openClearModal, close: closeClearModal }] = useDisclosure(false);
-
-  const [messages] = useLocalStorage<MessageData[]>({ key: "messages", defaultValue: [] });
-  const [_, setLastDebugPrompt] = useLocalStorage<string>({ key: "last-debug-prompt", defaultValue: "" });
-
-  const createMessage = useCreateMessage();
 
   return (
     <Flex direction="column" py="md" pl="md" pr="lg">
@@ -106,18 +96,6 @@ export default function Sidebar() {
             color="grape"
             modal={<Hypebot isOpened={isHypebotModalOpened} close={closeHypebotModal} />}
             open={openHypebotModal}
-          />
-        </Flex>
-        <Flex direction="column" mb="xl" gap="sm">
-          <ModalButton
-            label="Debug Prompt"
-            icon={<GiMagnifyingGlass />}
-            color="green"
-            modal={<Debug isOpened={isDebugPromptModalOpened} close={closeDebugPromptModal} />}
-            open={() => {
-              setLastDebugPrompt(JSON.stringify(createMessage(messages), null, 2));
-              openDebugPromptModal();
-            }}
           />
         </Flex>
         <Flex direction="column" mb="xl" gap="sm">
