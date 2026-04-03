@@ -155,7 +155,7 @@ export default function Messages() {
 						ref={scrollContainerRef}
 						flex={1}
 						px="md"
-						mt="xl"
+						pt="xl"
 						style={{ overflowY: "auto" }}
 					>
 						{messages.length === 0 && <h1>Your story awaits...</h1>}
