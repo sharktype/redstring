@@ -1,4 +1,4 @@
-import { Card, Box, Badge } from "@mantine/core";
+import { Card, Text, Badge, List, Code, Title } from "@mantine/core";
 import type Message from "../../../../models/Message";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
@@ -12,6 +12,8 @@ interface MessageCardProps {
 	bg?: string;
 }
 
+// TODO: Not allowed to use a Badge here.
+
 export default function MessageCard({ message, bg }: MessageCardProps) {
 	return (
 		<Card
@@ -19,17 +21,27 @@ export default function MessageCard({ message, bg }: MessageCardProps) {
 			shadow="sm"
 			p="md"
 			w={message.role === "assistant" ? "100%" : "auto"}
-			style={{ whiteSpace: "pre-wrap" }}
 		>
 			<ReactMarkdown
+				id={`message-content-${message.id}`}
 				remarkPlugins={[remarkGfm]}
 				rehypePlugins={[rehypeRaw]}
 				components={{
+					h1: ({ node: _, ...props }) => <Title order={1} {...props} />,
+					h2: ({ node: _, ...props }) => <Title order={2} {...props} />,
+					p: ({ node: _, ...props }) => <Text mb="xs" {...props} />,
+					ul: ({ node: _, ...props }) => (
+						<List withPadding pt="xs" {...props} />
+					),
+					ol: ({ node: _, ...props }) => (
+						<List withPadding {...{ props, type: "ordered" }} />
+					),
+					li: ({ node: _, ...props }) => <List.Item {...props} />,
+					code: ({ node: _, ...props }) => <Code {...props} />,
 					system: ({ children, callable, args }) => {
 						let parsedResult: string = children as string;
 						try {
 							parsedResult = JSON.parse(parsedResult);
-							console.log(parsedResult);
 						} catch {
 							// If parsing fails, we'll just use the raw string.
 						}
@@ -41,8 +53,8 @@ export default function MessageCard({ message, bg }: MessageCardProps) {
 						);
 
 						return (
-							<span style={{ display: "block" }}>
-								<Badge color={color} leftSection={icon}>
+							<span style={{ display: "block", margin: "12px 0" }}>
+								<Badge color={color} leftSection={icon} component="span">
 									{content}
 								</Badge>
 							</span>
@@ -67,32 +79,27 @@ function mapToolCallResultToDisplay(
 } {
 	// TODO: This should not rely on hardcoded tool names.
 
-	console.log(callable, args, result);
+	const parsedArgs = JSON.parse(args);
+	const parsedResult = JSON.parse(result).result;
 
 	try {
 		if (callable === "roll_d20") {
-			const parsed = JSON.parse(result).result;
-			const rolls: number[] = parsed.rolls;
-			const modifier: number = parsed.modifier;
-			const total: number = parsed.total;
-			const rollsStr =
-				rolls.length > 1 ? `[${rolls.join(", ")}]` : `${rolls[0]}`;
-			const modStr =
-				modifier !== 0 ? ` ${modifier > 0 ? "+" : ""}${modifier}` : "";
+			const modifierText = parsedArgs.modifier
+				? `${parsedArgs.modifier > 0 ? "+" : ""}${parsedArgs.modifier}`
+				: "";
 
 			return {
 				icon: <LiaDiceD20Solid />,
 				color: "grape",
-				content: `Rolled ${rolls.length}d20${modStr}: ${rollsStr}${modStr} = ${total}`,
+				content: `Rolled ${parsedArgs.die_count || ""}d20${modifierText} = ${parsedResult.total}`,
 			};
 		}
 
 		if (callable === "arithmetic") {
-			const parsedArgs = JSON.parse(args);
 			return {
 				icon: <BiCalculator />,
 				color: "blue",
-				content: `${parsedArgs.expression} = ${result}`,
+				content: `${parsedArgs.expression} = ${parsedResult}`,
 			};
 		}
 	} catch (e) {

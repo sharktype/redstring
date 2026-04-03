@@ -82,6 +82,11 @@ const TOOLS: ToolDefinition[] = [
 						description:
 							"The arithmetic expression to evaluate, e.g. '(2 + 3) * 4'.",
 					},
+					decimal_places: {
+						type: "number",
+						description:
+							"The number of decimal places to round the result to. Defaults to 2.",
+					},
 				},
 				required: ["expression"],
 			},
@@ -95,6 +100,7 @@ function executeToolCall(toolCall: ToolCall): string {
 	switch (toolCall.function.name) {
 		case "roll_d20": {
 			const args = JSON.parse(toolCall.function.arguments || "{}");
+
 			const count = args.die_count ?? 1;
 			const modifier = args.modifier ?? 0;
 			const rolls = Array.from(
@@ -103,12 +109,22 @@ function executeToolCall(toolCall: ToolCall): string {
 			);
 			const total = rolls.reduce((sum, r) => sum + r, 0) + modifier;
 
-			return JSON.stringify({ result: { rolls, modifier, total } });
+			return JSON.stringify({ result: { rolls, total } });
 		}
 		case "arithmetic": {
 			try {
-				const { expression } = JSON.parse(toolCall.function.arguments);
-				const result = exprParser.evaluate(expression);
+				const { expression, decimal_places } = JSON.parse(
+					toolCall.function.arguments,
+				);
+
+				let result = exprParser.evaluate(expression);
+
+				if (!Number.isInteger(result)) {
+					const factor = Math.pow(10, decimal_places ?? 2);
+
+					result = Math.round(result * factor) / factor;
+				}
+
 				return JSON.stringify({ result });
 			} catch (e) {
 				return JSON.stringify({ error: `invalid expression: ${e}` });
