@@ -17,12 +17,7 @@ function createMessage(messages: MessageData[]): MessageData[] {
 
   // More permanent.
 
-  const characters = localStorage.getItem("characters") || "";
-  const setting = localStorage.getItem("setting") || "";
-  const economy = localStorage.getItem("economy") || "";
-  const plot = localStorage.getItem("plot") || "";
-  const style = localStorage.getItem("style") || "";
-  const rules = localStorage.getItem("rules") || "";
+  const instructions = localStorage.getItem("instructions") || "";
 
   // RNG is a random number from 0 to 100 that the LLM might use.
 
@@ -44,12 +39,7 @@ function createMessage(messages: MessageData[]): MessageData[] {
     `RNG 6/8\n${rng06}/100.0`,
     `RNG 7/8\n${rng07}/100.0`,
     `RNG 8/8\n${rng08}/100.0`,
-    `CHARACTERS:\n${characters}`,
-    `SETTING:\n${setting}`,
-    `ECONOMY:\n${economy}`,
-    `PLOT:\n${plot}`,
-    `RULES:\n${rules}`,
-    `STYLE:\n${style}`,
+    `INSTRUCTIONS:\n${instructions}`,
     `EQUIPS:\n${equips}`,
     `INVENTORY:\n${inventory}`,
     `STATS:\n${stats}`,

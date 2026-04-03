@@ -1,15 +1,15 @@
 import { Modal, Textarea } from "@mantine/core";
 import { useLocalStorage } from "@mantine/hooks";
 
-interface PlotProps {
+interface InstructionsProps {
   isOpened: boolean;
   close: () => void;
 }
 
-export default function Plot(props: PlotProps) {
-  const [value, setValue] = useLocalStorage({ key: "plot", defaultValue: "" });
+export default function Instructions(props: InstructionsProps) {
+  const [value, setValue] = useLocalStorage({ key: "instructions", defaultValue: "" });
   return (
-    <Modal title="Plot" opened={props.isOpened} onClose={() => props.close()} size="xl" centered>
+    <Modal title="Instructions" opened={props.isOpened} onClose={() => props.close()} size="xl" centered>
       <Textarea
         description="This input is saved to your browser's local storage."
         value={value}
