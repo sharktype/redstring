@@ -28,10 +28,8 @@ export default function UserMessageBox({ message }: { message: Message }) {
 			className="message-box"
 		>
 			<HoverableMeta
-				sentAt={message.sentAt}
-				editedAt={message.editedAt}
+				message={message}
 				isEditMode={isEditMode}
-				originalMessage={message.content}
 				temporaryEditMessage={temporaryEditMessage}
 				onToggleEditMode={() => setIsEditMode((prev) => !prev)}
 				onConfirmEdit={() => {
@@ -55,7 +53,7 @@ export default function UserMessageBox({ message }: { message: Message }) {
 					/>
 				) : (
 					<Card bg="blue" shadow="sm" p="md" style={{ whiteSpace: "pre-wrap" }}>
-						{message.content}
+						{message.content.trim()}
 					</Card>
 				)}
 			</Flex>

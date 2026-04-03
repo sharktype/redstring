@@ -1,20 +1,18 @@
 import { Anchor, Text } from "@mantine/core";
 import { useState } from "react";
+import useSubmit from "../../../../handlers/hooks/useSubmit";
+import type Message from "../../../../models/Message";
 
 interface HoverableMetaProps {
+	message: Message;
+
 	align?: "left" | "right";
 
 	isBeingStreamed?: boolean;
 
-	// Metadata information:
-
-	sentAt: Date;
-	editedAt?: Date;
-
 	// Editing:
 
 	isEditMode: boolean;
-	originalMessage: string;
 	temporaryEditMessage: string;
 
 	onToggleEditMode: () => void;
@@ -31,23 +29,23 @@ interface HoverableMetaProps {
  * @param props {HoverableMetaProps} the props for the hoverable meta component
  */
 export default function HoverableMeta({
+	message,
 	align = "right",
 	isBeingStreamed,
-	sentAt,
-	editedAt,
 	isEditMode,
-	originalMessage,
 	temporaryEditMessage,
 	onToggleEditMode,
 	onConfirmEdit,
 	onDelete,
 }: HoverableMetaProps) {
+	const { regenerate } = useSubmit();
+
 	const [confirmDelete, setConfirmDelete] = useState(false);
 
 	const canConfirmEdit =
 		isEditMode &&
 		temporaryEditMessage.trim() !== "" &&
-		temporaryEditMessage !== originalMessage;
+		temporaryEditMessage !== message.content;
 
 	if (isBeingStreamed) {
 		return (
@@ -75,7 +73,7 @@ export default function HoverableMeta({
 			data-edit-mode={isEditMode}
 			className="hoverable-meta"
 		>
-			{(editedAt || sentAt).toLocaleDateString(undefined, {
+			{(message.editedAt || message.sentAt).toLocaleDateString(undefined, {
 				hour: "2-digit",
 				minute: "2-digit",
 			})}
@@ -124,6 +122,10 @@ export default function HoverableMeta({
 				}}
 			>
 				{confirmDelete ? "Click again to confirm delete!" : "Delete"}
+			</Anchor>
+			{" | "}
+			<Anchor size="xs" c="teal" onClick={() => void regenerate(message)}>
+				Regenerate
 			</Anchor>
 		</Text>
 	);

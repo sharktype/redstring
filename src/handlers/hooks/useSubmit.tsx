@@ -1,19 +1,26 @@
 import { useCallback } from "react";
 import useGameContext from "../../context/hooks/useGameContext";
 import useLlmContext from "../../context/hooks/useLlmContext";
+import { useMessages } from "../../db/hooks/useMessages";
 import type Message from "../../models/Message";
 
 export default function useSubmit() {
-	const { agentConfigs, addMessage } = useGameContext();
-	const { isStreaming, startStreaming, stopStreaming, setStreamingMessage } =
-		useLlmContext();
+	const { agentConfigs, messages, addMessage } = useGameContext();
+	const {
+		isStreaming,
+		startStreaming,
+		stopStreaming,
+		setStreamingMessage,
+		setStreamingPosition,
+	} = useLlmContext();
+	const { deleteMessage } = useMessages();
 
-	const submit = useCallback(
-		async (messages: Message[]) => {
-			if (messages.length === 0 || isStreaming) {
-				return;
-			}
-
+	const streamResponse = useCallback(
+		async (
+			historyToSubmit: Message[],
+			responseMeta: Omit<Message, "id" | "content">,
+			streamingPosition: string | null = null,
+		) => {
 			const storytellerAgent = agentConfigs.find(
 				(agent) => agent.type === "storyteller",
 			);
@@ -21,11 +28,14 @@ export default function useSubmit() {
 				return;
 			}
 
+			// null means to place the streaming message at the end.
+
+			setStreamingPosition(streamingPosition);
 			startStreaming();
 
 			// Note to devs: this needs to be totally agnostic to the provider.
 
-			const readableStream = await storytellerAgent.submit(messages);
+			const readableStream = await storytellerAgent.submit(historyToSubmit);
 			const reader = readableStream.getReader();
 			let fullResponse = "";
 
@@ -37,16 +47,15 @@ export default function useSubmit() {
 					}
 
 					fullResponse += value.replaceAll("—", " - ").replaceAll("–", " - ");
-					setStreamingMessage(fullResponse);
+					setStreamingMessage(fullResponse.trim());
 				}
 			} catch (error) {
 				console.error("error reading from stream:", error);
 			} finally {
 				if (fullResponse.trim() !== "") {
 					await addMessage({
-						content: fullResponse,
-						role: "assistant",
-						sentAt: new Date(),
+						content: fullResponse.trim(),
+						...responseMeta,
 					});
 				}
 
@@ -56,12 +65,100 @@ export default function useSubmit() {
 		[
 			addMessage,
 			agentConfigs,
-			isStreaming,
 			setStreamingMessage,
+			setStreamingPosition,
 			startStreaming,
 			stopStreaming,
 		],
 	);
 
-	return submit;
+	const submit = useCallback(
+		async (messagesToSubmit: Message[]) => {
+			if (messagesToSubmit.length === 0 || isStreaming) {
+				return;
+			}
+
+			await streamResponse(messagesToSubmit, {
+				role: "assistant",
+				sentAt: new Date(),
+			});
+		},
+		[isStreaming, streamResponse],
+	);
+
+	const regenerate = useCallback(
+		async (targetMessage: Message) => {
+			if (isStreaming || !targetMessage.id) {
+				return;
+			}
+
+			const allMessages = [...messages];
+
+			// This target is the message that was used to regenerate, not necessarily the message to be regenerated.
+
+			const targetIndex = allMessages.findIndex(
+				(m) => m.id === targetMessage.id,
+			);
+			if (targetIndex === -1) {
+				return;
+			}
+
+			let historyToSubmit: Message[];
+			let originalSentAt: Date;
+			let originalRerollCount: number;
+			let streamingPosition: string | null;
+
+			// Regenerate on a user message regenerates the next message, not the user message itself.
+
+			if (targetMessage.role === "user") {
+				// If the next message isn't an assistant message, that means a message was deleted.
+
+				const nextMessage = allMessages[targetIndex + 1];
+				if (nextMessage?.role === "assistant" && nextMessage.id) {
+					originalSentAt = nextMessage.sentAt;
+					originalRerollCount = nextMessage.rerollCount ?? 0;
+
+					// We do not give the old message to the agent.
+
+					streamingPosition = nextMessage.sentAt.toISOString();
+					await deleteMessage(nextMessage.id);
+				} else {
+					originalSentAt = new Date(targetMessage.sentAt.getTime() + 1);
+					originalRerollCount = 0;
+
+					// If the old message was deleted, we need to set the send at of the new message to be just after
+					// the previous message. We'll just assume that no message could be sent within the same
+					// millisecond as the original message.
+
+					streamingPosition = new Date(
+						targetMessage.sentAt.getTime() + 1,
+					).toISOString();
+				}
+
+				historyToSubmit = allMessages.slice(0, targetIndex + 1);
+			} else {
+				originalSentAt = targetMessage.sentAt;
+				originalRerollCount = targetMessage.rerollCount ?? 0;
+
+				streamingPosition = targetMessage.sentAt.toISOString();
+				await deleteMessage(targetMessage.id);
+
+				historyToSubmit = allMessages.slice(0, targetIndex);
+			}
+
+			await streamResponse(
+				historyToSubmit,
+				{
+					role: "assistant",
+					sentAt: originalSentAt,
+					rerolledAt: new Date(),
+					rerollCount: originalRerollCount + 1,
+				},
+				streamingPosition,
+			);
+		},
+		[isStreaming, messages, deleteMessage, streamResponse],
+	);
+
+	return { submit, regenerate };
 }

@@ -13,12 +13,10 @@ import useLlmContext from "../../../context/hooks/useLlmContext";
 
 const SCROLL_THRESHOLD_PIXELS = 128;
 
-const UNCHANGING_ARBITRARY_DATE = new Date("2000-01-01T00:00:00Z");
-
 export default function Messages() {
-	const { isStreaming, streamingMessage } = useLlmContext();
+	const { isStreaming, streamingMessage, streamingPosition } = useLlmContext();
 	const { messages, addMessage } = useMessages();
-	const submitToStoryteller = useSubmit();
+	const { submit: submitToStoryteller } = useSubmit();
 
 	const textareaRef = useRef<HTMLTextAreaElement>(null);
 
@@ -146,6 +144,35 @@ export default function Messages() {
 		};
 	}, [submit]);
 
+	// Messages are already sorted. Insert the streaming message at its sorted position by scanning from the end.
+
+	const messagesWithStreaming: Message[] = (() => {
+		if (!isStreaming) {
+			return messages;
+		}
+
+		const sentAt = streamingPosition ? new Date(streamingPosition) : undefined;
+
+		const streaming = {
+			role: "assistant" as const,
+			content: streamingMessage || "_Generating..._",
+			sentAt: sentAt || new Date(),
+		};
+
+		const streamingTime = sentAt?.getTime() ?? Number.POSITIVE_INFINITY;
+
+		let index = messages.length;
+		while (
+			index > 0 &&
+			(messages[index - 1].sentAt?.getTime() ?? Number.POSITIVE_INFINITY) >
+				streamingTime
+		) {
+			index--;
+		}
+
+		return [...messages.slice(0, index), streaming, ...messages.slice(index)];
+	})();
+
 	return (
 		<Container id="messages" size="lg" flex={1} h="100%">
 			<Container h="100%">
@@ -158,23 +185,18 @@ export default function Messages() {
 						pt="xl"
 						style={{ overflowY: "auto" }}
 					>
-						{messages.length === 0 && <h1>Your story awaits...</h1>}
-						{messages.map((message) => (
-							<MessageBox
-								key={`message-${message.role}-${message.id}-${message.sentAt.toISOString()}`}
-								message={message}
-							/>
-						))}
-						{isStreaming && streamingMessage && (
-							<MessageBox
-								key={`message-assistant-streaming`}
-								message={{
-									role: "assistant",
-									content: streamingMessage,
-									sentAt: UNCHANGING_ARBITRARY_DATE,
-								}}
-							/>
+						{messagesWithStreaming.length === 0 && (
+							<h1>Your story awaits...</h1>
 						)}
+
+						{messagesWithStreaming.map((message) => {
+							return (
+								<MessageBox
+									key={`message-${message.role}-${message.id}-${message.sentAt.toISOString()}`}
+									message={message}
+								/>
+							);
+						})}
 
 						<Box ref={messagesEndRef} />
 					</Box>

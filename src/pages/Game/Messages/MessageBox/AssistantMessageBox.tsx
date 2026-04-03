@@ -27,12 +27,10 @@ export default function AssistantMessageBox({ message }: { message: Message }) {
 			className="message-box"
 		>
 			<HoverableMeta
+				message={message}
 				align="left"
 				isBeingStreamed={isStreaming && !messageId}
-				sentAt={message.sentAt}
-				editedAt={message.editedAt}
 				isEditMode={isEditMode}
-				originalMessage={message.content}
 				temporaryEditMessage={temporaryEditMessage}
 				onToggleEditMode={() => setIsEditMode((prev) => !prev)}
 				onConfirmEdit={() => {
@@ -72,7 +70,7 @@ export default function AssistantMessageBox({ message }: { message: Message }) {
 						p="md"
 						style={{ whiteSpace: "pre-wrap" }}
 					>
-						{message.content}
+						{message.content.trim() || "..."}
 					</Card>
 				)}
 			</Flex>
