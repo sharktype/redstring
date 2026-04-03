@@ -23,6 +23,8 @@ interface HoverableMetaProps {
 	onDelete: () => void;
 }
 
+// TODO: User message regenerate behaviour should be to save first, then regenerate.
+
 /**
  * A text strip with the ability to edit and delete the message, as well as showing time and other metadata.
  *

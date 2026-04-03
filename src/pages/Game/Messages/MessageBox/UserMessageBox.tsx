@@ -4,6 +4,7 @@ import { useMessages } from "../../../../db/hooks/useMessages";
 import type Message from "../../../../models/Message";
 import EditModeForm from "./EditModeForm";
 import HoverableMeta from "./HoverableMeta";
+import MessageCard from "./MessageCard";
 
 export default function UserMessageBox({ message }: { message: Message }) {
 	const { updateMessage, deleteMessage } = useMessages();
@@ -52,9 +53,7 @@ export default function UserMessageBox({ message }: { message: Message }) {
 						onChange={setTemporaryEditMessage}
 					/>
 				) : (
-					<Card bg="blue" shadow="sm" p="md" style={{ whiteSpace: "pre-wrap" }}>
-						{message.content.trim()}
-					</Card>
+					<MessageCard message={message} bg="blue" />
 				)}
 			</Flex>
 		</Flex>

@@ -5,6 +5,7 @@ import type Message from "../../../../models/Message";
 import EditModeForm from "./EditModeForm";
 import HoverableMeta from "./HoverableMeta";
 import useLlmContext from "../../../../context/hooks/useLlmContext";
+import MessageCard from "./MessageCard";
 
 export default function AssistantMessageBox({ message }: { message: Message }) {
 	const { isStreaming } = useLlmContext();
@@ -64,14 +65,10 @@ export default function AssistantMessageBox({ message }: { message: Message }) {
 						onChange={setTemporaryEditMessage}
 					/>
 				) : (
-					<Card
+					<MessageCard
+						message={message}
 						bg={colorScheme === "light" ? "white" : "black"}
-						shadow="sm"
-						p="md"
-						style={{ whiteSpace: "pre-wrap" }}
-					>
-						{message.content.trim() || "..."}
-					</Card>
+					/>
 				)}
 			</Flex>
 		</Flex>

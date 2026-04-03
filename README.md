@@ -22,6 +22,7 @@ FOSS LLM-powered opinionated story/scenario player based on a specific RPG philo
 - Add ability to retain/export all messages even after summarisation.
 - Implement something to replace the stock browser alerts.
 - "Save slots" for storylines and worlds (both text and browser).
+- Use virtualized lists for rendering messages.
 
 ### Stretch Goals
 
