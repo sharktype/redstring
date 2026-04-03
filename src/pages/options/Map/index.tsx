@@ -30,9 +30,99 @@ import MapEdge from "./MapEdge";
 import TravelCalculator from "./TravelCalculator";
 import { getDistance, humanizeDistance } from "../../../utils/distance";
 
+type RegionSnapshot = {
+	id: string;
+	name: string;
+	type: Region["type"];
+	description: string;
+	position: {
+		x: number;
+		y: number;
+	};
+	connectedRegionIds: string[];
+};
+
+type MapSnapshot = {
+	scale: number;
+	regions: RegionSnapshot[];
+};
+
+const sortIds = (ids: string[]) =>
+	[...new Set(ids)].sort((a, b) => a.localeCompare(b));
+
+const createSnapshotFromRegions = (
+	regions: Region[],
+	scale: number,
+): MapSnapshot => {
+	const regionsById = new globalThis.Map<string, RegionSnapshot>();
+
+	regions.forEach((region) => {
+		const id = String(region.id);
+		regionsById.set(id, {
+			id,
+			name: region.name,
+			type: region.type,
+			description: region.description,
+			position: {
+				x: Math.round(region.position.x),
+				y: Math.round(region.position.y),
+			},
+			connectedRegionIds: sortIds(region.connectedRegionIds.map(String)),
+		});
+	});
+
+	return {
+		scale,
+		regions: [...regionsById.values()].sort((a, b) => a.id.localeCompare(b.id)),
+	};
+};
+
+const createSnapshotFromFlow = (
+	nodes: Node[],
+	edges: Edge[],
+	scale: number,
+): MapSnapshot => {
+	const connections: Record<string, string[]> = {};
+
+	edges.forEach((edge) => {
+		if (!connections[edge.source]) {
+			connections[edge.source] = [];
+		}
+		if (!connections[edge.target]) {
+			connections[edge.target] = [];
+		}
+
+		connections[edge.source].push(edge.target);
+		connections[edge.target].push(edge.source);
+	});
+
+	const regions = nodes
+		.map((node): RegionSnapshot => {
+			const region = node.data as Partial<Region>;
+			const regionPosition = region.position;
+			const x = Math.round(regionPosition?.x ?? node.position.x);
+			const y = Math.round(regionPosition?.y ?? node.position.y);
+
+			return {
+				id: String(node.id),
+				name: region.name ?? "",
+				type: (region.type as Region["type"]) ?? "other",
+				description: region.description ?? "",
+				position: { x, y },
+				connectedRegionIds: sortIds(connections[node.id] ?? []),
+			};
+		})
+		.sort((a, b) => a.id.localeCompare(b.id));
+
+	return {
+		scale,
+		regions,
+	};
+};
+
 export default function Map() {
-	const { regions, bulkSaveRegions } = useRegions();
-	const { gameState, updateGameState } = useGameState();
+	const { regions, areRegionsLoaded, bulkSaveRegions } = useRegions();
+	const { gameState, isGameStateLoaded, updateGameState } = useGameState();
 	const scale = gameState?.scale ?? 10;
 
 	const [scaleInput, setScaleInput] = useState<number>(scale);
@@ -46,22 +136,9 @@ export default function Map() {
 	const [nodes, setNodes, onNodesChangeBase] = useNodesState<Node>([]);
 	const [edges, setEdges, onEdgesChangeBase] = useEdgesState<Edge>([]);
 
-	const [isDirty, setIsDirty] = useState(false);
+	const [isMapHydrated, setIsMapHydrated] = useState(false);
 
-	const onNodesChange = useCallback(
-		(...args: Parameters<typeof onNodesChangeBase>) => {
-			onNodesChangeBase(...args);
-			setIsDirty(true);
-		},
-		[onNodesChangeBase],
-	);
-	const onEdgesChange = useCallback(
-		(...args: Parameters<typeof onEdgesChangeBase>) => {
-			onEdgesChangeBase(...args);
-			setIsDirty(true);
-		},
-		[onEdgesChangeBase],
-	);
+	// "initialized" is used to ensure hydration only happens once. We use a ref since hydration deps. on regions.
 
 	const initialized = useRef(false);
 	const nodeTypes = useMemo(() => ({ location: MapNode }), []);
@@ -70,53 +147,73 @@ export default function Map() {
 	// Initialise nodes and edges from saved regions.
 
 	useEffect(() => {
-		if (!initialized.current && regions.length !== 0) {
-			initialized.current = true;
-
-			setNodes(
-				regions.map((region) => ({
-					id: String(region.id),
-					type: "location",
-					position: { x: region.position.x, y: region.position.y },
-					data: {
-						...region,
-					},
-				})),
-			);
-
-			const initEdges: Edge[] = [];
-			const seen = new Set<string>();
-
-			for (const region of regions) {
-				for (const targetId of region.connectedRegionIds) {
-					const key = [
-						Math.min(region.id!, targetId),
-						Math.max(region.id!, targetId),
-					].join("-");
-
-					if (!seen.has(key)) {
-						seen.add(key);
-						initEdges.push({
-							id: `e${key}`,
-							type: "map",
-							source: String(region.id),
-							target: String(targetId),
-							markerStart: {
-								type: MarkerType.ArrowClosed,
-								color: "var(--mantine-color-default-border)",
-							},
-							markerEnd: {
-								type: MarkerType.ArrowClosed,
-								color: "var(--mantine-color-default-border)",
-							},
-						});
-					}
-				}
-			}
-
-			setEdges(initEdges);
+		if (!areRegionsLoaded || initialized.current) {
+			return;
 		}
-	}, [regions, setEdges, setNodes]);
+
+		initialized.current = true;
+
+		setNodes(
+			regions.map((region) => ({
+				id: String(region.id),
+				type: "location",
+				position: { x: region.position.x, y: region.position.y },
+				data: {
+					...region,
+				},
+			})),
+		);
+
+		const initialEdges: Edge[] = [];
+		const seenEdgeKeys = new Set<string>();
+
+		regions.forEach((region) => {
+			region.connectedRegionIds.forEach((targetId) => {
+				const key = [
+					Math.min(region.id!, targetId),
+					Math.max(region.id!, targetId),
+				].join("-");
+
+				if (!seenEdgeKeys.has(key)) {
+					seenEdgeKeys.add(key);
+					initialEdges.push({
+						id: `e${key}`,
+						type: "map",
+						source: String(region.id),
+						target: String(targetId),
+						markerStart: {
+							type: MarkerType.ArrowClosed,
+							color: "var(--mantine-color-default-border)",
+						},
+						markerEnd: {
+							type: MarkerType.ArrowClosed,
+							color: "var(--mantine-color-default-border)",
+						},
+					});
+				}
+			});
+		});
+
+		setEdges(initialEdges);
+		setIsMapHydrated(true);
+	}, [regions, areRegionsLoaded, setEdges, setNodes]);
+
+	// Comparing IndexedDB state to local state is tricky; we can really only do this with this complex snapshot
+	// serialisation approach.
+
+	const persistedSnapshot = useMemo(
+		() => createSnapshotFromRegions(regions, scale),
+		[regions, scale],
+	);
+	const localSnapshot = useMemo(
+		() => createSnapshotFromFlow(nodes, edges, scaleInput),
+		[nodes, edges, scaleInput],
+	);
+	const isDirty =
+		isMapHydrated &&
+		areRegionsLoaded &&
+		isGameStateLoaded &&
+		JSON.stringify(localSnapshot) !== JSON.stringify(persistedSnapshot);
 
 	// Label edges with distances.
 
@@ -151,15 +248,20 @@ export default function Map() {
 
 	const onConnect = useCallback(
 		(params: Connection) => {
-			setEdges((prev) => {
-				const exists = prev.some(
-					(e) =>
-						(e.source === params.source && e.target === params.target) ||
-						(e.source === params.target && e.target === params.source),
-				);
-				if (exists) return prev;
+			const isDirectionless = !params.source || !params.target;
+			const isSelfLoop = params.source === params.target;
+			const isExists = edges.some(
+				(e) =>
+					(e.source === params.source && e.target === params.target) ||
+					(e.source === params.target && e.target === params.source),
+			);
 
-				return addEdge(
+			if (isDirectionless || isSelfLoop || isExists) {
+				return;
+			}
+
+			setEdges((prev) =>
+				addEdge(
 					{
 						...params,
 						type: "map",
@@ -173,12 +275,10 @@ export default function Map() {
 						},
 					},
 					prev,
-				);
-			});
-
-			setIsDirty(true);
+				),
+			);
 		},
-		[setEdges],
+		[edges, setEdges],
 	);
 
 	const onNodeDragStop = useCallback(
@@ -225,22 +325,22 @@ export default function Map() {
 				},
 			},
 		]);
-		setIsDirty(true);
 	}, [nodes.length, setNodes]);
 
 	const saveMap = useCallback(async () => {
 		const connections: Record<string, number[]> = {};
-		for (const edge of edges) {
+		edges.forEach((edge) => {
 			if (!connections[edge.source]) {
 				connections[edge.source] = [];
 			}
+
 			if (!connections[edge.target]) {
 				connections[edge.target] = [];
 			}
 
 			connections[edge.source].push(Number(edge.target));
 			connections[edge.target].push(Number(edge.source));
-		}
+		});
 
 		const updatedRegions: Region[] = nodes.map((node) => {
 			const region = node.data as unknown as Region;
@@ -274,8 +374,6 @@ export default function Map() {
 				},
 			})),
 		);
-
-		setIsDirty(false);
 	}, [nodes, bulkSaveRegions, updateGameState, scaleInput, setNodes, edges]);
 
 	return (
@@ -287,8 +385,8 @@ export default function Map() {
 				edgeTypes={edgeTypes}
 				defaultEdgeOptions={{ type: "map" }}
 				connectionLineType={ConnectionLineType.Straight}
-				onNodesChange={onNodesChange}
-				onEdgesChange={onEdgesChange}
+				onNodesChange={onNodesChangeBase}
+				onEdgesChange={onEdgesChangeBase}
 				onConnect={onConnect}
 				onNodeDragStop={(_event, node) => onNodeDragStop(node)}
 				proOptions={{ hideAttribution: true }}
@@ -324,7 +422,6 @@ export default function Map() {
 						value={scaleInput}
 						onChange={(val) => {
 							setScaleInput(Number(val));
-							setIsDirty(true);
 						}}
 					/>
 					<List size="xs" mt="md">

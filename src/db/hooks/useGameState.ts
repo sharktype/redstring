@@ -8,7 +8,11 @@ const DEFAULT_GAME_STATE: Omit<StoredGameState, "id"> = {
 };
 
 export function useGameState() {
-	const gameState = useLiveQuery(() => db.gameState.toCollection().first(), []);
+	const gameStateResult = useLiveQuery(
+		() => db.gameState.toCollection().first(),
+		[],
+	);
+	const gameState = gameStateResult;
 
 	useEffect(() => {
 		if (gameState !== undefined) {
@@ -31,6 +35,7 @@ export function useGameState() {
 
 	return {
 		gameState: gameState ?? null,
+		isGameStateLoaded: gameStateResult !== undefined,
 		updateGameState,
 	};
 }

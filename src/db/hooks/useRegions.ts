@@ -3,7 +3,8 @@ import { db } from "../database.ts";
 import type { Region } from "../../models/Location.ts";
 
 export function useRegions() {
-	const regions = useLiveQuery(() => db.regions.toArray(), []) ?? [];
+	const regionsResult = useLiveQuery(() => db.regions.toArray(), []);
+	const regions = regionsResult ?? [];
 
 	const bulkSaveRegions = async (updatedRegions: Region[]) => {
 		await db.transaction("rw", db.regions, async () => {
@@ -20,6 +21,7 @@ export function useRegions() {
 
 	return {
 		regions,
+		areRegionsLoaded: regionsResult !== undefined,
 		bulkSaveRegions,
 		saveRegion,
 	};
