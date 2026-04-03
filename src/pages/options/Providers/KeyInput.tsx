@@ -8,7 +8,7 @@ import {
 	Text,
 	TextInput,
 } from "@mantine/core";
-import { BiTrash } from "react-icons/bi";
+import { BiHide, BiShow, BiTrash } from "react-icons/bi";
 import { BsLightbulb } from "react-icons/bs";
 import { useProviderConfigs } from "../../../db/hooks/useProviderConfigs.ts";
 import type ProviderConfig from "../../../models/ProviderConfig.ts";
@@ -19,6 +19,7 @@ export default function KeyInput(props: { providerConfig?: ProviderConfig }) {
 
 	const [isDirtyNaive, setIsDirtyNaive] = useState(false);
 	const [isTesting, setIsTesting] = useState(false);
+	const [showApiKey, setShowApiKey] = useState(false);
 
 	const nicknameRef = useRef<HTMLInputElement>(null);
 	const typeRef = useRef<HTMLSelectElement>(null);
@@ -100,11 +101,17 @@ export default function KeyInput(props: { providerConfig?: ProviderConfig }) {
 			/>
 			<TextInput
 				ref={apiKeyRef}
+				type={showApiKey ? "text" : "password"}
 				label="API Key"
 				placeholder="e.g., sk-xxx..."
 				defaultValue={providerConfig?.apiKey}
 				disabled={isTesting}
 				onChange={() => setIsDirtyNaive(true)}
+				rightSection={
+					<ActionIcon variant="subtle" onClick={() => setShowApiKey((v) => !v)}>
+						{showApiKey ? <BiHide /> : <BiShow />}
+					</ActionIcon>
+				}
 			/>
 			<Group mt="md">
 				<Button

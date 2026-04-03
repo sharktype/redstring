@@ -8,18 +8,16 @@ FOSS LLM-powered opinionated story/scenario player based on a specific RPG philo
 
 - Chat between the player and the storyteller AI. Clearly the most important feature.
 - Ability to set style, rules, economy, setting, plot, and characters.
-  - This needs a lot of thought. A lot of the time I rarely even use these in roleplays. Many of them could be
-    condensed into one thing - maybe just the system prompt of the Storyteller AI which already exists?
-  - My thought is that it should be condensed. In the beta, it's currently: rules, reinforcement (delete?), modules,
-    chargen (definitely keep), and the more structured other stuff: map, item, characters. Plus in the future, "codex"
-    will allow linking in the actual story.
+  - Condensed: this is permanent stuff but not in the system prompt. So, Rules or something like that should be present
+    by the System as one of the first messages before the messages.
 - Equipped, inventory, stats, and memory that is given to the AI on every response.
   - Memory in the alpha is not correctly given to the agent; it should be given right before the current message. More
     thought should be given to where the supplementary information is given to the Storyteller.
 - Implement time, date, and weather via non-LLM "game setting" forms.
 - A non-map node based location editor that allows selecting the current location.
 - Allow selecting the current location from the map as well.
-- Implement "password" blocking with eye icon to hide/show text for API key inputs.
+- Overlap the connection nodes on nodes to make them easier to connect.
+- Make the lines for connections go over nodes (z-index).
 
 ### Future Goals
 
@@ -42,3 +40,5 @@ FOSS LLM-powered opinionated story/scenario player based on a specific RPG philo
 - Modules: a "module" is a collection of default injections into either the system prompt, the pre-prompt, and so on.
 - "Add as quest?" agent that scans just the last few messages and small context (fast, cheap LLM) that gives the user
   some buttons like "add to quest" or "add to notebook" and so on.
+- Add a "codex" that will automatically link things mentioned in the story.
+  - Maybe with an autocomplete for the user as well?
