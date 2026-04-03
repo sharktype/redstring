@@ -1,5 +1,11 @@
 import { useEffect, useRef, useState } from "react";
-import { Handle, Position, useReactFlow, type NodeProps } from "@xyflow/react";
+import {
+	Handle,
+	Position,
+	useEdges,
+	useReactFlow,
+	type NodeProps,
+} from "@xyflow/react";
 import {
 	Box,
 	Button,
@@ -37,6 +43,9 @@ export default function MapNode({ id, data, selected }: NodeProps) {
 	const { updateNodeData } = useReactFlow();
 
 	const scale = gameState?.scale ?? 1;
+
+	const edges = useEdges();
+	const isOrphan = !edges.some((e) => e.source === id || e.target === id);
 
 	const [name, setName] = useState(region.name);
 	const [type, setType] = useState<Region["type"]>(region.type);
@@ -125,8 +134,8 @@ export default function MapNode({ id, data, selected }: NodeProps) {
 					}}
 				>
 					<Text size="xs" c="dimmed">
-						⠿ {region.id == null && "🚧 "}(x:{" "}
-						{Math.round(region.position.x * scale)}m, y:{" "}
+						⠿ {region.id == null && "🚧 "}
+						{isOrphan && "🏝️ "}(x: {Math.round(region.position.x * scale)}m, y:{" "}
 						{Math.round(region.position.y * scale)}m) ⠿
 					</Text>
 				</Box>
