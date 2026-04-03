@@ -12,148 +12,168 @@ const MAX_MESSAGES_IN_HISTORY = 50;
 const SCROLL_THRESHOLD_PIXELS = 128;
 
 export default function Chat() {
-  const textareaRef = useRef<HTMLTextAreaElement>(null);
+	const textareaRef = useRef<HTMLTextAreaElement>(null);
 
-  // These refs are for advanced scrolling handling.
+	// These refs are for advanced scrolling handling.
 
-  const messagesEndRef = useRef<HTMLDivElement>(null);
-  const scrollContainerRef = useRef<HTMLDivElement>(null);
-  const isUserScrolledUpRef = useRef(false);
+	const messagesEndRef = useRef<HTMLDivElement>(null);
+	const scrollContainerRef = useRef<HTMLDivElement>(null);
+	const isUserScrolledUpRef = useRef(false);
 
-  const { isStreaming, streamingMessage } = useLlmContext();
+	const { isStreaming, streamingMessage } = useLlmContext();
 
-  const [messages, setMessages] = useLocalStorage<MessageData[]>({ key: "messages", defaultValue: [] });
+	const [messages, setMessages] = useLocalStorage<MessageData[]>({
+		key: "messages",
+		defaultValue: [],
+	});
 
-  const sendMessage = useSendMessage();
+	const sendMessage = useSendMessage();
 
-  const isAtBottom = useCallback(() => {
-    const container = scrollContainerRef.current;
-    if (!container) {
-      return true;
-    }
+	const isAtBottom = useCallback(() => {
+		const container = scrollContainerRef.current;
+		if (!container) {
+			return true;
+		}
 
-    return container.scrollHeight - container.scrollTop - container.clientHeight < SCROLL_THRESHOLD_PIXELS;
-  }, []);
+		return (
+			container.scrollHeight - container.scrollTop - container.clientHeight <
+			SCROLL_THRESHOLD_PIXELS
+		);
+	}, []);
 
-  const scrollToBottom = useCallback(() => {
-    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
-  }, []);
+	const scrollToBottom = useCallback(() => {
+		messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+	}, []);
 
-  useEffect(() => {
-    // Track user scroll position.
+	useEffect(() => {
+		// Track user scroll position.
 
-    const container = scrollContainerRef.current;
-    if (!container) {
-      return;
-    }
+		const container = scrollContainerRef.current;
+		if (!container) {
+			return;
+		}
 
-    const handleScroll = () => {
-      isUserScrolledUpRef.current = !isAtBottom();
-    };
+		const handleScroll = () => {
+			isUserScrolledUpRef.current = !isAtBottom();
+		};
 
-    container.addEventListener("scroll", handleScroll);
+		container.addEventListener("scroll", handleScroll);
 
-    return () => {
-      container.removeEventListener("scroll", handleScroll);
-    };
-  }, [isAtBottom]);
+		return () => {
+			container.removeEventListener("scroll", handleScroll);
+		};
+	}, [isAtBottom]);
 
-  useEffect(() => {
-    // Auto-scroll only if the user is at the bottom when messages change.
+	useEffect(() => {
+		// Auto-scroll only if the user is at the bottom when messages change.
 
-    if (!isUserScrolledUpRef.current) {
-      scrollToBottom();
-    }
-  }, [messages, isStreaming, scrollToBottom, streamingMessage]);
+		if (!isUserScrolledUpRef.current) {
+			scrollToBottom();
+		}
+	}, [messages, isStreaming, scrollToBottom, streamingMessage]);
 
-  const submit = useCallback(() => {
-    const value = textareaRef.current?.value;
-    if (!value || value.trim() === "") {
-      console.debug("DEBUG - submit called without value");
+	const submit = useCallback(() => {
+		const value = textareaRef.current?.value;
+		if (!value || value.trim() === "") {
+			console.debug("DEBUG - submit called without value");
 
-      return;
-    }
+			return;
+		}
 
-    const currentUserMessage: MessageData = { content: value.trim(), role: "user" };
+		const currentUserMessage: MessageData = {
+			content: value.trim(),
+			role: "user",
+		};
 
-    console.debug("DEBUG - submitting user message:", JSON.stringify(currentUserMessage, null, 2));
+		console.debug(
+			"DEBUG - submitting user message:",
+			JSON.stringify(currentUserMessage, null, 2),
+		);
 
-    setMessages((prevMessages) => [...prevMessages.slice(-MAX_MESSAGES_IN_HISTORY + 1), currentUserMessage]);
+		setMessages((prevMessages) => [
+			...prevMessages.slice(-MAX_MESSAGES_IN_HISTORY + 1),
+			currentUserMessage,
+		]);
 
-    if (textareaRef.current) {
-      textareaRef.current.value = "";
-    }
+		if (textareaRef.current) {
+			textareaRef.current.value = "";
+		}
 
-    // Now, start the LLM response process:
+		// Now, start the LLM response process:
 
-    console.log("DEBUG - calling sendMessage to process LLM response");
+		console.log("DEBUG - calling sendMessage to process LLM response");
 
-    void sendMessage([...messages, currentUserMessage]);
-  }, [sendMessage, setMessages, messages]);
+		void sendMessage([...messages, currentUserMessage]);
+	}, [sendMessage, setMessages, messages]);
 
-  useEffect(() => {
-    textareaRef.current?.focus();
-  }, []);
+	useEffect(() => {
+		textareaRef.current?.focus();
+	}, []);
 
-  useEffect(() => {
-    const handleKeyDown = (event: KeyboardEvent) => {
-      if (event.key === "Enter" && !event.shiftKey) {
-        event.preventDefault();
-        submit();
-      }
-    };
+	useEffect(() => {
+		const handleKeyDown = (event: KeyboardEvent) => {
+			if (event.key === "Enter" && !event.shiftKey) {
+				event.preventDefault();
+				submit();
+			}
+		};
 
-    const textarea = textareaRef.current;
-    textarea?.addEventListener("keydown", handleKeyDown);
+		const textarea = textareaRef.current;
+		textarea?.addEventListener("keydown", handleKeyDown);
 
-    return () => {
-      textarea?.removeEventListener("keydown", handleKeyDown);
-    };
-  }, [submit]);
+		return () => {
+			textarea?.removeEventListener("keydown", handleKeyDown);
+		};
+	}, [submit]);
 
-  return (
-    <Flex direction="column" flex={1} h="100vh" miw={768}>
-      <Container h="100%" miw={768}>
-        <Flex direction="column" flex={1} h="100%" p="xl">
-          <Box ref={scrollContainerRef} flex={1} style={{ overflowY: "auto" }} mt="xl">
-            {messages.length === 0 && (
-              <Box c="gray" ta="center" mt="lg">
-                The story has not yet begun...
-              </Box>
-            )}
-            {messages.map((message, idx) => {
-              return <Message key={`message-${idx}`} message={message} />;
-            })}
-            {isStreaming ? <Stream /> : null}
+	return (
+		<Flex direction="column" flex={1} h="100vh" miw={768}>
+			<Container h="100%" miw={768}>
+				<Flex direction="column" flex={1} h="100%" p="xl">
+					<Box
+						ref={scrollContainerRef}
+						flex={1}
+						style={{ overflowY: "auto" }}
+						mt="xl"
+					>
+						{messages.length === 0 && (
+							<Box c="gray" ta="center" mt="lg">
+								The story has not yet begun...
+							</Box>
+						)}
+						{messages.map((message, idx) => {
+							return <Message key={`message-${idx}`} message={message} />;
+						})}
+						{isStreaming ? <Stream /> : null}
 
-            <Box ref={messagesEndRef} />
-          </Box>
-          <Box pos="relative" mb="xl" pt={4}>
-            <Textarea
-              description="Press ENTER to send. Press SHIFT + ENTER to add a new line."
-              ref={textareaRef}
-              placeholder="Type your command here..."
-              minRows={4}
-              maxRows={16}
-              autosize
-            />
-            <Button
-              pos="absolute"
-              right={12}
-              bottom={12}
-              variant="light"
-              size="xs"
-              disabled={isStreaming}
-              onClick={(e) => {
-                e.preventDefault();
-                submit();
-              }}
-            >
-              <BiSend />
-            </Button>
-          </Box>
-        </Flex>
-      </Container>
-    </Flex>
-  );
+						<Box ref={messagesEndRef} />
+					</Box>
+					<Box pos="relative" mb="xl" pt={4}>
+						<Textarea
+							description="Press ENTER to send. Press SHIFT + ENTER to add a new line."
+							ref={textareaRef}
+							placeholder="Type your command here..."
+							minRows={4}
+							maxRows={16}
+							autosize
+						/>
+						<Button
+							pos="absolute"
+							right={12}
+							bottom={12}
+							variant="light"
+							size="xs"
+							disabled={isStreaming}
+							onClick={(e) => {
+								e.preventDefault();
+								submit();
+							}}
+						>
+							<BiSend />
+						</Button>
+					</Box>
+				</Flex>
+			</Container>
+		</Flex>
+	);
 }
