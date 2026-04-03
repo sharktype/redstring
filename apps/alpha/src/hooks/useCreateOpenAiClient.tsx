@@ -20,7 +20,7 @@ function createOpenAiClient(openAiApiKey: string, openAiBaseUrl: string) {
     baseURL: openAiBaseUrl,
     defaultHeaders: {},
 
-    // Enable if you used OAuth to fetch a user-scoped `apiKey` above. See https://openrouter.ai/docs#oauth to learn how.
+    // Enable if you used OAuth to fetch a user-scoped `apiKey` above. See https://openrouter.ai/docs#oauth.
     dangerouslyAllowBrowser: true,
   });
 

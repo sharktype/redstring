@@ -1,4 +1,3 @@
-import "./App.css";
 import { AppShell, MantineProvider } from "@mantine/core";
 import "@mantine/core/styles.css";
 import Sidebar from "./partials/Sidebar";

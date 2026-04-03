@@ -7,8 +7,8 @@ export default function Main() {
   return (
     <Flex h="100vh">
       <Chat />
-      <Flex w={620} miw={320} maw={620} direction="column" mr={64} mt={48}>
-        <Flex mb="md">
+      <Flex w={620} miw={320} maw={620} direction="column" mr={64} justify="center">
+        <Flex>
           <Stats />
           <Memory />
         </Flex>
