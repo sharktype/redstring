@@ -6,7 +6,6 @@ FOSS LLM-powered opinionated story/scenario player based on a specific RPG philo
 
 ### Up Next
 
-- Chat between the player and the storyteller AI. Clearly the most important feature.
 - Ability to set style, rules, economy, setting, plot, and characters.
   - Condensed: this is permanent stuff but not in the system prompt. So, Rules or something like that should be present
     by the System as one of the first messages before the messages.

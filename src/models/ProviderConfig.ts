@@ -1,3 +1,5 @@
+import type Message from "./Message";
+
 export default interface ProviderConfig {
 	type: (typeof AVAILABLE_PROVIDER_TYPES)[number];
 
@@ -6,6 +8,7 @@ export default interface ProviderConfig {
 	apiKey: string;
 	model: string;
 
+	submit(messages: Message[]): Promise<ReadableStream<string>>;
 	call(options: Record<string, unknown>): Promise<Response>;
 	test(): Promise<string | null>;
 }

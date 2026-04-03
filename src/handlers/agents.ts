@@ -3,6 +3,7 @@ import type {
 	AVAILABLE_AGENT_TYPES,
 	StoredAgentConfig,
 } from "../models/AgentConfig.ts";
+import type Message from "../models/Message.ts";
 import type ProviderConfig from "../models/ProviderConfig.ts";
 
 export default class Agent implements AgentConfig {
@@ -46,6 +47,17 @@ export default class Agent implements AgentConfig {
 			...options,
 			messages: [{ role: "system", content: this.prompt }, ...messages],
 		});
+	}
+
+	async submit(messages: Message[]): Promise<ReadableStream<string>> {
+		if (!this.provider) {
+			throw new Error("no provider configured for agent type " + this.type);
+		}
+
+		return this.provider.submit([
+			{ role: "system", content: this.prompt, sentAt: new Date() },
+			...messages,
+		]);
 	}
 
 	async test() {

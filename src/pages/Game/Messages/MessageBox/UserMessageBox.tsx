@@ -1,0 +1,68 @@
+import { Badge, Card, Flex } from "@mantine/core";
+import { useDisclosure } from "@mantine/hooks";
+import { useState } from "react";
+import { useMessages } from "../../../../db/hooks/useMessages";
+import type Message from "../../../../models/Message";
+import EditModeForm from "./EditModeForm";
+import HoverableMeta from "./HoverableMeta";
+
+export default function UserMessageBox({ message }: { message: Message }) {
+	const { updateMessage, deleteMessage } = useMessages();
+
+	const [isEditMode, setIsEditMode] = useState(false);
+	const [temporaryEditMessage, setTemporaryEditMessage] = useState(
+		message.content,
+	);
+	const [hovered, { open, close }] = useDisclosure(false);
+
+	if (!message.id) {
+		throw new Error("message must have an id to be editable or deletable");
+	}
+
+	const messageId = message.id;
+
+	return (
+		<Flex
+			direction="column"
+			justify="flex-end"
+			mb="md"
+			w="100%"
+			onMouseEnter={open}
+			onMouseLeave={close}
+		>
+			<HoverableMeta
+				isHovered={hovered}
+				sentAt={message.sentAt}
+				editedAt={message.editedAt}
+				isEditMode={isEditMode}
+				originalMessage={message.content}
+				temporaryEditMessage={temporaryEditMessage}
+				onToggleEditMode={() => setIsEditMode((prev) => !prev)}
+				onConfirmEdit={() => {
+					updateMessage(messageId, {
+						content: temporaryEditMessage,
+						editedAt: new Date(),
+					});
+					setIsEditMode(false);
+				}}
+				onDelete={() => deleteMessage(messageId)}
+			/>
+			<Flex pos="relative" justify="flex-end" w="100%">
+				<Flex pos="absolute" top={-12} right={4} style={{ zIndex: 1 }}>
+					<Badge color="orange">You</Badge>
+				</Flex>
+
+				{isEditMode ? (
+					<EditModeForm
+						value={temporaryEditMessage}
+						onChange={setTemporaryEditMessage}
+					/>
+				) : (
+					<Card bg="blue" shadow="sm" p="md">
+						{message.content}
+					</Card>
+				)}
+			</Flex>
+		</Flex>
+	);
+}

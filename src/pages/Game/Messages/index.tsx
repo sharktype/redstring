@@ -3,11 +3,14 @@ import { useCallback, useEffect, useRef } from "react";
 import { BiSend } from "react-icons/bi";
 import { useMessages } from "../../../db/hooks/useMessages";
 import MessageBox from "./MessageBox";
+import type Message from "../../../models/Message";
+import useSubmit from "../../../handlers/hooks/useSubmit";
 
 const SCROLL_THRESHOLD_PIXELS = 88;
 
 export default function Messages() {
 	const { messages, addMessage } = useMessages();
+	const submitToStoryteller = useSubmit();
 
 	const textareaRef = useRef<HTMLTextAreaElement>(null);
 
@@ -74,18 +77,21 @@ export default function Messages() {
 			return;
 		}
 
-		addMessage({
+		const newMessage: Message = {
 			content: value.trim(),
 			role: "user",
 			sentAt: new Date(),
-		});
+		};
+
+		addMessage(newMessage);
+		void submitToStoryteller([...messages, newMessage]);
 
 		if (textareaRef.current) {
 			textareaRef.current.value = "";
 		}
 
 		isUserScrolledUpRef.current = false;
-	}, [addMessage]);
+	}, [addMessage, messages, submitToStoryteller]);
 
 	useEffect(() => {
 		const handleKeyDown = (event: KeyboardEvent) => {

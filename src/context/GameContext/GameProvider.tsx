@@ -12,7 +12,7 @@ import { OpenRouterConfig } from "../../handlers/providers/openrouter.ts";
 import type PlayerState from "../../models/PlayerState.ts";
 
 export default function GameProvider({ children }: PropsWithChildren) {
-	const { messages } = useMessages();
+	const { messages, addMessage } = useMessages();
 	const { playerState, updatePlayerState } = usePlayerState();
 	const { gameState } = useGameState();
 	const { providerConfigs } = useProviderConfigs();
@@ -86,6 +86,7 @@ export default function GameProvider({ children }: PropsWithChildren) {
 				player: augmentedPlayerState,
 				gameState,
 				messages,
+				addMessage,
 				providerConfigs: augmentedProviderConfigs,
 				agentConfigs: augmentedAgentConfigs,
 			}}

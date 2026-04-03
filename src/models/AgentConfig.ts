@@ -1,3 +1,5 @@
+import type Message from "./Message";
+
 export default interface AgentConfig {
 	/**
 	 * The type of the agent.
@@ -15,6 +17,7 @@ export default interface AgentConfig {
 		numerical: Record<string, { value: number; default: number }>;
 	};
 
+	submit(messages: Message[]): Promise<ReadableStream<string>>;
 	call(options: Record<string, unknown>): Promise<Response>;
 	test(): Promise<string | null>;
 }

@@ -8,7 +8,10 @@ import type GameState from "../../models/GameState.ts";
 export interface GameContextType {
 	player: PlayerState | null;
 	gameState: GameState | null;
+
 	messages: Message[];
+	addMessage: (message: Omit<Message, "id">) => Promise<void>;
+
 	providerConfigs: ProviderConfig[];
 	agentConfigs: AgentConfig[];
 }
