@@ -21,10 +21,7 @@ export default interface AgentConfig {
 
 export type StoredAgentConfig = Omit<AgentConfig, "call" | "test">;
 
-export const AVAILABLE_AGENT_TYPES = [
-	"storyteller",
-	"summarizer",
-] as const;
+export const AVAILABLE_AGENT_TYPES = ["storyteller", "summarizer"] as const;
 
 // TODO: These are placeholders for now. They should read from files.
 

@@ -4,13 +4,11 @@ import {
 	Panel,
 	ConnectionLineType,
 	MarkerType,
-	applyNodeChanges,
-	applyEdgeChanges,
+	useNodesState,
+	useEdgesState,
 	addEdge,
 	type Node,
 	type Edge,
-	type NodeChange,
-	type EdgeChange,
 	type Connection,
 } from "@xyflow/react";
 import "@xyflow/react/dist/style.css";
@@ -34,10 +32,27 @@ export default function Map() {
 		setScaleInput(scale);
 	}, [scale]);
 
-	const [nodes, setNodes] = useState<Node[]>([]);
-	const [edges, setEdges] = useState<Edge[]>([]);
+	// For now, we use the base Node and Edge types from xyflow.
+
+	const [nodes, setNodes, onNodesChangeBase] = useNodesState<Node>([]);
+	const [edges, setEdges, onEdgesChangeBase] = useEdgesState<Edge>([]);
 
 	const [isDirty, setIsDirty] = useState(false);
+
+	const onNodesChange = useCallback(
+		(...args: Parameters<typeof onNodesChangeBase>) => {
+			onNodesChangeBase(...args);
+			setIsDirty(true);
+		},
+		[onNodesChangeBase],
+	);
+	const onEdgesChange = useCallback(
+		(...args: Parameters<typeof onEdgesChangeBase>) => {
+			onEdgesChangeBase(...args);
+			setIsDirty(true);
+		},
+		[onEdgesChangeBase],
+	);
 
 	const initialized = useRef(false);
 	const nodeTypes = useMemo(() => ({ location: MapNode }), []);
@@ -92,7 +107,7 @@ export default function Map() {
 
 			setEdges(initEdges);
 		}
-	}, [regions]);
+	}, [regions, setEdges, setNodes]);
 
 	// Label edges with distances.
 
@@ -125,65 +140,59 @@ export default function Map() {
 		[nodes, edges, scale, regions],
 	);
 
-	// Define behaviour when nodes or edges are changed.
+	const onConnect = useCallback(
+		(params: Connection) => {
+			setEdges((prev) => {
+				const exists = prev.some(
+					(e) =>
+						(e.source === params.source && e.target === params.target) ||
+						(e.source === params.target && e.target === params.source),
+				);
+				if (exists) return prev;
 
-	const onNodesChange = useCallback((changes: NodeChange[]) => {
-		setNodes((nodesSnapshot) => applyNodeChanges(changes, nodesSnapshot));
-
-		setIsDirty(true);
-	}, []);
-	const onEdgesChange = useCallback((changes: EdgeChange[]) => {
-		setEdges((edgesSnapshot) => applyEdgeChanges(changes, edgesSnapshot));
-
-		setIsDirty(true);
-	}, []);
-	const onConnect = useCallback((params: Connection) => {
-		setEdges((prev) => {
-			const exists = prev.some(
-				(e) =>
-					(e.source === params.source && e.target === params.target) ||
-					(e.source === params.target && e.target === params.source),
-			);
-			if (exists) return prev;
-
-			return addEdge(
-				{
-					...params,
-					type: "map",
-					markerStart: {
-						type: MarkerType.ArrowClosed,
-						color: "var(--mantine-color-default-border)",
+				return addEdge(
+					{
+						...params,
+						type: "map",
+						markerStart: {
+							type: MarkerType.ArrowClosed,
+							color: "var(--mantine-color-default-border)",
+						},
+						markerEnd: {
+							type: MarkerType.ArrowClosed,
+							color: "var(--mantine-color-default-border)",
+						},
 					},
-					markerEnd: {
-						type: MarkerType.ArrowClosed,
-						color: "var(--mantine-color-default-border)",
-					},
-				},
-				prev,
-			);
-		});
+					prev,
+				);
+			});
 
-		setIsDirty(true);
-	}, []);
+			setIsDirty(true);
+		},
+		[setEdges],
+	);
 
-	const onNodeDragStop = useCallback((_event: React.MouseEvent, node: Node) => {
-		setNodes((prev) =>
-			prev.map((n) =>
-				n.id === node.id
-					? {
-							...n,
-							data: {
-								...n.data,
-								position: {
-									x: Math.round(node.position.x),
-									y: Math.round(node.position.y),
+	const onNodeDragStop = useCallback(
+		(node: Node) => {
+			setNodes((prev) =>
+				prev.map((n) =>
+					n.id === node.id
+						? {
+								...n,
+								data: {
+									...n.data,
+									position: {
+										x: Math.round(node.position.x),
+										y: Math.round(node.position.y),
+									},
 								},
-							},
-						}
-					: n,
-			),
-		);
-	}, []);
+							}
+						: n,
+				),
+			);
+		},
+		[setNodes],
+	);
 
 	const addNode = useCallback(() => {
 		const name = `region ${nodes.length + 1}`;
@@ -208,7 +217,7 @@ export default function Map() {
 			},
 		]);
 		setIsDirty(true);
-	}, [nodes.length]);
+	}, [nodes.length, setNodes]);
 
 	const saveMap = useCallback(async () => {
 		// Start by collecting the connections since we need to put them onto the regions.
@@ -260,7 +269,7 @@ export default function Map() {
 		);
 
 		setIsDirty(false);
-	}, [nodes, edges, scaleInput, bulkSaveRegions, updateGameState]);
+	}, [nodes, bulkSaveRegions, updateGameState, scaleInput, setNodes, edges]);
 
 	return (
 		<Flex w="calc(100vw - var(--app-shell-width))" h="100vh">
@@ -274,7 +283,7 @@ export default function Map() {
 				onNodesChange={onNodesChange}
 				onEdgesChange={onEdgesChange}
 				onConnect={onConnect}
-				onNodeDragStop={onNodeDragStop}
+				onNodeDragStop={(_event, node) => onNodeDragStop(node)}
 				proOptions={{ hideAttribution: true }}
 				fitView
 			>
