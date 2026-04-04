@@ -111,6 +111,7 @@ This version has feature parity with the legacy Staircase version with a few ext
   - Memory in the alpha is not correctly given to the agent; it should be given right before the current message. More
     thought should be given to where the supplementary information is given to the Storyteller.
 - Easy: Move the lengthy content in this README to its own doc file in `docs/` and link to it from here.
+- Easy: Implement a "luck die" that gets a categorical luck result that the LLM can use for roleplay.
 
 ### After That
 
@@ -124,6 +125,7 @@ This version removes the placeholders off the interface so everything that is cl
 - Moderate: Implement rudimentary character creation.
 - Moderate: Implement summarisation.
 - Moderate: Add skills and flags.
+  - Including a new tool call that does skill checks instead of a straight up d20 roll.
 - Moderate: Implement spells and abilities.
 - Moderate: Actually integrate locations and the map.
 - Moderate: Implement Buildings in Locations.
@@ -158,6 +160,11 @@ After this version, we have a public alpha.
   - Could be controversial. I am on the fence about this.
 - Swipes: instead of regenerate deleting the message, we could save the old versions and allow swiping through them.
   - Might not be implemented; depends on how well the existing regenerate works.
+- Non-English support: This means two things:
+  - The LLM both takes in and responds in a non-English language. This supports non-English speakers.
+  - The LLM's context window is shortened by using Chinese but the response messages still end up in English. Perhaps
+    optionally, the summaries can also be in Chinese. Tests so far do not support that this shortens the context window
+    but it's an interesting idea to explore.
 
 ### Questions/Challenges
 
