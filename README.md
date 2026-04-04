@@ -156,6 +156,8 @@ After this version, we have a public alpha.
 - Scene planning tool call and related agent that the storyteller can optionally call for complex scenes.
 - Visuals: using AIs to generate images for characters, items, and so on.
   - Could be controversial. I am on the fence about this.
+- Swipes: instead of regenerate deleting the message, we could save the old versions and allow swiping through them.
+  - Might not be implemented; depends on how well the existing regenerate works.
 
 ### Questions/Challenges
 

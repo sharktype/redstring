@@ -61,6 +61,17 @@ export default function HoverableMeta({
 		);
 	}
 
+	const regenerateHistoryText =
+		message.role === "assistant" && message.rerollCount
+			? `rerolled ${message.rerollCount} ${message.rerollCount === 1 ? "time" : "times"}. `
+			: "";
+
+	const regenerateText = isEditMode
+		? "Save and Regenerate"
+		: message.role === "user"
+			? "Resend"
+			: "Regenerate";
+
 	// data-edit-mode is used for the hover CSS.
 
 	return (
@@ -73,11 +84,30 @@ export default function HoverableMeta({
 			data-edit-mode={isEditMode}
 			className="hoverable-meta"
 		>
-			{(message.editedAt || message.sentAt).toLocaleDateString(undefined, {
+			{message.sentAt.toLocaleDateString(undefined, {
 				hour: "2-digit",
 				minute: "2-digit",
 			})}
 			{", "}
+			{regenerateHistoryText}
+			{!isEditMode && (
+				<>
+					<Anchor
+						size="xs"
+						c="red"
+						onClick={() => {
+							if (confirmDelete) {
+								onDelete();
+							} else {
+								setConfirmDelete(true);
+							}
+						}}
+					>
+						{confirmDelete ? "Click again to confirm delete!" : "Delete"}
+					</Anchor>
+					{" | "}
+				</>
+			)}
 			<Anchor
 				size="xs"
 				c="blue"
@@ -105,27 +135,27 @@ export default function HoverableMeta({
 							}
 						}}
 					>
-						Confirm Edit
+						Save
 					</Anchor>
 				</>
 			)}
 			{" | "}
 			<Anchor
 				size="xs"
-				c="red"
+				c="teal"
 				onClick={() => {
-					if (confirmDelete) {
-						onDelete();
+					if (isEditMode && canConfirmEdit) {
+						onConfirmEdit();
+						void regenerate({
+							...message,
+							content: temporaryEditMessage,
+						});
 					} else {
-						setConfirmDelete(true);
+						void regenerate(message);
 					}
 				}}
 			>
-				{confirmDelete ? "Click again to confirm delete!" : "Delete"}
-			</Anchor>
-			{" | "}
-			<Anchor size="xs" c="teal" onClick={() => void regenerate(message)}>
-				Regenerate
+				{regenerateText}
 			</Anchor>
 		</Text>
 	);
