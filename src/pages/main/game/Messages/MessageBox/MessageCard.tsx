@@ -1,5 +1,5 @@
 import { Card, Text, List, Code, Title, Stack } from "@mantine/core";
-import type Message from "../../../../models/Message";
+import type Message from "../../../../../models/Message";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import rehypeRaw from "rehype-raw";

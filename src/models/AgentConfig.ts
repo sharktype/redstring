@@ -22,7 +22,7 @@ export default interface AgentConfig {
 	test(): Promise<string | null>;
 }
 
-export type StoredAgentConfig = Omit<AgentConfig, "call" | "test">;
+export type StoredAgentConfig = Omit<AgentConfig, "call" | "test" | "submit">;
 
 export const AVAILABLE_AGENT_TYPES = ["storyteller", "summarizer"] as const;
 

@@ -17,10 +17,10 @@ import {
 	Textarea,
 } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
-import type { Region } from "../../../models/Location";
-import { useRegions } from "../../../db/hooks/useRegions";
-import { useGameState } from "../../../db/hooks/useGameState";
-import { usePlayerState } from "../../../db/hooks/usePlayerState";
+import { useGameState } from "../../../../db/hooks/useGameState";
+import { usePlayerState } from "../../../../db/hooks/usePlayerState";
+import { useRegions } from "../../../../db/hooks/useRegions";
+import type { Region } from "../../../../models/Location";
 
 /**
  * Subset of region types that can be assigned to a node.

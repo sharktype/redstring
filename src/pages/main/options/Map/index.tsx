@@ -23,13 +23,13 @@ import {
 	NumberInput,
 	Text,
 } from "@mantine/core";
-import { useRegions } from "../../../db/hooks/useRegions";
-import { useGameState } from "../../../db/hooks/useGameState";
-import type { Region } from "../../../models/Location";
 import MapNode from "./MapNode";
 import MapEdge from "./MapEdge";
 import TravelCalculator from "./TravelCalculator";
-import { getDistance, humanizeDistance } from "../../../utils/distance";
+import { useGameState } from "../../../../db/hooks/useGameState";
+import { useRegions } from "../../../../db/hooks/useRegions";
+import type { Region } from "../../../../models/Location";
+import { humanizeDistance, getDistance } from "../../../../utils/distance";
 
 type RegionSnapshot = {
 	id: string;

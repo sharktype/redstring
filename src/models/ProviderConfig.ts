@@ -15,6 +15,9 @@ export default interface ProviderConfig {
 	test(): Promise<string | null>;
 }
 
-export type StoredProviderConfig = Omit<ProviderConfig, "call" | "test">;
+export type StoredProviderConfig = Omit<
+	ProviderConfig,
+	"call" | "test" | "execute" | "submit"
+>;
 
 export const AVAILABLE_PROVIDER_TYPES = ["openrouter"] as const;

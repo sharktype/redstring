@@ -2,13 +2,13 @@ import "@mantine/core/styles.css";
 import "./App.css";
 
 import { Route, Routes } from "react-router";
-import Game from "./pages/Game/index.tsx";
+import Game from "./pages/main/game/index.tsx";
 import AppShellLayout from "./layouts/AppShellLayout.tsx";
-import Providers from "./pages/options/Providers/index.tsx";
-import Agents from "./pages/options/Agents/index.tsx";
+import Providers from "./pages/main/options/Providers/index.tsx";
+import Agents from "./pages/main/options/Agents/index.tsx";
 import { MantineProvider } from "@mantine/core";
 import GameProvider from "./context/GameContext/GameProvider.tsx";
-import Locations from "./pages/options/Map/index.tsx";
+import Locations from "./pages/main/options/Map/index.tsx";
 import LlmProvider from "./context/LlmContext/LlmProvider.tsx";
 
 function App() {

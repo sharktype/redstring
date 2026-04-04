@@ -1,6 +1,6 @@
 import { useMemo, useState } from "react";
 import { NumberInput, Select, Text } from "@mantine/core";
-import { humanizeDistance } from "../../../utils/distance";
+import { humanizeDistance } from "../../../../utils/distance";
 
 // Measured in: km/h.
 

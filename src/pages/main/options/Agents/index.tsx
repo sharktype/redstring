@@ -1,8 +1,8 @@
 import { Anchor, Alert, Container, Stack, Text, Title } from "@mantine/core";
 import { CgInfo } from "react-icons/cg";
 import { useNavigate } from "react-router";
-import { useAgentConfig } from "../../../db/hooks/useAgentConfigs.ts";
-import AgentInput from "./AgentInput.tsx";
+import AgentInput from "./AgentInput";
+import { useAgentConfig } from "../../../../db/hooks/useAgentConfigs";
 
 export default function Agents() {
 	const navigate = useNavigate();

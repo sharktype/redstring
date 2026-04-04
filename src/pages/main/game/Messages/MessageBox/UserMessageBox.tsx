@@ -1,7 +1,7 @@
 import { Badge, Flex } from "@mantine/core";
 import { useState } from "react";
-import { useMessages } from "../../../../db/hooks/useMessages";
-import type Message from "../../../../models/Message";
+import { useMessages } from "../../../../../db/hooks/useMessages";
+import type Message from "../../../../../models/Message";
 import EditModeForm from "./EditModeForm";
 import HoverableMeta from "./HoverableMeta";
 import MessageCard from "./MessageCard";

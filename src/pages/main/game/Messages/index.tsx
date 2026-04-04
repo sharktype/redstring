@@ -1,11 +1,11 @@
 import { Box, Button, Container, Flex, Textarea } from "@mantine/core";
 import { useCallback, useEffect, useRef } from "react";
 import { BiSend } from "react-icons/bi";
-import { useMessages } from "../../../db/hooks/useMessages";
+import { useMessages } from "../../../../db/hooks/useMessages";
 import MessageBox from "./MessageBox";
-import type Message from "../../../models/Message";
-import useSubmit from "../../../handlers/hooks/useSubmit";
-import useLlmContext from "../../../context/hooks/useLlmContext";
+import type Message from "../../../../models/Message";
+import useSubmit from "../../../../handlers/hooks/useSubmit";
+import useLlmContext from "../../../../context/hooks/useLlmContext";
 
 // A balance needs to be struck with this number. If this number is too low and the agent streaming is too fast, the
 // scrolling behaviour might not actually work. If the number is too high, then the user cannot scroll up during

@@ -1,6 +1,6 @@
 import { Badge } from "@mantine/core";
 import type { PropsWithChildren, ReactNode } from "react";
-import type { ToolName } from "../../../../models/LLMs";
+import type { ToolName } from "../../../../../models/LLMs";
 
 /**
  * The props for a displayed tool call result in the message content.

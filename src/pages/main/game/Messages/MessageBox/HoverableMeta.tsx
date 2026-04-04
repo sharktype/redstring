@@ -1,7 +1,7 @@
 import { Anchor, Text } from "@mantine/core";
 import { useState } from "react";
-import useSubmit from "../../../../handlers/hooks/useSubmit";
-import type Message from "../../../../models/Message";
+import useSubmit from "../../../../../handlers/hooks/useSubmit";
+import type Message from "../../../../../models/Message";
 
 interface HoverableMetaProps {
 	message: Message;

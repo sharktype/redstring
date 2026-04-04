@@ -10,14 +10,14 @@ import {
 import { useDisclosure } from "@mantine/hooks";
 import { AiFillWarning } from "react-icons/ai";
 import { BiEdit, BiPlay, BiSave } from "react-icons/bi";
-import useGameContext from "../../../context/hooks/useGameContext.tsx";
-import { useAgentConfigs } from "../../../db/hooks/useAgentConfigs.ts";
-import type { StoredAgentConfig } from "../../../models/AgentConfig.ts";
+import AgentEditModal from "./AgentEditModal.tsx";
+import useGameContext from "../../../../context/hooks/useGameContext.tsx";
+import { useAgentConfigs } from "../../../../db/hooks/useAgentConfigs.ts";
 import {
 	DEFAULT_STORYTELLER_PROMPT,
 	DEFAULT_SUMMARIZER_PROMPT,
-} from "../../../models/AgentConfig.ts";
-import AgentEditModal from "./AgentEditModal.tsx";
+	type StoredAgentConfig,
+} from "../../../../models/AgentConfig.ts";
 
 const DEFAULT_PROMPTS: Record<string, string> = {
 	storyteller: DEFAULT_STORYTELLER_PROMPT,

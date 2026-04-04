@@ -1,4 +1,4 @@
-import type Message from "../../../../models/Message";
+import type Message from "../../../../../models/Message";
 import AssistantMessageBox from "./AssistantMessageBox";
 import SystemMessageBox from "./SystemMessageBox";
 import UserMessageBox from "./UserMessageBox";

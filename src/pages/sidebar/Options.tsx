@@ -55,7 +55,6 @@ export default function Options() {
 						Gameplay
 					</Title>
 					<Stack gap="xs">
-						<OptionsItem label="Rules" icon={<GiWorld />} />
 						<OptionsItem label="Modules" icon={<GiWorld />} />
 						<OptionsItem label="Feature Flags" icon={<GiWorld />} />
 						<OptionsItem label="Chargen" icon={<GiWorld />} />

@@ -10,9 +10,9 @@ import {
 } from "@mantine/core";
 import { BiHide, BiShow, BiTrash } from "react-icons/bi";
 import { BsLightbulb } from "react-icons/bs";
-import { useProviderConfigs } from "../../../db/hooks/useProviderConfigs.ts";
-import type ProviderConfig from "../../../models/ProviderConfig.ts";
-import { AVAILABLE_PROVIDER_TYPES } from "../../../models/ProviderConfig.ts";
+import { useProviderConfigs } from "../../../../db/hooks/useProviderConfigs";
+import { AVAILABLE_PROVIDER_TYPES } from "../../../../models/ProviderConfig";
+import type ProviderConfig from "../../../../models/ProviderConfig";
 
 export default function KeyInput(props: { providerConfig?: ProviderConfig }) {
 	const { providerConfig } = props;
