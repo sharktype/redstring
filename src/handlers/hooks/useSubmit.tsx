@@ -121,6 +121,10 @@ export default function useSubmit() {
 					// We do not give the old message to the agent.
 
 					streamingPosition = nextMessage.sentAt.toISOString();
+
+					setStreamingPosition(streamingPosition);
+					startStreaming();
+
 					await deleteMessage(nextMessage.id);
 				} else {
 					originalSentAt = new Date(targetMessage.sentAt.getTime() + 1);
@@ -141,10 +145,16 @@ export default function useSubmit() {
 				originalRerollCount = targetMessage.rerollCount ?? 0;
 
 				streamingPosition = targetMessage.sentAt.toISOString();
+
+				setStreamingPosition(streamingPosition);
+				startStreaming();
+
 				await deleteMessage(targetMessage.id);
 
 				historyToSubmit = allMessages.slice(0, targetIndex);
 			}
+
+			// Note streaming can and should start before this call for cases where messages needed to be deleted.
 
 			await streamResponse(
 				historyToSubmit,
@@ -157,7 +167,14 @@ export default function useSubmit() {
 				streamingPosition,
 			);
 		},
-		[isStreaming, messages, deleteMessage, streamResponse],
+		[
+			isStreaming,
+			messages,
+			deleteMessage,
+			streamResponse,
+			setStreamingPosition,
+			startStreaming,
+		],
 	);
 
 	return { submit, regenerate };

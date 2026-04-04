@@ -161,16 +161,30 @@ export default function Messages() {
 
 		const streamingTime = sentAt?.getTime() ?? Number.POSITIVE_INFINITY;
 
-		let index = messages.length;
+		// When regenerating, filter out the old assistant message at the streaming position so both don't appear
+		// simultaneously.
+
+		const baseMessages = streamingPosition
+			? messages.filter(
+					(m) =>
+						!(m.role === "assistant" && m.sentAt?.getTime() === streamingTime),
+				)
+			: messages;
+
+		let index = baseMessages.length;
 		while (
 			index > 0 &&
-			(messages[index - 1].sentAt?.getTime() ?? Number.POSITIVE_INFINITY) >
+			(baseMessages[index - 1].sentAt?.getTime() ?? Number.POSITIVE_INFINITY) >
 				streamingTime
 		) {
 			index--;
 		}
 
-		return [...messages.slice(0, index), streaming, ...messages.slice(index)];
+		return [
+			...baseMessages.slice(0, index),
+			streaming,
+			...baseMessages.slice(index),
+		];
 	})();
 
 	return (
