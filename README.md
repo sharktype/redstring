@@ -154,6 +154,8 @@ After this version, we have a public alpha.
 - Date and time gets a calendar. This also allows adding holidays and events depending on the day and might be a
   prerequisite for the timeline suggestion.
 - Scene planning tool call and related agent that the storyteller can optionally call for complex scenes.
+- Visuals: using AIs to generate images for characters, items, and so on.
+  - Could be controversial. I am on the fence about this.
 
 ### Questions/Challenges
 
