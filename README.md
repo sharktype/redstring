@@ -161,10 +161,10 @@ After this version, we have a public alpha.
 - Swipes: instead of regenerate deleting the message, we could save the old versions and allow swiping through them.
   - Might not be implemented; depends on how well the existing regenerate works.
 - Non-English support: This means two things:
-  - The LLM both takes in and responds in a non-English language. This supports non-English speakers.
-  - The LLM's context window is shortened by using Chinese but the response messages still end up in English. Perhaps
-    optionally, the summaries can also be in Chinese. Tests so far do not support that this shortens the context window
-    but it's an interesting idea to explore.
+  - The LLM both takes in and responds in a non-English language. This supports non-English speakers. It might already
+    support this, but more testing is needed.
+- Internationalisation of the interface - all strings to be localised, including my British English to American English
+  if in the US, and so on.
 
 ### Questions/Challenges
 
