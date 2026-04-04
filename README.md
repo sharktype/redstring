@@ -143,7 +143,7 @@ After this version, we have a public alpha.
 
 ### Stretch Goals
 
-- Difficult: Implement allowing Storyteller or some other agent to modify characters, locations, etc. as needed.
+- Implement allowing Storyteller or some other agent to modify characters, locations, etc. as needed.
 - The map feature could be improved: rather than needing a separate map generator and manually creating, the whole
   worldgen feature could be built into the engine entirely.
 - Character generator: a separate LLM that can be called as a tool call to generate a random character, which itself
@@ -165,6 +165,7 @@ After this version, we have a public alpha.
     support this, but more testing is needed.
 - Internationalisation of the interface - all strings to be localised, including my British English to American English
   if in the US, and so on.
+- Indexer/embeddings for lorebook entries.
 
 ### Questions/Challenges
 
