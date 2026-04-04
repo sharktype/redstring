@@ -2,7 +2,7 @@ import { Box, Button, Stack, Text, Flex } from "@mantine/core";
 import type { ReactNode } from "react";
 import { GiBackpack, GiSkills } from "react-icons/gi";
 import { FaMap, FaScroll } from "react-icons/fa";
-import { useRegions } from "../../../db/hooks/useRegions.ts";
+import { useRegions } from "../../db/hooks/useRegions.ts";
 
 export default function Status() {
 	const { regions } = useRegions();

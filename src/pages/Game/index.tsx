@@ -2,7 +2,7 @@
 
 import { Flex } from "@mantine/core";
 import Messages from "./Messages";
-import Detailer from "../../components/partials/detailer";
+import Detailer from "../detailer";
 
 export default function Game() {
 	return (

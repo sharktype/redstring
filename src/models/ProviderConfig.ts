@@ -1,3 +1,4 @@
+import type { ToolCall } from "./LLMs";
 import type Message from "./Message";
 
 export default interface ProviderConfig {
@@ -10,6 +11,7 @@ export default interface ProviderConfig {
 
 	submit(messages: Message[]): Promise<ReadableStream<string>>;
 	call(options: Record<string, unknown>): Promise<Response>;
+	execute(toolCall: ToolCall): string;
 	test(): Promise<string | null>;
 }
 

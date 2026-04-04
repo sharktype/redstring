@@ -1,10 +1,10 @@
 import { AppShell, Burger, Group, useMantineColorScheme } from "@mantine/core";
-import Sidebar from "../components/partials/sidebar/index.tsx";
+import Sidebar from "../pages/sidebar/index.tsx";
 import { useDisclosure } from "@mantine/hooks";
-import Header from "../components/partials/Header.tsx";
+import Header from "../pages/Header.tsx";
 import { Outlet, useLocation } from "react-router";
-import Options from "../components/partials/sidebar/Options.tsx";
-import Status from "../components/partials/sidebar/Status.tsx";
+import Options from "../pages/sidebar/Options.tsx";
+import Status from "../pages/sidebar/Status.tsx";
 
 export default function AppShellLayout() {
 	const [opened, { toggle }] = useDisclosure();

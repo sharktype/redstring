@@ -8,10 +8,10 @@ import {
 	Text,
 	Title,
 } from "@mantine/core";
-import useGameContext from "../../../context/hooks/useGameContext.tsx";
-import { useRegions } from "../../../db/hooks/useRegions.ts";
-import { getDistance, humanizeDistance } from "../../../utils/distance.ts";
-import { getDirection } from "../../../utils/direction.ts";
+import useGameContext from "../../context/hooks/useGameContext.tsx";
+import { useRegions } from "../../db/hooks/useRegions.ts";
+import { getDistance, humanizeDistance } from "../../utils/distance.ts";
+import { getDirection } from "../../utils/direction.ts";
 
 export default function Detailer() {
 	const { player } = useGameContext();

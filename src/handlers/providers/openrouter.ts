@@ -1,141 +1,17 @@
-import { Parser } from "expr-eval";
 import type Message from "../../models/Message.ts";
 import type ProviderConfig from "../../models/ProviderConfig.ts";
 import type { AVAILABLE_PROVIDER_TYPES } from "../../models/ProviderConfig.ts";
+import {
+	TOOLS,
+	type ApiMessage,
+	type ToolCall,
+	type ToolName,
+} from "../../models/LLMs.ts";
+import rollD20 from "../tools/rollD20.ts";
+import doArithmetic from "../tools/doArithmetic.ts";
 
 export const OPENROUTER_API_URL =
 	"https://openrouter.ai/api/v1/chat/completions";
-
-// Note: each of these types are specific to this OpenRouter configuration.
-
-type ToolDefinition = {
-	type: "function";
-	function: {
-		name: string;
-		description: string;
-		parameters: Record<string, unknown>;
-	};
-};
-
-type ToolCall = {
-	id: string;
-	type: "function";
-	function: {
-		name: string;
-		arguments: string;
-	};
-};
-
-type RegularMessage = {
-	role: "user" | "assistant" | "system";
-	content: string;
-};
-
-type AssistantToolCallMessage = {
-	role: "assistant";
-	content: string;
-	tool_calls: ToolCall[];
-};
-
-type ToolMessage = { role: "tool"; tool_call_id: string; content: string };
-
-type ApiMessage = RegularMessage | AssistantToolCallMessage | ToolMessage;
-
-// Note that all providers should always have access to all tools. Since providers may have different requirements for
-// defining how to call tools, there is currently no mechanism to define all tools once for use across providers.
-
-// TODO: I think we can do better than that.
-
-const TOOLS: ToolDefinition[] = [
-	{
-		type: "function",
-		function: {
-			name: "roll_d20",
-			description: "Roll one or more d20 dice with an optional modifier.",
-			parameters: {
-				type: "object",
-				properties: {
-					die_count: {
-						type: "number",
-						description: "The number of d20 dice to roll. Defaults to 1.",
-					},
-					modifier: {
-						type: "number",
-						description:
-							"A fixed modifier to add to the total roll. Defaults to 0.",
-					},
-				},
-			},
-		},
-	},
-	{
-		type: "function",
-		function: {
-			name: "arithmetic",
-			description:
-				"Evaluate a BODMAS arithmetic expression. Supports +, -, *, /, parentheses, and ^.",
-			parameters: {
-				type: "object",
-				properties: {
-					expression: {
-						type: "string",
-						description:
-							"The arithmetic expression to evaluate, e.g. '(2 + 3) * 4'.",
-					},
-					decimal_places: {
-						type: "number",
-						description:
-							"The number of decimal places to round the result to. Defaults to 2.",
-					},
-				},
-				required: ["expression"],
-			},
-		},
-	},
-];
-
-const exprParser = new Parser();
-
-function executeToolCall(toolCall: ToolCall): string {
-	switch (toolCall.function.name) {
-		case "roll_d20": {
-			const args = JSON.parse(toolCall.function.arguments || "{}");
-
-			const count = args.die_count ?? 1;
-			const modifier = args.modifier ?? 0;
-			const rolls = Array.from(
-				{ length: count },
-				() => Math.floor(Math.random() * 20) + 1,
-			);
-			const total = rolls.reduce((sum, r) => sum + r, 0) + modifier;
-
-			return JSON.stringify({ result: { rolls, total } });
-		}
-		case "arithmetic": {
-			try {
-				const { expression, decimal_places } = JSON.parse(
-					toolCall.function.arguments,
-				);
-
-				let result = exprParser.evaluate(expression);
-
-				if (!Number.isInteger(result)) {
-					const factor = Math.pow(10, decimal_places ?? 2);
-
-					result = Math.round(result * factor) / factor;
-				}
-
-				return JSON.stringify({ result });
-			} catch (e) {
-				return JSON.stringify({ error: `invalid expression: ${e}` });
-			}
-		}
-		default:
-			return JSON.stringify({
-				error: `unknown tool: ${toolCall.function.name}`,
-			});
-	}
-}
 
 export class OpenRouterConfig implements ProviderConfig {
 	type: (typeof AVAILABLE_PROVIDER_TYPES)[number] = "openrouter";
@@ -177,7 +53,9 @@ export class OpenRouterConfig implements ProviderConfig {
 
 		let activeReader: ReadableStreamDefaultReader<Uint8Array> | null = null;
 
-		const callProvider = (opts: Record<string, unknown>) => this.call(opts);
+		const callProvider = (options: Record<string, unknown>) =>
+			this.call(options);
+		const executeTool = (toolCall: ToolCall) => this.execute(toolCall);
 
 		return new ReadableStream<string>({
 			async start(controller) {
@@ -308,13 +186,13 @@ export class OpenRouterConfig implements ProviderConfig {
 						});
 
 						toolCallsArray.forEach((tc) => {
-							const rawResult = executeToolCall(tc);
+							const rawResult = executeTool(tc);
 
-							let resultContent = "<system ";
+							let resultContent = "<toolcall ";
 
 							resultContent += `callable="${tc.function.name}" `;
 							resultContent += `args="${tc.function.arguments.replaceAll('"', "&quot;")}"`;
-							resultContent += `>${rawResult}</system>\n`;
+							resultContent += `>${rawResult}</toolcall>\n`;
 
 							controller.enqueue(resultContent);
 
@@ -359,12 +237,52 @@ export class OpenRouterConfig implements ProviderConfig {
 		return data.choices?.[0]?.message?.content || null;
 	}
 
-	private mapInternalMessagesForAgent(messages: Message[]): RegularMessage[] {
+	execute(toolCall: ToolCall): string {
+		const callArguments: Record<string, unknown> = JSON.parse(
+			toolCall.function.arguments || "{}",
+		);
+
+		const executor =
+			OpenRouterConfig.TOOL_EXECUTORS[toolCall.function.name as ToolName];
+		if (!executor) {
+			return JSON.stringify({
+				error: `unknown tool: ${toolCall.function.name}`,
+			});
+		}
+
+		return executor(callArguments);
+	}
+
+	// This ensures that tools are exhaustively implemented:
+
+	private static readonly TOOL_EXECUTORS: Record<
+		ToolName,
+		(args: Record<string, unknown>) => string
+	> = {
+		roll_d20: (args) => {
+			const count = (args.die_count ?? 1) as number;
+			const modifier = (args.modifier ?? 0) as number;
+			return JSON.stringify({ result: rollD20(count, modifier) });
+		},
+		do_arithmetic: (args) => {
+			try {
+				const expression = args.expression as string;
+				const decimalPlaces = (args.decimal_places ?? 2) as number;
+				return JSON.stringify({
+					result: doArithmetic(expression, decimalPlaces),
+				});
+			} catch (e) {
+				return JSON.stringify({ error: `cannot do arithmetic: ${e}` });
+			}
+		},
+	};
+
+	private mapInternalMessagesForAgent(messages: Message[]): ApiMessage[] {
 		return messages.map((message) => {
 			return {
 				role: message.role,
 				content: message.content
-					.replace(/<system>[\s\S]*?<\/system>/g, "")
+					.replace(/<toolcall>[\s\S]*?<\/toolcall>/g, "")
 					.trim(),
 			};
 		});

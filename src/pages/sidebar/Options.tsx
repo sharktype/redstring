@@ -5,7 +5,7 @@ import { FaMap } from "react-icons/fa";
 import { GiWorld } from "react-icons/gi";
 import type { ReactNode } from "react";
 import { useNavigate } from "react-router";
-import { useMessages } from "../../../db/hooks/useMessages.ts";
+import { useMessages } from "../../db/hooks/useMessages.ts";
 
 export default function Options() {
 	const [resetOpened, { open: openResetMessages, close: closeResetMessages }] =

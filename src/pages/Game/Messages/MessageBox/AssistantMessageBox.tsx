@@ -1,4 +1,4 @@
-import { Badge, Card, Flex, useMantineColorScheme } from "@mantine/core";
+import { Badge, Flex, useMantineColorScheme } from "@mantine/core";
 import { useState } from "react";
 import { useMessages } from "../../../../db/hooks/useMessages";
 import type Message from "../../../../models/Message";
@@ -55,7 +55,7 @@ export default function AssistantMessageBox({ message }: { message: Message }) {
 						color={colorScheme === "light" ? "black" : "white"}
 						style={{ color: colorScheme === "light" ? "white" : "black" }}
 					>
-						Assistant
+						Storyteller
 					</Badge>
 				</Flex>
 
