@@ -5,7 +5,7 @@ const EXPRESSION_PARSER = new Parser();
 export default function doArithmetic(
 	expression: string,
 	decimalPlaces = 2,
-): number {
+): string {
 	let result: number;
 
 	try {
@@ -20,5 +20,5 @@ export default function doArithmetic(
 		result = Math.round(result * factor) / factor;
 	}
 
-	return result;
+	return new Intl.NumberFormat().format(result);
 }
