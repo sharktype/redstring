@@ -1,11 +1,11 @@
-import { Box, Button, Container, Flex, Textarea } from "@mantine/core";
+import { Box, Container, Flex } from "@mantine/core";
 import { useCallback, useEffect, useRef } from "react";
-import { BiSend } from "react-icons/bi";
 import { useMessages } from "../../../../db/hooks/useMessages";
 import MessageBox from "./MessageBox";
 import type Message from "../../../../models/Message";
 import useSubmit from "../../../../handlers/hooks/useSubmit";
 import useLlmContext from "../../../../context/hooks/useLlmContext";
+import MessageInput from "./MessageInput";
 
 // A balance needs to be struck with this number. If this number is too low and the agent streaming is too fast, the
 // scrolling behaviour might not actually work. If the number is too high, then the user cannot scroll up during
@@ -128,22 +128,6 @@ export default function Messages() {
 		isUserScrolledUpRef.current = false;
 	}, [addMessage, messages, submitToStoryteller]);
 
-	useEffect(() => {
-		const handleKeyDown = (event: KeyboardEvent) => {
-			if (event.key === "Enter" && !event.shiftKey) {
-				event.preventDefault();
-				submit();
-			}
-		};
-
-		const textarea = textareaRef.current;
-		textarea?.addEventListener("keydown", handleKeyDown);
-
-		return () => {
-			textarea?.removeEventListener("keydown", handleKeyDown);
-		};
-	}, [submit]);
-
 	// Messages are already sorted. Insert the streaming message at its sorted position by scanning from the end.
 
 	const messagesWithStreaming: Message[] = (() => {
@@ -214,32 +198,7 @@ export default function Messages() {
 
 						<Box ref={messagesEndRef} />
 					</Box>
-					<Box id="message-input" pos="relative" mt={4} mb="xl">
-						<Textarea
-							description="Press ENTER to send. Press SHIFT + ENTER to add a new line."
-							ref={textareaRef}
-							placeholder="Type your command here..."
-							minRows={5}
-							maxRows={16}
-							mx="md"
-							disabled={isStreaming}
-							autosize
-						/>
-						<Button
-							pos="absolute"
-							right={24}
-							bottom={12}
-							variant="light"
-							size="xs"
-							onClick={(e) => {
-								e.preventDefault();
-								submit();
-							}}
-							disabled={isStreaming}
-						>
-							<BiSend />
-						</Button>
-					</Box>
+					<MessageInput ref={textareaRef} submit={submit} />
 				</Flex>
 			</Container>
 		</Container>

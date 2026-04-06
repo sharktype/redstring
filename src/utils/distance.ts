@@ -1,6 +1,10 @@
 import type { Region } from "../models/Location.ts";
 
-export function getDistance(a: Region, b: Region): number {
+export function getDistance(a?: Region, b?: Region): number {
+	if (!a || !b) {
+		return -1;
+	}
+
 	const dx = b.position.x - a.position.x;
 	const dy = b.position.y - a.position.y;
 

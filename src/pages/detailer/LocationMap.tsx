@@ -14,25 +14,25 @@ import { useRegions } from "../../db/hooks/useRegions";
 import { getDirection } from "../../utils/direction";
 
 export default function LocationMap() {
-	const { player } = useGameContext();
+	const { playerState } = useGameContext();
 	const { regions } = useRegions();
 
-	const hasLocation = player?.location.region.id != null;
+	const hasLocation = playerState?.location?.region.id;
 
 	const connectedRegions = hasLocation
 		? regions
-				.filter((r) =>
-					player.location.region.connectedRegionIds.includes(r.id!),
+				.filter((region) =>
+					playerState?.location?.region.connectedRegionIds.includes(region.id!),
 				)
-				.map((r) => ({
-					region: r,
-					distance: getDistance(player.location.region, r),
-					direction: getDirection(player.location.region, r),
+				.map((region) => ({
+					region: region,
+					distance: getDistance(playerState?.location?.region, region),
+					direction: getDirection(playerState?.location?.region, region),
 				}))
 				.sort((a, b) => a.distance - b.distance)
 		: [];
 
-	if (player == null) {
+	if (playerState == null) {
 		return (
 			<Box h="100%" w="calc(var(--app-shell-navbar-width) * 1.5)">
 				<Center
@@ -48,7 +48,7 @@ export default function LocationMap() {
 		);
 	}
 
-	let regionType: string = player.location.region.type;
+	let regionType: string = playerState?.location?.region?.type || "other";
 	if (!regionType || regionType === "other") {
 		regionType = "region";
 	}
@@ -67,7 +67,7 @@ export default function LocationMap() {
 						<Button
 							key={region.id}
 							variant="default"
-							onClick={() => player.move(region.id!)}
+							onClick={() => playerState.move(region.id!)}
 						>
 							{region.name}
 						</Button>
@@ -78,9 +78,9 @@ export default function LocationMap() {
 					<Text>
 						You are in the <b>{regionType}</b> of:
 					</Text>
-					<Title order={3}>{player.location.region.name}</Title>
+					<Title order={3}>{playerState?.location?.region.name}</Title>
 					<Text size="sm" c="dimmed">
-						{player.location.region.description}
+						{playerState?.location?.region.description}
 					</Text>
 					{connectedRegions.length > 0 && (
 						<>
@@ -91,7 +91,7 @@ export default function LocationMap() {
 									variant="default"
 									fullWidth
 									justify="space-between"
-									onClick={() => player.move(region.id!)}
+									onClick={() => playerState.move(region.id!)}
 									rightSection={
 										<Group gap="xs" wrap="nowrap">
 											<Text size="xs" fw={500} component="span">

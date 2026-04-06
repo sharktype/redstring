@@ -1,6 +1,10 @@
 import type { Region } from "../models/Location.ts";
 
-export function getDirection(from: Region, to: Region): string {
+export function getDirection(from?: Region, to?: Region): string {
+	if (!from || !to) {
+		return "Unknown";
+	}
+
 	const dx = to.position.x - from.position.x;
 	const dy = to.position.y - from.position.y;
 

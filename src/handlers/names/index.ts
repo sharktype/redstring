@@ -88,9 +88,7 @@ export function generateRandomName(
 			? NAME_DATA[chosenCulture]
 			: {
 					givenMale: Object.values(NAME_DATA).flatMap((d) => d.givenMale),
-					givenFemale: Object.values(NAME_DATA).flatMap(
-						(d) => d.givenFemale,
-					),
+					givenFemale: Object.values(NAME_DATA).flatMap((d) => d.givenFemale),
 					surnames: Object.values(NAME_DATA).flatMap((d) => d.surnames),
 				};
 

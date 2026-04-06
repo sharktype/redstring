@@ -9,8 +9,9 @@
 		"format": "biome format --write"
 	},
 	"dependencies": {
-		"@mantine/core": "^8.3.6",
-		"@mantine/hooks": "^8.3.6",
+		"@mantine/core": "9.0.1",
+		"@mantine/dates": "^9.0.1",
+		"@mantine/hooks": "^9.0.1",
 		"@xyflow/react": "^12.10.2",
 		"@xyflow/system": "^0.0.76",
 		"dexie": "^4.2.1",

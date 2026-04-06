@@ -1,12 +1,18 @@
-import { Box } from "@mantine/core";
+import { Badge, Box, Center, Flex } from "@mantine/core";
+import { FaLock } from "react-icons/fa";
 import useGameContext from "../../context/hooks/useGameContext.tsx";
 import Inventory from "./Inventory.tsx";
 import Journal from "./Journal.tsx";
 import LocationMap from "./LocationMap.tsx";
 import Profile from "./Profile.tsx";
+import ChargenDetailer from "./ChargenDetailer.tsx";
 
 export default function Detailer() {
-	const { gameState } = useGameContext();
+	const { gameState, playerState } = useGameContext();
+
+	const playerNotReady = !playerState || !playerState.isInitialized;
+
+	// Note that the "character creation" detailer is not an actual detailer state.
 
 	let chosenComponent = null;
 	switch (gameState?.detailer) {
@@ -23,7 +29,27 @@ export default function Detailer() {
 			chosenComponent = <Journal />;
 			break;
 		default:
+			if (playerNotReady) {
+				chosenComponent = <ChargenDetailer />;
+				break;
+			}
+
 			return null;
+	}
+
+	if (gameState?.detailer && playerNotReady) {
+		chosenComponent = (
+			<Center h="100%">
+				<Flex direction="column" align="center" gap="md">
+					<FaLock size={24} opacity={0.3} />
+					<Box>
+						<Badge size="lg" color="gray">
+							...?
+						</Badge>
+					</Box>
+				</Flex>
+			</Center>
+		);
 	}
 
 	return (
