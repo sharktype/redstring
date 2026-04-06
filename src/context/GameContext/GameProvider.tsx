@@ -88,7 +88,8 @@ export default function GameProvider({ children }: PropsWithChildren) {
 	return (
 		<GameContext.Provider
 			value={{
-				player: augmentedPlayerState,
+				playerState: augmentedPlayerState,
+				updatePlayerState,
 				gameState,
 				updateGameState,
 				messages,

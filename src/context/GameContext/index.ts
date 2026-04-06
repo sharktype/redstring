@@ -6,9 +6,13 @@ import type PlayerState from "../../models/PlayerState.ts";
 import type GameState from "../../models/GameState.ts";
 import type { Region } from "../../models/Location.ts";
 import type { StoredGameState } from "../../models/GameState.ts";
+import type { StoredPlayerState } from "../../models/PlayerState.ts";
 
 export interface GameContextType {
-	player: PlayerState | null;
+	playerState: PlayerState | null;
+	updatePlayerState: (
+		updates: Partial<Omit<StoredPlayerState, "id">>,
+	) => Promise<void>;
 	gameState: GameState | null;
 	updateGameState: (
 		updates: Partial<Omit<StoredGameState, "id">>,
