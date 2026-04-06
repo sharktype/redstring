@@ -12,12 +12,19 @@ import { useState } from "react";
 import { FaDice, FaEraser, FaLock, FaLockOpen } from "react-icons/fa";
 import type { ChargenStepProps } from ".";
 import { DEFAULT_GENDER_IDENTITIES } from "../../../../models/PlayerState";
-import { generateRandomName } from "../../../../handlers/names";
+import {
+	type Culture,
+	SUPPORTED_CULTURES,
+	generateRandomName,
+} from "../../../../handlers/names";
 
 export default function NameStep({ playerState, onChange }: ChargenStepProps) {
 	const [isGivenNameLocked, setIsGivenNameLocked] = useState(false);
 	const [isSurnameLocked, setIsSurnameLocked] = useState(false);
 	const [isGenderLocked, setIsGenderLocked] = useState(false);
+	const [selectedCulture, setSelectedCulture] = useState<
+		Culture | "mixed" | null
+	>(null);
 
 	const allLocked = isGivenNameLocked && isSurnameLocked && isGenderLocked;
 
@@ -26,10 +33,21 @@ export default function NameStep({ playerState, onChange }: ChargenStepProps) {
 		label: g.identity.charAt(0).toUpperCase() + g.identity.slice(1),
 	}));
 
+	const cultureOptions = [
+		...SUPPORTED_CULTURES.map((c) => ({
+			value: c,
+			label: c.charAt(0).toUpperCase() + c.slice(1),
+		})),
+		{ value: "mixed", label: "Mixed" },
+	];
+
 	const randomize = () => {
 		const updates: Parameters<typeof onChange>[0] = {};
+		const cultureArg: Culture | null | undefined =
+			selectedCulture === "mixed" ? null : (selectedCulture ?? undefined);
 		const { givenName, surname, gender } = generateRandomName(
 			isGenderLocked ? playerState.gender : undefined,
+			cultureArg,
 		);
 
 		// Ignore parts of the newly-generated name if those fields are locked.
@@ -81,6 +99,17 @@ export default function NameStep({ playerState, onChange }: ChargenStepProps) {
 				<Group justify="space-between">
 					<Title order={4}>Name</Title>
 					<Group gap="xs">
+						<Select
+							placeholder="Culture"
+							data={cultureOptions}
+							value={selectedCulture}
+							onChange={(val) =>
+								setSelectedCulture(val as Culture | "mixed" | null)
+							}
+							clearable
+							size="xs"
+							w={120}
+						/>
 						<ActionIcon
 							variant="subtle"
 							color="gray"
