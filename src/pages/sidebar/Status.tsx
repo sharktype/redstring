@@ -1,7 +1,23 @@
-import { Box, Button, Center, Stack, Text, Flex, Badge } from "@mantine/core";
+import {
+	Box,
+	Button,
+	Center,
+	Divider,
+	Stack,
+	Text,
+	Flex,
+	Badge,
+} from "@mantine/core";
 import type { ReactNode } from "react";
 import { GiBackpack, GiSkills } from "react-icons/gi";
-import { FaLock, FaMap, FaScroll } from "react-icons/fa";
+import {
+	FaClock,
+	FaLock,
+	FaMap,
+	FaMapMarkerAlt,
+	FaScroll,
+	FaUser,
+} from "react-icons/fa";
 import useGameContext from "../../context/hooks/useGameContext.tsx";
 import { GrDisabledOutline } from "react-icons/gr";
 
@@ -35,15 +51,67 @@ function PlayerOverview() {
 	}
 
 	return (
-		<Stack>
+		<Stack gap="sm" p="xs">
 			<Box>
-				<Text>
-					<b>Character Name</b>
-				</Text>
-				<Text size="xs">Level N Race Class (Current/Next XP)</Text>
+				<Flex align="center" gap={6} mb={4}>
+					<FaUser size={10} opacity={0.5} />
+					<Text size="xs" tt="uppercase" c="dimmed">
+						<b>Name</b>
+					</Text>
+				</Flex>
+				<Flex align="baseline" gap={6}>
+					<Text size="sm">
+						<b>
+							{playerState.name?.given} {playerState.name?.surname}
+						</b>
+					</Text>
+					{playerState.gender && (
+						<Text size="xs" c="dimmed">
+							({playerState.gender.pronouns.subject}/
+							{playerState.gender.pronouns.object})
+						</Text>
+					)}
+				</Flex>
 			</Box>
-			<Box>Character Major Stats</Box>
-			<Box>Equipped Items</Box>
+
+			{playerState.time && (
+				<>
+					<Divider />
+					<Box>
+						<Flex align="center" gap={6} mb={4}>
+							<FaClock size={10} opacity={0.5} />
+							<Text size="xs" tt="uppercase" c="dimmed">
+								<b>Time</b>
+							</Text>
+						</Flex>
+						<Text size="sm" ff="monospace">
+							{(playerState.time.hour % 12 || 12).toString().padStart(2, "0")}:
+							{playerState.time.minute.toString().padStart(2, "0")}{" "}
+							{playerState.time.hour < 12 ? "AM" : "PM"}
+						</Text>
+					</Box>
+				</>
+			)}
+
+			{playerState.location && (
+				<>
+					<Divider />
+					<Box>
+						<Flex align="center" gap={6} mb={4}>
+							<FaMapMarkerAlt size={10} opacity={0.5} />
+							<Text size="xs" tt="uppercase" c="dimmed">
+								<b>Location</b>
+							</Text>
+						</Flex>
+						<Text size="sm">{playerState.location.region.name}</Text>
+						{playerState.location.building && (
+							<Text size="xs" c="dimmed">
+								{playerState.location.building.name}
+							</Text>
+						)}
+					</Box>
+				</>
+			)}
 		</Stack>
 	);
 }
