@@ -11,10 +11,15 @@ import Agent from "../../handlers/agents.ts";
 import { OpenRouterConfig } from "../../handlers/providers/openrouter.ts";
 import type PlayerState from "../../models/PlayerState.ts";
 
+// During the game, most of the interactions should happen through the game
+// context. The only exception is for directly dealing with the database. Note,
+// however, that changing the database will still trigger updates in the context
+// so this is mostly for consistency.
+
 export default function GameProvider({ children }: PropsWithChildren) {
 	const { messages, addMessage } = useMessages();
 	const { playerState, updatePlayerState } = usePlayerState();
-	const { gameState } = useGameState();
+	const { gameState, updateGameState } = useGameState();
 	const { providerConfigs } = useProviderConfigs();
 	const { agentConfigs } = useAgentConfigs();
 	const { regions } = useRegions();
@@ -43,7 +48,7 @@ export default function GameProvider({ children }: PropsWithChildren) {
 		return {
 			...playerState,
 			move,
-			enter: (buildingSlug: string) => true,
+			enter: (_buildingSlug: string) => true,
 			exit: () => true,
 		};
 	}, [playerState, move]);
@@ -85,8 +90,10 @@ export default function GameProvider({ children }: PropsWithChildren) {
 			value={{
 				player: augmentedPlayerState,
 				gameState,
+				updateGameState,
 				messages,
 				addMessage,
+				regions,
 				providerConfigs: augmentedProviderConfigs,
 				agentConfigs: augmentedAgentConfigs,
 			}}

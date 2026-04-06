@@ -4,6 +4,7 @@ import { db } from "../database.ts";
 import type { StoredGameState } from "../../models/GameState.ts";
 
 const DEFAULT_GAME_STATE: Omit<StoredGameState, "id"> = {
+	detailer: null,
 	scale: 10,
 };
 
@@ -27,7 +28,9 @@ export function useGameState() {
 		});
 	}, [gameState]);
 
-	const updateGameState = async (updates: Omit<StoredGameState, "id">) => {
+	const updateGameState = async (
+		updates: Partial<Omit<StoredGameState, "id">>,
+	) => {
 		if (gameState?.id != null) {
 			await db.gameState.update(gameState.id, updates);
 		}

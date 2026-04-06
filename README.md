@@ -13,12 +13,15 @@ This version has feature parity with the legacy Staircase version with a few ext
 - Easy (as described): Equipped, inventory, stats, and memory that is given to the AI on every response.
   - Memory in the alpha is not correctly given to the agent; it should be given right before the current message. More
     thought should be given to where the supplementary information is given to the Storyteller.
-- Easy: Implement a "luck die" that gets a categorical luck result that the LLM can use for roleplay.
+  - Really the equipped shouldn't be part of this (not fun to manage), nor is inventory. So it's just stats and memory.
+    Stats should exist by itself as something more consolidated. Memory should exist as a "are you sure you want to
+    edit this?" thing on the Journal, plus some tool calls to be able to read and write from it.
 
 ### After That
 
 This version removes the placeholders off the interface so everything that is clickable actually does something.
 
+- Easy Bug: Differentiate between when to use use- hooks directly versus the `GameContext` provided functions.
 - Easy: Add deploy script to Cloudflare Pages.
 - Moderate: Implement time, date, and weather via non-LLM "game setting" forms.
 - Moderate: A non-map node based location editor that allows selecting the current location.
