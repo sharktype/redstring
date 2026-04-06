@@ -42,7 +42,7 @@ const STEP_TO_DETAILER_STEP: Record<Step, DetailerStep> = {
 };
 
 export default function ChargenDetailer() {
-	const { playerState } = useGameContext();
+	const { playerState, updatePlayerState } = useGameContext();
 	return (
 		<Stack p="md" h="100%" justify="space-between">
 			<Stack>
@@ -79,7 +79,11 @@ export default function ChargenDetailer() {
 					);
 				})}
 			</Stack>
-			<Button size="lg" color="green" disabled>
+			<Button
+				size="lg"
+				color="green"
+				onClick={() => updatePlayerState({ isInitialized: true })}
+			>
 				Set Out
 			</Button>
 		</Stack>
