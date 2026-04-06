@@ -31,7 +31,7 @@ const STEP_TO_DETAILER_STEP: Record<Step, DetailerStep> = {
 		label: "Set starting date & time",
 		color: "grape",
 		icon: BsClock,
-		isComplete: (ps) => ps?.date != null && ps?.time != null,
+		isComplete: (ps) => ps?.time != null,
 	},
 	location: {
 		label: "Set starting location",
