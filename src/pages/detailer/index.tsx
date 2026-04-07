@@ -1,5 +1,4 @@
-import { Badge, Box, Center, Flex } from "@mantine/core";
-import { FaLock } from "react-icons/fa";
+import { Box } from "@mantine/core";
 import useGameContext from "../../context/hooks/useGameContext.tsx";
 import Inventory from "./Inventory.tsx";
 import Journal from "./Journal.tsx";
@@ -29,27 +28,11 @@ export default function Detailer() {
 			chosenComponent = <Journal />;
 			break;
 		default:
-			if (playerNotReady) {
-				chosenComponent = <ChargenDetailer />;
-				break;
-			}
-
-			return null;
+			break;
 	}
 
-	if (gameState?.detailer && playerNotReady) {
-		chosenComponent = (
-			<Center h="100%">
-				<Flex direction="column" align="center" gap="md">
-					<FaLock size={24} opacity={0.3} />
-					<Box>
-						<Badge size="lg" color="gray">
-							...?
-						</Badge>
-					</Box>
-				</Flex>
-			</Center>
-		);
+	if (playerNotReady) {
+		chosenComponent = <ChargenDetailer />;
 	}
 
 	return (

@@ -19,25 +19,27 @@ const STEP_TO_DETAILER_STEP: Record<Step, DetailerStep> = {
 		label: "Choose a name",
 		color: "blue",
 		icon: GiPerson,
-		isComplete: (ps) => !!ps?.name?.given && !!ps?.name?.surname,
+		isComplete: (playerState) =>
+			!!playerState?.name?.given && !!playerState?.name?.surname,
 	},
 	extraStats: {
 		label: "Write any initial stats",
 		color: "yellow",
 		icon: GiQuillInk,
-		isComplete: (ps) => !!ps?.stats?.textual,
+		isComplete: (playerState) => !!playerState?.stats?.textual,
 	},
 	datetime: {
 		label: "Set starting date & time",
 		color: "grape",
 		icon: BsClock,
-		isComplete: (ps) => ps?.time != null,
+		isComplete: (playerState) => playerState?.time != null,
 	},
 	location: {
 		label: "Set starting location",
 		color: "green",
 		icon: BiMap,
-		isComplete: (ps) => ps?.location != null,
+		isComplete: (playerState) =>
+			playerState?.location != null && playerState.location.region.name !== "",
 	},
 };
 

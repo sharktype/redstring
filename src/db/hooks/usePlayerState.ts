@@ -7,8 +7,7 @@ import type { StoredPlayerState } from "../../models/PlayerState.ts";
 // methods. It does not need to be mutated directly.
 
 const DEFAULT_PLAYER_STATE: Omit<StoredPlayerState, "id"> = {
-	date: { day: 1, month: 1, year: 1 },
-	time: { hour: 0, minute: 0 },
+	isInitialized: false,
 	location: {
 		region: {
 			name: "",
@@ -51,8 +50,14 @@ export function usePlayerState() {
 		await db.playerState.update(playerState.id, updates);
 	};
 
+	const clearPlayerState = async () => {
+		await db.playerState.clear();
+		await db.playerState.add({ ...DEFAULT_PLAYER_STATE });
+	};
+
 	return {
 		playerState: playerState ?? null,
 		updatePlayerState,
+		clearPlayerState,
 	};
 }
