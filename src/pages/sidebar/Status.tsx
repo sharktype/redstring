@@ -19,7 +19,6 @@ import {
 	FaUser,
 } from "react-icons/fa";
 import useGameContext from "../../context/hooks/useGameContext.tsx";
-import { GrDisabledOutline } from "react-icons/gr";
 
 export default function Status() {
 	return (
@@ -143,7 +142,7 @@ function DetailerSelector() {
 					});
 				}}
 			/>
-			{regions.length > 1 && (
+			{playerState.location && playerState.location?.region?.name && (
 				<StatusItem
 					label="Map"
 					icon={<FaMap />}
