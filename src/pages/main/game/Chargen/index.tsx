@@ -7,6 +7,7 @@ import NameStep from "./NameStep";
 import ExtraStatsStep from "./ExtraStatsStep";
 import DateTimeStep from "./DateTimeStep";
 import LocationStep from "./LocationStep";
+import WealthStep from "./WealthStep";
 
 export interface ChargenStepProps {
 	playerState: StoredPlayerState;
@@ -18,6 +19,7 @@ const STEP_TO_COMPONENT: Record<Step, ComponentType<ChargenStepProps>> = {
 	extraStats: ExtraStatsStep,
 	datetime: DateTimeStep,
 	location: LocationStep,
+	wealth: WealthStep,
 };
 
 export default function Chargen() {

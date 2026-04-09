@@ -38,6 +38,8 @@ export default interface PlayerState {
 		building: Building | null;
 	};
 
+	money?: number;
+
 	move(locationId: number): boolean;
 	enter(buildingSlug: string): boolean;
 	exit(): boolean;

@@ -92,6 +92,23 @@ function PlayerOverview() {
 				</>
 			)}
 
+			{playerState.money !== undefined && (
+				<>
+					<Divider />
+					<Box>
+						<Flex align="center" gap={6} mb={4}>
+							<FaClock size={10} opacity={0.5} />
+							<Text size="xs" tt="uppercase" c="dimmed">
+								<b>Money</b>
+							</Text>
+						</Flex>
+						<Text size="sm" ff="monospace">
+							{playerState.money} gold
+						</Text>
+					</Box>
+				</>
+			)}
+
 			{playerState.location && playerState.location?.region?.name && (
 				<>
 					<Divider />

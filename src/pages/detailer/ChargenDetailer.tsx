@@ -1,6 +1,6 @@
 import { Box, Button, Checkbox, Flex, Stack, Title } from "@mantine/core";
 import type { IconType } from "react-icons";
-import { GiPerson, GiQuillInk } from "react-icons/gi";
+import { GiPerson, GiQuillInk, GiTwoCoins } from "react-icons/gi";
 import { type Step, STEPS } from "../../models/Chargen";
 import { BsClock } from "react-icons/bs";
 import { BiMap } from "react-icons/bi";
@@ -40,6 +40,12 @@ const STEP_TO_DETAILER_STEP: Record<Step, DetailerStep> = {
 		icon: BiMap,
 		isComplete: (playerState) =>
 			playerState?.location != null && playerState.location.region.name !== "",
+	},
+	wealth: {
+		label: "Set starting wealth",
+		color: "orange",
+		icon: GiTwoCoins,
+		isComplete: (playerState) => playerState?.money != null,
 	},
 };
 
