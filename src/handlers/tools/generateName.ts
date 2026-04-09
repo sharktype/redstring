@@ -6,7 +6,8 @@ export default function generateName(gender?: "male" | "female") {
 		gender === "male" ? MALE : gender === "female" ? FEMALE : undefined;
 
 	return Array.from({ length: 3 }, () => {
-		const name = generateRandomName(resolvedGender);
+		const name = generateRandomName(resolvedGender, undefined, true);
+
 		return {
 			givenName: name.givenName,
 			surname: name.surname,
