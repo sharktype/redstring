@@ -14,13 +14,10 @@ This version removes the placeholders off the interface so everything that is cl
 - Easy: Add deploy script to Cloudflare Pages.
 - Moderate: Implement time, date, and weather via non-LLM "game setting" forms.
 - Moderate: A non-map node based location editor that allows selecting the current location.
-- Moderate: Implement possibility of random encounters when moving, and system messages of moving happening.
-  - This includes adding functionality to the "cycle" button on the map form.
 - Moderate: Implement summarisation.
 - Moderate: Add skills and flags.
   - Including a new tool call that does skill checks instead of a straight up d20 roll.
 - Moderate: Implement spells and abilities.
-- Moderate: Actually integrate locations and the map.
 - Moderate: Implement Buildings in Locations.
 
 After this version, we have a public alpha.

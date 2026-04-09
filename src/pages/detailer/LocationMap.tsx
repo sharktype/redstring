@@ -24,6 +24,7 @@ import type { ConnectionSafety, Region } from "../../models/Location";
 import { getEffectiveSafety } from "../../models/Location";
 import { getDirection } from "../../utils/direction";
 import useTravel from "../../handlers/hooks/useTravel";
+import useSubmit from "../../handlers/hooks/useSubmit";
 import TravelCalculator from "../main/options/Map/TravelCalculator";
 
 export default function LocationMap() {
@@ -37,7 +38,14 @@ export default function LocationMap() {
 		isInTransit,
 		canSleep,
 	} = useTravel();
-	const [isTripModalOpened, { open, close }] = useDisclosure(false);
+	const { submit } = useSubmit();
+
+	const submitAfterTravel = async () => {
+		await submit([]);
+	};
+
+	const [isTripModalOpened, { open: openTripModal, close: closeTripModal }] =
+		useDisclosure(false);
 	const [selectedTrip, setSelectedTrip] = useState<{
 		region: Region;
 		distance: number;
@@ -174,7 +182,7 @@ export default function LocationMap() {
 															safety,
 														});
 
-														open();
+														openTripModal();
 													}}
 													rightSection={
 														<Group gap="xs" wrap="nowrap">
@@ -287,9 +295,33 @@ export default function LocationMap() {
 											<Button variant="default" onClick={() => turnAround()}>
 												Turn Around
 											</Button>
-											<Button onClick={() => advanceTravel()}>Continue</Button>
+											<Button
+												onClick={() =>
+													advanceTravel().then(async (result) => {
+														if (result && result.type !== "uneventful") {
+															await submitAfterTravel();
+														}
+													})
+												}
+											>
+												Continue
+											</Button>
+											
 											{canSleep && (
-												<Button variant="light" onClick={() => sleepOnRoad()}>
+												<Button
+													variant="light"
+													onClick={() =>
+														sleepOnRoad().then(async (result) => {
+															if (
+																result &&
+																result.type !== "rested" &&
+																result.type !== "no_sleep"
+															) {
+																await submitAfterTravel();
+															}
+														})
+													}
+												>
 													Sleep
 												</Button>
 											)}
@@ -303,7 +335,7 @@ export default function LocationMap() {
 
 				<Modal
 					opened={isTripModalOpened}
-					onClose={close}
+					onClose={closeTripModal}
 					title={<Text fw={700}>Travel Confirmation</Text>}
 				>
 					{selectedTrip &&
@@ -361,13 +393,20 @@ export default function LocationMap() {
 									</List>
 
 									<Group justify="flex-end" mt="md">
-										<Button variant="default" onClick={close}>
+										<Button variant="default" onClick={closeTripModal}>
 											Cancel
 										</Button>
 										<Button
-											onClick={() => {
-												beginTravel(selectedTrip.region.id!);
-												close();
+											onClick={async () => {
+												const result = await beginTravel(
+													selectedTrip.region.id!,
+												);
+
+												closeTripModal();
+
+												if (result && result.type !== "uneventful") {
+													await submitAfterTravel();
+												}
 											}}
 										>
 											Travel

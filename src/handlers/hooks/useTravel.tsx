@@ -242,6 +242,8 @@ export default function useTravel() {
 			};
 
 			await applyTravelBlock(result, transitLocation, destination, 0);
+
+			return result;
 		},
 		[playerState, gameState, regions, applyTravelBlock],
 	);
@@ -355,7 +357,7 @@ export default function useTravel() {
 		const maxSleep = Math.min(timeSleepRemaining, hoursUntil8am);
 
 		if (maxSleep <= 0) {
-			return;
+			return { type: "no_sleep" as const };
 		}
 
 		const dangerTriggered = Math.random() < EVENT_CHANCES[safety];
@@ -433,6 +435,8 @@ export default function useTravel() {
 					sentAt: new Date(),
 				});
 			}
+
+			return { type: eventType };
 		} else {
 			await updatePlayerState({
 				time: newTime,
@@ -461,6 +465,8 @@ export default function useTravel() {
 				content: lines.join("\n\n"),
 				sentAt: new Date(),
 			});
+
+			return { type: "rested" as const };
 		}
 	}, [playerState, updatePlayerState, addMessage]);
 
