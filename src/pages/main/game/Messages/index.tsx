@@ -101,7 +101,32 @@ export default function Messages() {
 	}, [isStreaming, scrollToBottom]);
 
 	useEffect(() => {
-		textareaRef.current?.focus();
+		const textarea = textareaRef.current;
+		if (!textarea) {
+			return;
+		}
+
+		const saved = localStorage.getItem("draft-message");
+		if (saved) {
+			textarea.value = saved;
+		}
+
+		textarea.focus();
+
+		const handleInput = () => {
+			const value = textarea.value;
+			if (value) {
+				localStorage.setItem("draft-message", value);
+			} else {
+				localStorage.removeItem("draft-message");
+			}
+		};
+
+		textarea.addEventListener("input", handleInput);
+
+		return () => {
+			textarea.removeEventListener("input", handleInput);
+		};
 	}, []);
 
 	// Logic to handle submission of messages:
@@ -124,6 +149,8 @@ export default function Messages() {
 		if (textareaRef.current) {
 			textareaRef.current.value = "";
 		}
+
+		localStorage.removeItem("draft-message");
 
 		isUserScrolledUpRef.current = false;
 	}, [addMessage, messages, submitToStoryteller]);
