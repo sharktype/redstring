@@ -103,10 +103,10 @@ const TOOL_DISPLAY: Record<
 		color: "yellow",
 		content: "Updated character notes",
 	}),
-	write_secret: (args) => ({
+	write_secret: () => ({
 		icon: "🔒",
 		color: "violet",
-		content: `Updated secret: ${args.slug}`,
+		content: `Storyteller updated some secret information...`,
 	}),
 };
 
