@@ -3,7 +3,7 @@ import useGameContext from "../../context/hooks/useGameContext";
 import type Message from "../../models/Message";
 
 export default function usePresystemMessage() {
-	const { playerState, gameState } = useGameContext();
+	const { playerState, gameState, regions } = useGameContext();
 
 	const buildPresystemMessage = useCallback((): Message | null => {
 		if (!playerState || !gameState) {
@@ -66,6 +66,21 @@ export default function usePresystemMessage() {
 			}
 		}
 
+		if (regions.length > 0) {
+			const sortedRegions = [...regions].sort(
+				(a, b) => a.position.x - b.position.x,
+			);
+
+			const regionList = sortedRegions
+				.map(
+					(region) =>
+						`- ${region.name} (${region.type}) [${region.position.x}, ${region.position.y}]`,
+				)
+				.join("\n");
+
+			parts.push(`**Regions in game:**\n${regionList}`);
+		}
+
 		if (playerState.inventory && playerState.inventory.length > 0) {
 			const items = playerState.inventory
 				.map((entry) => `- ${entry.item.name} x${entry.quantity}`)
@@ -91,7 +106,7 @@ export default function usePresystemMessage() {
 			content: parts.join("\n\n"),
 			sentAt: new Date(),
 		};
-	}, [playerState, gameState]);
+	}, [playerState, gameState, regions]);
 
 	return { buildPresystemMessage };
 }
