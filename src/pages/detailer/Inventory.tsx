@@ -45,9 +45,13 @@ export default function Inventory() {
 	const consumeItem = (index: number) => {
 		const entry = inventory[index];
 
+		const description = entry.item.isDescriptionSecret
+			? `<spoiler>${entry.item.description}</spoiler>`
+			: entry.item.description;
+
 		addMessage({
 			role: "system",
-			content: `Player has consumed ${entry.item.name}`,
+			content: `Player has consumed ${entry.item.name} with ${entry.item.isDescriptionSecret ? "a secret" : "a visible"} description: "${description}"`,
 			sentAt: new Date(),
 		});
 
@@ -69,9 +73,13 @@ export default function Inventory() {
 	const discardItem = (index: number) => {
 		const entry = inventory[index];
 
+		const description = entry.item.isDescriptionSecret
+			? `<spoiler>${entry.item.description}</spoiler>`
+			: entry.item.description;
+
 		addMessage({
 			role: "system",
-			content: `Player has discarded ${entry.item.name}`,
+			content: `Player has discarded ${entry.item.name} with ${entry.item.isDescriptionSecret ? "a secret" : "a visible"} description: "${description}"`,
 			sentAt: new Date(),
 		});
 

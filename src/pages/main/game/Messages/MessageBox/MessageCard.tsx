@@ -3,6 +3,7 @@ import type Message from "../../../../../models/Message";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import rehypeRaw from "rehype-raw";
+import Spoiler from "./Spoiler";
 import ToolCall, { type ToolCallProps } from "./ToolCall";
 
 interface MessageCardProps {
@@ -35,6 +36,7 @@ export default function MessageCard({ message, bg }: MessageCardProps) {
 
 						// Custom:
 
+						spoiler: ({ node: _, ...props }) => <Spoiler {...props} />,
 						toolcall: ({ ...props }: ToolCallProps) => <ToolCall {...props} />,
 					}}
 				>
