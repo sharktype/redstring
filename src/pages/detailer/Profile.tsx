@@ -1,4 +1,5 @@
-import { Text } from "@mantine/core";
+import { Box, Textarea, Title } from "@mantine/core";
+import { usePlayerState } from "../../db/hooks/usePlayerState";
 
 /**
  * The Profile is a detailer and form component containing the core details about the player character.
@@ -20,5 +21,25 @@ import { Text } from "@mantine/core";
  * - Freeform status (can be written by the Storyteller and player).
  */
 export default function Profile() {
-	return <Text>Profile details coming soon...</Text>;
+	const { playerState, updatePlayerState } = usePlayerState();
+
+	return (
+		<Box h="100%">
+			<Title order={2} mb="md">
+				Profile
+			</Title>
+
+			<Textarea
+				label="Character Notes"
+				description="Note: Also writable by the Storyteller."
+				value={playerState?.stats?.textual ?? ""}
+				onChange={(event) =>
+					updatePlayerState({ stats: { textual: event.currentTarget.value } })
+				}
+				placeholder="Freeform character notes..."
+				minRows={8}
+				autosize
+			/>
+		</Box>
+	);
 }
