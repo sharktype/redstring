@@ -98,6 +98,28 @@ export const TOOLS = [
 			},
 		},
 	},
+	{
+		type: "function",
+		function: {
+			name: "write_secret",
+			description:
+				"Write or update a secret in the player's journal. Creates a new secret if the slug does not exist, or overwrites the existing one.",
+			parameters: {
+				type: "object",
+				properties: {
+					slug: {
+						type: "string",
+						description: "The slug identifier for the secret.",
+					},
+					content: {
+						type: "string",
+						description: "The content of the secret.",
+					},
+				},
+				required: ["slug", "content"],
+			},
+		},
+	},
 ] as const satisfies ToolDefinition[];
 
 export type ToolName = (typeof TOOLS)[number]["function"]["name"];
@@ -107,8 +129,10 @@ export type ToolName = (typeof TOOLS)[number]["function"]["name"];
  */
 export interface ToolContext {
 	playerMoney: number;
+
 	updatePlayerMoney: (newAmount: number) => void;
 	updatePlayerNotes: (content: string) => void;
+	updateSecret: (slug: string, content: string) => void;
 }
 
 /**

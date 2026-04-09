@@ -6,8 +6,15 @@ import type { ToolContext } from "../../models/LLMs";
 import type Message from "../../models/Message";
 
 export default function useSubmit() {
-	const { agentConfigs, messages, addMessage, playerState, updatePlayerState } =
-		useGameContext();
+	const {
+		agentConfigs,
+		messages,
+		addMessage,
+		playerState,
+		updatePlayerState,
+		gameState,
+		updateGameState,
+	} = useGameContext();
 	const {
 		isStreaming,
 		startStreaming,
@@ -44,6 +51,11 @@ export default function useSubmit() {
 				},
 				updatePlayerNotes: (content: string) => {
 					updatePlayerState({ stats: { textual: content } });
+				},
+				updateSecret: (slug: string, content: string) => {
+					updateGameState({
+						secrets: { ...gameState?.secrets, [slug]: content },
+					});
 				},
 			};
 

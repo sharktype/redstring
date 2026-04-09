@@ -85,6 +85,11 @@ const TOOL_DISPLAY: Record<
 		color: "yellow",
 		content: "Updated character notes",
 	}),
+	write_secret: (args) => ({
+		icon: "🔒",
+		color: "violet",
+		content: `Updated secret: ${args.slug}`,
+	}),
 };
 
 function mapToolCallResultToDisplay(
