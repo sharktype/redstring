@@ -12,6 +12,7 @@ import {
 import { getDistance, humanizeDistance } from "../../utils/distance";
 import useGameContext from "../../context/hooks/useGameContext";
 import { useRegions } from "../../db/hooks/useRegions";
+import type { ConnectionSafety } from "../../models/Location";
 import { getDirection } from "../../utils/direction";
 import TravelCalculator from "../main/options/Map/TravelCalculator";
 
@@ -21,16 +22,30 @@ export default function LocationMap() {
 
 	const hasLocation = playerState?.location?.region.id;
 
+	const safetyColors: Record<ConnectionSafety, string> = {
+		safe: "green",
+		cautious: "yellow",
+		dangerous: "orange",
+		perilous: "red",
+		lethal: "grape",
+	};
+
 	const connectedRegions = hasLocation
 		? regions
 				.filter((region) =>
 					playerState?.location?.region.connectedRegionIds.includes(region.id!),
 				)
-				.map((region) => ({
-					region: region,
-					distance: getDistance(playerState?.location?.region, region),
-					direction: getDirection(playerState?.location?.region, region),
-				}))
+				.map((region) => {
+					const safety: ConnectionSafety =
+						playerState?.location?.region.connectionSafety?.[region.id!] ??
+						"safe";
+					return {
+						region: region,
+						distance: getDistance(playerState?.location?.region, region),
+						direction: getDirection(playerState?.location?.region, region),
+						safety,
+					};
+				})
 				.sort((a, b) => a.distance - b.distance)
 		: [];
 
@@ -116,7 +131,7 @@ export default function LocationMap() {
 												{bucket.label}
 											</Text>
 
-											{items.map(({ region, distance, direction }) => (
+											{items.map(({ region, distance, direction, safety }) => (
 												<Button
 													key={region.id}
 													variant="default"
@@ -139,8 +154,13 @@ export default function LocationMap() {
 															<Text size="xs" c="dimmed" component="span">
 																|
 															</Text>
-															<Text size="xs" c="green" component="span">
-																Safe
+															<Text
+																size="xs"
+																c={safetyColors[safety]}
+																component="span"
+															>
+																{safety.charAt(0).toUpperCase() +
+																	safety.slice(1)}
 															</Text>
 														</Group>
 													}

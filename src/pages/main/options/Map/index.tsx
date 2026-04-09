@@ -28,7 +28,7 @@ import MapEdge from "./MapEdge";
 import TravelCalculator from "./TravelCalculator";
 import { useGameState } from "../../../../db/hooks/useGameState";
 import { useRegions } from "../../../../db/hooks/useRegions";
-import type { Region } from "../../../../models/Location";
+import type { Region, ConnectionSafety } from "../../../../models/Location";
 import { humanizeDistance, getDistance } from "../../../../utils/distance";
 
 type RegionSnapshot = {
@@ -41,6 +41,7 @@ type RegionSnapshot = {
 		y: number;
 	};
 	connectedRegionIds: string[];
+	connectionSafety: Record<string, ConnectionSafety>;
 };
 
 type MapSnapshot = {
@@ -59,6 +60,14 @@ const createSnapshotFromRegions = (
 
 	regions.forEach((region) => {
 		const id = String(region.id);
+		const safetySnapshot: Record<string, ConnectionSafety> = {};
+
+		if (region.connectionSafety) {
+			Object.entries(region.connectionSafety).forEach(([targetId, safety]) => {
+				safetySnapshot[String(targetId)] = safety;
+			});
+		}
+
 		regionsById.set(id, {
 			id,
 			name: region.name,
@@ -69,6 +78,7 @@ const createSnapshotFromRegions = (
 				y: Math.round(region.position.y),
 			},
 			connectedRegionIds: sortIds(region.connectedRegionIds.map(String)),
+			connectionSafety: safetySnapshot,
 		});
 	});
 
@@ -84,23 +94,39 @@ const createSnapshotFromFlow = (
 	scale: number,
 ): MapSnapshot => {
 	const connections: Record<string, string[]> = {};
+	const safetyMap: Record<string, Record<string, ConnectionSafety>> = {};
 
 	edges.forEach((edge) => {
 		if (!connections[edge.source]) {
 			connections[edge.source] = [];
 		}
+
 		if (!connections[edge.target]) {
 			connections[edge.target] = [];
 		}
 
 		connections[edge.source].push(edge.target);
 		connections[edge.target].push(edge.source);
+
+		const safety = (edge.data?.safety as ConnectionSafety) ?? "safe";
+
+		if (!safetyMap[edge.source]) {
+			safetyMap[edge.source] = {};
+		}
+
+		if (!safetyMap[edge.target]) {
+			safetyMap[edge.target] = {};
+		}
+
+		safetyMap[edge.source][edge.target] = safety;
+		safetyMap[edge.target][edge.source] = safety;
 	});
 
 	const regions = nodes
 		.map((node): RegionSnapshot => {
 			const region = node.data as Partial<Region>;
 			const regionPosition = region.position;
+
 			const x = Math.round(regionPosition?.x ?? node.position.x);
 			const y = Math.round(regionPosition?.y ?? node.position.y);
 
@@ -111,6 +137,7 @@ const createSnapshotFromFlow = (
 				description: region.description ?? "",
 				position: { x, y },
 				connectedRegionIds: sortIds(connections[node.id] ?? []),
+				connectionSafety: safetyMap[node.id] ?? {},
 			};
 		})
 		.sort((a, b) => a.id.localeCompare(b.id));
@@ -177,11 +204,15 @@ export default function Map() {
 
 				if (!seenEdgeKeys.has(key)) {
 					seenEdgeKeys.add(key);
+
+					const safety = region.connectionSafety?.[targetId] ?? "safe";
+
 					initialEdges.push({
 						id: `e${key}`,
 						type: "map",
 						source: String(region.id),
 						target: String(targetId),
+						data: { safety },
 						markerStart: {
 							type: MarkerType.ArrowClosed,
 							color: "var(--mantine-color-default-border)",
@@ -221,18 +252,18 @@ export default function Map() {
 	const labeledEdges = useMemo(
 		() =>
 			edges.map((edge) => {
-				const source = nodes.find((n) => n.id === edge.source);
-				const target = nodes.find((n) => n.id === edge.target);
+				const source = nodes.find((node) => node.id === edge.source);
+				const target = nodes.find((node) => node.id === edge.target);
 
 				if (!source || !target) {
-					return { ...edge, data: { distance: "" } };
+					return { ...edge, data: { ...edge.data, distance: "" } };
 				}
 
 				const sourceRegion = regions.find((r) => String(r.id) === edge.source);
 				const targetRegion = regions.find((r) => String(r.id) === edge.target);
 
 				if (!sourceRegion || !targetRegion) {
-					return { ...edge, data: { distance: "" } };
+					return { ...edge, data: { ...edge.data, distance: "" } };
 				}
 
 				const dist = humanizeDistance(
@@ -241,7 +272,7 @@ export default function Map() {
 
 				return {
 					...edge,
-					data: { distance: dist },
+					data: { ...edge.data, distance: dist },
 				};
 			}),
 		[nodes, edges, scale, regions],
@@ -252,9 +283,9 @@ export default function Map() {
 			const isDirectionless = !params.source || !params.target;
 			const isSelfLoop = params.source === params.target;
 			const isExists = edges.some(
-				(e) =>
-					(e.source === params.source && e.target === params.target) ||
-					(e.source === params.target && e.target === params.source),
+				(edge) =>
+					(edge.source === params.source && edge.target === params.target) ||
+					(edge.source === params.target && edge.target === params.source),
 			);
 
 			if (isDirectionless || isSelfLoop || isExists) {
@@ -284,20 +315,20 @@ export default function Map() {
 
 	const onNodeDragStop = useCallback(
 		(node: Node) => {
-			setNodes((prev) =>
-				prev.map((n) =>
-					n.id === node.id
+			setNodes((previous) =>
+				previous.map((previousNode) =>
+					previousNode.id === node.id
 						? {
-								...n,
+								...previousNode,
 								data: {
-									...n.data,
+									...previousNode.data,
 									position: {
 										x: Math.round(node.position.x),
 										y: Math.round(node.position.y),
 									},
 								},
 							}
-						: n,
+						: previousNode,
 				),
 			);
 		},
@@ -310,8 +341,8 @@ export default function Map() {
 		const x = Math.random() * 400;
 		const y = Math.random() * 400;
 
-		setNodes((prev) => [
-			...prev,
+		setNodes((previous) => [
+			...previous,
 			{
 				id: String(Date.now()),
 				type: "location",
@@ -330,6 +361,8 @@ export default function Map() {
 
 	const saveMap = useCallback(async () => {
 		const connections: Record<string, number[]> = {};
+		const safetyByNode: Record<string, Record<number, ConnectionSafety>> = {};
+
 		edges.forEach((edge) => {
 			if (!connections[edge.source]) {
 				connections[edge.source] = [];
@@ -341,6 +374,19 @@ export default function Map() {
 
 			connections[edge.source].push(Number(edge.target));
 			connections[edge.target].push(Number(edge.source));
+
+			const safety = (edge.data?.safety as ConnectionSafety) ?? "safe";
+
+			if (!safetyByNode[edge.source]) {
+				safetyByNode[edge.source] = {};
+			}
+
+			if (!safetyByNode[edge.target]) {
+				safetyByNode[edge.target] = {};
+			}
+
+			safetyByNode[edge.source][Number(edge.target)] = safety;
+			safetyByNode[edge.target][Number(edge.source)] = safety;
 		});
 
 		const updatedRegions: Region[] = nodes.map((node) => {
@@ -354,6 +400,7 @@ export default function Map() {
 					y: Math.round(node.position.y),
 				},
 				connectedRegionIds: connections[node.id] ?? [],
+				connectionSafety: safetyByNode[node.id] ?? {},
 			};
 		});
 
@@ -361,6 +408,7 @@ export default function Map() {
 		await updateGameState({ scale: scaleInput });
 
 		const version = Date.now();
+
 		setNodes((prev) =>
 			prev.map((n) => ({
 				...n,

@@ -2,9 +2,22 @@ import {
 	BaseEdge,
 	EdgeLabelRenderer,
 	getStraightPath,
+	useReactFlow,
 	type EdgeProps,
 } from "@xyflow/react";
 import { Anchor, Text } from "@mantine/core";
+import {
+	CONNECTION_SAFETY_LEVELS,
+	type ConnectionSafety,
+} from "../../../../models/Location";
+
+const safetyColors: Record<ConnectionSafety, string> = {
+	safe: "green",
+	cautious: "yellow",
+	dangerous: "orange",
+	perilous: "red",
+	lethal: "grape",
+};
 
 export default function MapEdge({
 	id,
@@ -16,6 +29,8 @@ export default function MapEdge({
 	markerEnd,
 	data,
 }: EdgeProps) {
+	const { setEdges } = useReactFlow();
+
 	const [edgePath, labelX, labelY] = getStraightPath({
 		sourceX,
 		sourceY,
@@ -24,6 +39,23 @@ export default function MapEdge({
 	});
 
 	const distance = (data?.distance as string) ?? "";
+	const safety = (data?.safety as ConnectionSafety) ?? "safe";
+
+	const cycleSafety = () => {
+		const currentIndex = CONNECTION_SAFETY_LEVELS.indexOf(safety);
+		const nextIndex = (currentIndex + 1) % CONNECTION_SAFETY_LEVELS.length;
+		const nextSafety = CONNECTION_SAFETY_LEVELS[nextIndex];
+
+		setEdges((prev) =>
+			prev.map((edge) =>
+				edge.id === id
+					? { ...edge, data: { ...edge.data, safety: nextSafety } }
+					: edge,
+			),
+		);
+	};
+
+	const safetyLabel = safety.charAt(0).toUpperCase() + safety.slice(1);
 
 	return (
 		<>
@@ -51,11 +83,20 @@ export default function MapEdge({
 					className="nodrag nopan"
 				>
 					<Text component="span" size="xs">
-						{distance} (Safe),{" "}
+						{distance} (
 					</Text>
-					<Anchor component="button" type="button" size="xs" onClick={() => {}}>
-						Cycle?
+					<Anchor
+						component="button"
+						type="button"
+						size="xs"
+						c={safetyColors[safety]}
+						onClick={cycleSafety}
+					>
+						{safetyLabel}
 					</Anchor>
+					<Text component="span" size="xs">
+						)
+					</Text>
 				</div>
 			</EdgeLabelRenderer>
 		</>
