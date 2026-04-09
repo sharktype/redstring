@@ -15,6 +15,21 @@ export const CONNECTION_SAFETY_LEVELS: ConnectionSafety[] = [
 	"lethal",
 ];
 
+export function getEffectiveSafety(
+	safety: ConnectionSafety,
+	hour: number,
+): ConnectionSafety {
+	const isNight = hour >= 18 || hour < 6;
+
+	if (!isNight || safety === "lethal") {
+		return safety;
+	}
+
+	const index = CONNECTION_SAFETY_LEVELS.indexOf(safety);
+
+	return CONNECTION_SAFETY_LEVELS[index + 1];
+}
+
 export interface Region {
 	id?: number;
 

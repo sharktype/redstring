@@ -21,12 +21,22 @@ import {
 import useGameContext from "../../context/hooks/useGameContext";
 import { useRegions } from "../../db/hooks/useRegions";
 import type { ConnectionSafety, Region } from "../../models/Location";
+import { getEffectiveSafety } from "../../models/Location";
 import { getDirection } from "../../utils/direction";
+import useTravel from "../../handlers/hooks/useTravel";
 import TravelCalculator from "../main/options/Map/TravelCalculator";
 
 export default function LocationMap() {
 	const { playerState, gameState } = useGameContext();
 	const { regions } = useRegions();
+	const {
+		beginTravel,
+		advanceTravel,
+		turnAround,
+		sleepOnRoad,
+		isInTransit,
+		canSleep,
+	} = useTravel();
 	const [isTripModalOpened, { open, close }] = useDisclosure(false);
 	const [selectedTrip, setSelectedTrip] = useState<{
 		region: Region;
@@ -107,15 +117,19 @@ export default function LocationMap() {
 					</Stack>
 				) : (
 					<Stack flex={1}>
-						<Text>
-							You are in the <b>{regionType}</b> of:
-						</Text>
-						<Title order={3}>{playerState?.location?.region.name}</Title>
-						<Text size="sm" c="dimmed">
-							{playerState?.location?.region.description}
-						</Text>
+						{!isInTransit && (
+							<>
+								<Text>
+									You are in the <b>{regionType}</b> of:
+								</Text>
+								<Title order={3}>{playerState?.location?.region.name}</Title>
+								<Text size="sm" c="dimmed">
+									{playerState?.location?.region.description}
+								</Text>
+							</>
+						)}
 
-						{connectedRegions.length > 0 && (
+						{connectedRegions.length > 0 && !isInTransit && (
 							<Box>
 								<Title order={4} mb="xs">
 									From here, you can travel to:
@@ -201,6 +215,88 @@ export default function LocationMap() {
 								})}
 							</Box>
 						)}
+
+						{isInTransit &&
+							playerState?.location &&
+							(() => {
+								const transit = playerState.location;
+								const destination = transit.transitRegion!;
+								const traveled = transit.transitDistance ?? 0;
+								const total = transit.transitTotalDistance ?? 0;
+								const remaining = total - traveled;
+								const baseSafety: ConnectionSafety =
+									transit.transitBaseSafety ??
+									transit.region.connectionSafety?.[destination.id!] ??
+									"safe";
+								const safety = getEffectiveSafety(
+									baseSafety,
+									playerState.time?.hour ?? 12,
+								);
+								const walkingSpeed = 5;
+
+								return (
+									<Stack gap="sm">
+										<Title order={3} mt="xl">
+											In Transit
+										</Title>
+										<Text size="sm">
+											Traveling to <b>{destination.name}</b>...
+										</Text>
+
+										<Text size="sm">
+											<b>Road safety:</b>{" "}
+											<Text component="span" size="sm" c={safetyColors[safety]}>
+												{safety.charAt(0).toUpperCase() + safety.slice(1)}
+											</Text>
+											{safety !== baseSafety && (
+												<Text component="span" size="xs" c="dimmed">
+													{" "}
+													(nightfall)
+												</Text>
+											)}
+										</Text>
+
+										<List size="sm" spacing={4}>
+											<List.Item>
+												<Text size="sm">
+													<b>Time traveled:</b>{" "}
+													{estimateTravelTime(traveled, walkingSpeed)}
+												</Text>
+											</List.Item>
+											<List.Item>
+												<Text size="sm">
+													<b>Estimated time remaining:</b>{" "}
+													{estimateTravelTime(remaining, walkingSpeed)}
+												</Text>
+											</List.Item>
+											<List.Item>
+												<Text size="sm">
+													<b>Remaining to destination:</b>{" "}
+													{humanizeDistance(remaining)}
+												</Text>
+											</List.Item>
+											<List.Item>
+												<Text size="sm">
+													<b>Distance back to {transit.region.name}:</b>{" "}
+													{humanizeDistance(traveled)}
+												</Text>
+											</List.Item>
+										</List>
+
+										<Group gap="sm" mt="xs">
+											<Button variant="default" onClick={() => turnAround()}>
+												Turn Around
+											</Button>
+											<Button onClick={() => advanceTravel()}>Continue</Button>
+											{canSleep && (
+												<Button variant="light" onClick={() => sleepOnRoad()}>
+													Sleep
+												</Button>
+											)}
+										</Group>
+									</Stack>
+								);
+							})()}
 					</Stack>
 				)}
 				<TravelCalculator />
@@ -270,7 +366,7 @@ export default function LocationMap() {
 										</Button>
 										<Button
 											onClick={() => {
-												playerState.move(selectedTrip.region.id!);
+												beginTravel(selectedTrip.region.id!);
 												close();
 											}}
 										>

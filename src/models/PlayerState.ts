@@ -1,5 +1,5 @@
 import type Item from "./Item";
-import type { Building, Region } from "./Location";
+import type { Building, ConnectionSafety, Region } from "./Location";
 
 export default interface PlayerState {
 	isInitialized?: boolean;
@@ -49,6 +49,16 @@ export default interface PlayerState {
 		 * In metres, but will be multiplied by the game state's scale.
 		 */
 		transitTotalDistance?: number;
+
+		/**
+		 * The base connection safety level of the transit route.
+		 */
+		transitBaseSafety?: ConnectionSafety;
+
+		/**
+		 * Hours slept this night cycle (caps at 9).
+		 */
+		hoursSlept?: number;
 
 		/** The building the player is in. If this is null, they are in an exterior cell. */
 		building: Building | null;

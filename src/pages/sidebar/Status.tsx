@@ -119,11 +119,22 @@ function PlayerOverview() {
 								<b>Location</b>
 							</Text>
 						</Flex>
-						<Text size="sm">{playerState.location.region.name}</Text>
-						{playerState.location.building && (
-							<Text size="xs" c="dimmed">
-								{playerState.location.building.name}
+						{playerState.location.transitRegion ? (
+							<Text size="sm">
+								On the road from the {playerState.location.region.type} of{" "}
+								<b>{playerState.location.region.name}</b> to the{" "}
+								{playerState.location.transitRegion.type} of{" "}
+								<b>{playerState.location.transitRegion.name}</b>...
 							</Text>
+						) : (
+							<>
+								<Text size="sm">{playerState.location.region.name}</Text>
+								{playerState.location.building && (
+									<Text size="xs" c="dimmed">
+										{playerState.location.building.name}
+									</Text>
+								)}
+							</>
 						)}
 					</Box>
 				</>
@@ -133,7 +144,7 @@ function PlayerOverview() {
 }
 
 function DetailerSelector() {
-	const { gameState, updateGameState, playerState, regions } = useGameContext();
+	const { gameState, updateGameState, playerState } = useGameContext();
 
 	if (!playerState || !playerState.isInitialized) {
 		// Character creation needs to happen before anything else.
