@@ -111,11 +111,11 @@ const ARABIC_PARTICLES: Particle[] = [
 ];
 
 const IRL_CULTURE_TO_TRANSFORMS: Record<string, string> = {
-	"IRL: Afghan": "arabic",
-	"IRL: Gulf": "arabic",
-	"IRL: Iranian": "arabic",
-	"IRL: Levantine": "arabic",
-	"IRL: Maghrebi": "arabic",
+	Afghan: "arabic",
+	"Arabic (Gulf)": "arabic",
+	"Arabic (Levantine)": "arabic",
+	"Arabic (Maghrebi)": "arabic",
+	Iranian: "arabic",
 };
 
 const CULTURE_TRANSFORMS: Record<string, CultureTransforms> = {

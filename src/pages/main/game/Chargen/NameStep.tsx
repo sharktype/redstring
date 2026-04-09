@@ -14,11 +14,9 @@ import { useState } from "react";
 import { FaDice, FaEraser, FaLock, FaLockOpen, FaMagic } from "react-icons/fa";
 import type { ChargenStepProps } from ".";
 import { DEFAULT_GENDER_IDENTITIES } from "../../../../models/PlayerState";
-import {
-	type Culture,
-	SUPPORTED_CULTURES,
-	generateRandomName,
-} from "../../../../handlers/names";
+import { type Culture, generateRandomName } from "../../../../handlers/names";
+import { IRL_CULTURES } from "../../../../handlers/names/irl";
+import { PHONEME_CULTURES } from "../../../../handlers/names/phonemes";
 import { generatePartialFantasyName } from "../../../../handlers/names/fantasify";
 
 export default function NameStep({ playerState, onChange }: ChargenStepProps) {
@@ -40,14 +38,28 @@ export default function NameStep({ playerState, onChange }: ChargenStepProps) {
 		label: gender.identity.charAt(0).toUpperCase() + gender.identity.slice(1),
 	}));
 
+	const formatLabel = (culture: string) =>
+		culture.charAt(0).toUpperCase() + culture.slice(1);
+
 	const cultureOptions = [
-		...SUPPORTED_CULTURES.map((culture) => ({
-			value: culture,
-			label: culture.includes(": ")
-				? culture
-				: culture.charAt(0).toUpperCase() + culture.slice(1),
-		})),
-		{ value: "mixed", label: "Mixed" },
+		{
+			group: "IRL",
+			items: IRL_CULTURES.map((culture) => ({
+				value: culture,
+				label: formatLabel(culture),
+			})),
+		},
+		{
+			group: "Phoneme",
+			items: PHONEME_CULTURES.map((culture) => ({
+				value: culture,
+				label: formatLabel(culture),
+			})),
+		},
+		{
+			group: "Special",
+			items: [{ value: "mixed", label: "Mixed" }],
+		},
 	];
 
 	const randomize = () => {

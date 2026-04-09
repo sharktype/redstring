@@ -89,34 +89,34 @@ import turkicSurnamesRaw from "./data/turkic_surnames.txt?raw";
 import type { Name } from "./models";
 
 export const IRL_CULTURES = [
-	"IRL: Afghan",
-	"IRL: African (Central)",
-	"IRL: African (Southern)",
-	"IRL: African (West)",
-	"IRL: Anglophone",
-	"IRL: Asian (South)",
-	"IRL: Asian (Southeast)",
-	"IRL: Chinese",
-	"IRL: Ethiopian",
-	"IRL: European (Central)",
-	"IRL: European (Southern)",
-	"IRL: Fijian",
-	"IRL: French",
-	"IRL: Georgian",
-	"IRL: Germanic",
-	"IRL: Greek",
-	"IRL: Gulf",
-	"IRL: Iberoamerican",
-	"IRL: Iranian",
-	"IRL: Irish",
-	"IRL: Japanese",
-	"IRL: Korean",
-	"IRL: Levantine",
-	"IRL: Maghrebi",
-	"IRL: Nordic",
-	"IRL: Russian",
-	"IRL: Slavic (South)",
-	"IRL: Turkic",
+	"Afghan",
+	"African (Central)",
+	"African (Southern)",
+	"African (West)",
+	"Anglophone",
+	"Arabic (Gulf)",
+	"Arabic (Levantine)",
+	"Arabic (Maghrebi)",
+	"Asian (South)",
+	"Asian (Southeast)",
+	"Chinese",
+	"Ethiopian",
+	"European (Central)",
+	"European (Southern)",
+	"Fijian",
+	"French",
+	"Georgian",
+	"Germanic",
+	"Greek",
+	"Iberoamerican",
+	"Iranian",
+	"Irish",
+	"Japanese",
+	"Korean",
+	"Nordic",
+	"Russian",
+	"Slavic (South)",
+	"Turkic",
 ] as const;
 
 export type IRLCulture = (typeof IRL_CULTURES)[number];
@@ -128,149 +128,149 @@ interface IRLNameData {
 }
 
 const IRL_CULTURE_TO_NAME: Record<IRLCulture, IRLNameData> = {
-	"IRL: Afghan": {
+	Afghan: {
 		givenMale: lines(afghanGivenMaleRaw),
 		givenFemale: lines(afghanGivenFemaleRaw),
 		surnames: lines(afghanSurnamesRaw),
 	},
-	"IRL: African (Central)": {
+	"African (Central)": {
 		givenMale: lines(africanCentralGivenMaleRaw),
 		givenFemale: lines(africanCentralGivenFemaleRaw),
 		surnames: lines(africanCentralSurnamesRaw),
 	},
-	"IRL: African (Southern)": {
+	"African (Southern)": {
 		givenMale: lines(africanSouthernGivenMaleRaw),
 		givenFemale: lines(africanSouthernGivenFemaleRaw),
 		surnames: lines(africanSouthernSurnamesRaw),
 	},
-	"IRL: African (West)": {
+	"African (West)": {
 		givenMale: lines(africanWestGivenMaleRaw),
 		givenFemale: lines(africanWestGivenFemaleRaw),
 		surnames: lines(africanWestSurnamesRaw),
 	},
-	"IRL: Anglophone": {
+	Anglophone: {
 		givenMale: lines(anglophoneGivenMaleRaw),
 		givenFemale: lines(anglophoneGivenFemaleRaw),
 		surnames: lines(anglophoneSurnamesRaw),
 	},
-	"IRL: Asian (South)": {
-		givenMale: lines(asianSouthGivenMaleRaw),
-		givenFemale: lines(asianSouthGivenFemaleRaw),
-		surnames: lines(asianSouthSurnamesRaw),
-	},
-	"IRL: Asian (Southeast)": {
-		givenMale: lines(asianSoutheastGivenMaleRaw),
-		givenFemale: lines(asianSoutheastGivenFemaleRaw),
-		surnames: lines(asianSoutheastSurnamesRaw),
-	},
-	"IRL: Chinese": {
-		givenMale: lines(chineseGivenMaleRaw),
-		givenFemale: lines(chineseGivenFemaleRaw),
-		surnames: lines(chineseSurnamesRaw),
-	},
-	"IRL: Ethiopian": {
-		givenMale: lines(ethiopianGivenMaleRaw),
-		givenFemale: lines(ethiopianGivenFemaleRaw),
-		surnames: lines(ethiopianSurnamesRaw),
-	},
-	"IRL: European (Central)": {
-		givenMale: lines(europeanCentralGivenMaleRaw),
-		givenFemale: lines(europeanCentralGivenFemaleRaw),
-		surnames: lines(europeanCentralSurnamesRaw),
-	},
-	"IRL: European (Southern)": {
-		givenMale: lines(europeanSouthernGivenMaleRaw),
-		givenFemale: lines(europeanSouthernGivenFemaleRaw),
-		surnames: lines(europeanSouthernSurnamesRaw),
-	},
-	"IRL: Fijian": {
-		givenMale: lines(fijianGivenMaleRaw),
-		givenFemale: lines(fijianGivenFemaleRaw),
-		surnames: lines(fijianSurnamesRaw),
-	},
-	"IRL: French": {
-		givenMale: lines(frenchGivenMaleRaw),
-		givenFemale: lines(frenchGivenFemaleRaw),
-		surnames: lines(frenchSurnamesRaw),
-	},
-	"IRL: Georgian": {
-		givenMale: lines(georgianGivenMaleRaw),
-		givenFemale: lines(georgianGivenFemaleRaw),
-		surnames: lines(georgianSurnamesRaw),
-	},
-	"IRL: Germanic": {
-		givenMale: lines(germanicGivenMaleRaw),
-		givenFemale: lines(germanicGivenFemaleRaw),
-		surnames: lines(germanicSurnamesRaw),
-	},
-	"IRL: Greek": {
-		givenMale: lines(greekGivenMaleRaw),
-		givenFemale: lines(greekGivenFemaleRaw),
-		surnames: lines(greekSurnamesRaw),
-	},
-	"IRL: Gulf": {
+	"Arabic (Gulf)": {
 		givenMale: lines(gulfGivenMaleRaw),
 		givenFemale: lines(gulfGivenFemaleRaw),
 		surnames: lines(gulfSurnamesRaw),
 	},
-	"IRL: Iberoamerican": {
-		givenMale: lines(americanIberoGivenMaleRaw),
-		givenFemale: lines(americanIberoGivenFemaleRaw),
-		surnames: lines(americanIberoSurnamesRaw),
-	},
-	"IRL: Iranian": {
-		givenMale: lines(iranianGivenMaleRaw),
-		givenFemale: lines(iranianGivenFemaleRaw),
-		surnames: lines(iranianSurnamesRaw),
-	},
-	"IRL: Irish": {
-		givenMale: lines(irishGivenMaleRaw),
-		givenFemale: lines(irishGivenFemaleRaw),
-		surnames: lines(irishSurnamesRaw),
-	},
-	"IRL: Japanese": {
-		givenMale: lines(japaneseGivenMaleRaw),
-		givenFemale: lines(japaneseGivenFemaleRaw),
-		surnames: lines(japaneseSurnamesRaw),
-	},
-	"IRL: Korean": {
-		givenMale: lines(koreanGivenMaleRaw),
-		givenFemale: lines(koreanGivenFemaleRaw),
-		surnames: lines(koreanSurnamesRaw),
-	},
-	"IRL: Levantine": {
+	"Arabic (Levantine)": {
 		givenMale: lines(levantineGivenMaleRaw),
 		givenFemale: lines(levantineGivenFemaleRaw),
 		surnames: lines(levantineSurnamesRaw),
 	},
-	"IRL: Maghrebi": {
+	"Arabic (Maghrebi)": {
 		givenMale: lines(maghrebiGivenMaleRaw),
 		givenFemale: lines(maghrebiGivenFemaleRaw),
 		surnames: lines(maghrebiSurnamesRaw),
 	},
-	"IRL: Nordic": {
+	"Asian (South)": {
+		givenMale: lines(asianSouthGivenMaleRaw),
+		givenFemale: lines(asianSouthGivenFemaleRaw),
+		surnames: lines(asianSouthSurnamesRaw),
+	},
+	"Asian (Southeast)": {
+		givenMale: lines(asianSoutheastGivenMaleRaw),
+		givenFemale: lines(asianSoutheastGivenFemaleRaw),
+		surnames: lines(asianSoutheastSurnamesRaw),
+	},
+	Chinese: {
+		givenMale: lines(chineseGivenMaleRaw),
+		givenFemale: lines(chineseGivenFemaleRaw),
+		surnames: lines(chineseSurnamesRaw),
+	},
+	Ethiopian: {
+		givenMale: lines(ethiopianGivenMaleRaw),
+		givenFemale: lines(ethiopianGivenFemaleRaw),
+		surnames: lines(ethiopianSurnamesRaw),
+	},
+	"European (Central)": {
+		givenMale: lines(europeanCentralGivenMaleRaw),
+		givenFemale: lines(europeanCentralGivenFemaleRaw),
+		surnames: lines(europeanCentralSurnamesRaw),
+	},
+	"European (Southern)": {
+		givenMale: lines(europeanSouthernGivenMaleRaw),
+		givenFemale: lines(europeanSouthernGivenFemaleRaw),
+		surnames: lines(europeanSouthernSurnamesRaw),
+	},
+	Fijian: {
+		givenMale: lines(fijianGivenMaleRaw),
+		givenFemale: lines(fijianGivenFemaleRaw),
+		surnames: lines(fijianSurnamesRaw),
+	},
+	French: {
+		givenMale: lines(frenchGivenMaleRaw),
+		givenFemale: lines(frenchGivenFemaleRaw),
+		surnames: lines(frenchSurnamesRaw),
+	},
+	Georgian: {
+		givenMale: lines(georgianGivenMaleRaw),
+		givenFemale: lines(georgianGivenFemaleRaw),
+		surnames: lines(georgianSurnamesRaw),
+	},
+	Germanic: {
+		givenMale: lines(germanicGivenMaleRaw),
+		givenFemale: lines(germanicGivenFemaleRaw),
+		surnames: lines(germanicSurnamesRaw),
+	},
+	Greek: {
+		givenMale: lines(greekGivenMaleRaw),
+		givenFemale: lines(greekGivenFemaleRaw),
+		surnames: lines(greekSurnamesRaw),
+	},
+	Iberoamerican: {
+		givenMale: lines(americanIberoGivenMaleRaw),
+		givenFemale: lines(americanIberoGivenFemaleRaw),
+		surnames: lines(americanIberoSurnamesRaw),
+	},
+	Iranian: {
+		givenMale: lines(iranianGivenMaleRaw),
+		givenFemale: lines(iranianGivenFemaleRaw),
+		surnames: lines(iranianSurnamesRaw),
+	},
+	Irish: {
+		givenMale: lines(irishGivenMaleRaw),
+		givenFemale: lines(irishGivenFemaleRaw),
+		surnames: lines(irishSurnamesRaw),
+	},
+	Japanese: {
+		givenMale: lines(japaneseGivenMaleRaw),
+		givenFemale: lines(japaneseGivenFemaleRaw),
+		surnames: lines(japaneseSurnamesRaw),
+	},
+	Korean: {
+		givenMale: lines(koreanGivenMaleRaw),
+		givenFemale: lines(koreanGivenFemaleRaw),
+		surnames: lines(koreanSurnamesRaw),
+	},
+	Nordic: {
 		givenMale: lines(nordicGivenMaleRaw),
 		givenFemale: lines(nordicGivenFemaleRaw),
 		surnames: lines(nordicSurnamesRaw),
 	},
-	"IRL: Russian": {
+	Russian: {
 		givenMale: lines(russianGivenMaleRaw),
 		givenFemale: lines(russianGivenFemaleRaw),
 		surnames: lines(russianSurnamesRaw),
 	},
-	"IRL: Slavic (South)": {
+	"Slavic (South)": {
 		givenMale: lines(slavicSouthGivenMaleRaw),
 		givenFemale: lines(slavicSouthGivenFemaleRaw),
 		surnames: lines(slavicSouthSurnamesRaw),
 	},
-	"IRL: Turkic": {
+	Turkic: {
 		givenMale: lines(turkicGivenMaleRaw),
 		givenFemale: lines(turkicGivenFemaleRaw),
 		surnames: lines(turkicSurnamesRaw),
 	},
 };
 
-const GENDERED_SURNAME_CULTURES = new Set<string>(["IRL: Russian"]);
+const GENDERED_SURNAME_CULTURES = new Set<string>(["Russian"]);
 
 export function generateIRLName(
 	culture: IRLCulture | null,
