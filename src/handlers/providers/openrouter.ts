@@ -297,6 +297,16 @@ export class OpenRouterConfig implements ProviderConfig {
 
 			return JSON.stringify({ result });
 		},
+		write_notes: (args, toolContext) => {
+			if (!toolContext) {
+				return JSON.stringify({ error: "no player context available" });
+			}
+
+			const content = args.content as string;
+			toolContext.updatePlayerNotes(content);
+
+			return JSON.stringify({ result: "ok" });
+		},
 	};
 
 	private mapInternalMessagesForAgent(messages: Message[]): ApiMessage[] {

@@ -42,6 +42,9 @@ export default function useSubmit() {
 				updatePlayerMoney: (newAmount: number) => {
 					updatePlayerState({ money: newAmount });
 				},
+				updatePlayerNotes: (content: string) => {
+					updatePlayerState({ stats: { textual: content } });
+				},
 			};
 
 			const readableStream = await storytellerAgent.submit(

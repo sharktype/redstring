@@ -79,6 +79,25 @@ export const TOOLS = [
 			},
 		},
 	},
+	{
+		type: "function",
+		function: {
+			name: "write_notes",
+			description:
+				"Overwrite the player's character notes with new content. This replaces the entire notes field.",
+			parameters: {
+				type: "object",
+				properties: {
+					content: {
+						type: "string",
+						description:
+							"The new content to write to the player's character notes.",
+					},
+				},
+				required: ["content"],
+			},
+		},
+	},
 ] as const satisfies ToolDefinition[];
 
 export type ToolName = (typeof TOOLS)[number]["function"]["name"];
@@ -89,6 +108,7 @@ export type ToolName = (typeof TOOLS)[number]["function"]["name"];
 export interface ToolContext {
 	playerMoney: number;
 	updatePlayerMoney: (newAmount: number) => void;
+	updatePlayerNotes: (content: string) => void;
 }
 
 /**

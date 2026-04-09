@@ -80,6 +80,11 @@ const TOOL_DISPLAY: Record<
 				: `Spent ${args.cost} gold (in debt by ${-castResult.remaining} gold)`,
 		};
 	},
+	write_notes: () => ({
+		icon: "📝",
+		color: "yellow",
+		content: "Updated character notes",
+	}),
 };
 
 function mapToolCallResultToDisplay(
