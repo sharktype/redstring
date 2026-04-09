@@ -52,6 +52,18 @@ export default function usePresystemMessage() {
 			if (location.region.description) {
 				parts.push(`**Location Description:** ${location.region.description}`);
 			}
+
+			if (location.transitRegion) {
+				parts.push(
+					`**In transit from ${location.region.name} to ${location.transitRegion.name}**`,
+				);
+
+				parts.push(`## About ${location.transitRegion.name}`);
+
+				if (location.transitRegion.description) {
+					parts.push(location.transitRegion.description);
+				}
+			}
 		}
 
 		if (playerState.inventory && playerState.inventory.length > 0) {
