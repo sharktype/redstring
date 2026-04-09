@@ -286,7 +286,7 @@ export function generateIRLName(
 			? nameData.givenFemale
 			: nameData.givenMale;
 
-	let givenName = pick(givenPool);
+	const givenName = pick(givenPool);
 	let surname = pick(nameData.surnames);
 
 	if (culture !== null && GENDERED_SURNAME_CULTURES.has(culture)) {
