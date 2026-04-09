@@ -6,6 +6,7 @@ import type { StoredGameState } from "../../models/GameState.ts";
 const DEFAULT_GAME_STATE: Omit<StoredGameState, "id"> = {
 	detailer: "profile",
 	scale: 10,
+	secrets: {},
 };
 
 export function useGameState() {

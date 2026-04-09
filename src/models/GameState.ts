@@ -6,6 +6,10 @@ export default interface GameState {
 	// Locations:
 
 	scale: number;
+
+	// LLM context:
+
+	secrets: Record<string, string>;
 }
 
 export type StoredGameState = GameState & {
