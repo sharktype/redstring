@@ -10,7 +10,7 @@ export default function MessageBox({ message }: { message: Message }) {
 		case "assistant":
 			return <AssistantMessageBox message={message} />;
 		case "system":
-			return <SystemMessageBox />;
+			return <SystemMessageBox message={message} />;
 		default:
 			return null;
 	}

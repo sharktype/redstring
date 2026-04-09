@@ -21,6 +21,8 @@ interface HoverableMetaProps {
 	// Deleting:
 
 	onDelete: () => void;
+
+	showRegenerate?: boolean;
 }
 
 /**
@@ -37,6 +39,7 @@ export default function HoverableMeta({
 	onToggleEditMode,
 	onConfirmEdit,
 	onDelete,
+	showRegenerate = true,
 }: HoverableMetaProps) {
 	const { regenerate } = useSubmit();
 
@@ -139,24 +142,28 @@ export default function HoverableMeta({
 					</Anchor>
 				</>
 			)}
-			{" | "}
-			<Anchor
-				size="xs"
-				c="teal"
-				onClick={() => {
-					if (isEditMode && canConfirmEdit) {
-						onConfirmEdit();
-						void regenerate({
-							...message,
-							content: temporaryEditMessage,
-						});
-					} else {
-						void regenerate(message);
-					}
-				}}
-			>
-				{regenerateText}
-			</Anchor>
+			{showRegenerate && (
+				<>
+					{" | "}
+					<Anchor
+						size="xs"
+						c="teal"
+						onClick={() => {
+							if (isEditMode && canConfirmEdit) {
+								onConfirmEdit();
+								void regenerate({
+									...message,
+									content: temporaryEditMessage,
+								});
+							} else {
+								void regenerate(message);
+							}
+						}}
+					>
+						{regenerateText}
+					</Anchor>
+				</>
+			)}
 		</Text>
 	);
 }
