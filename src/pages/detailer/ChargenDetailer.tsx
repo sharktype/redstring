@@ -44,7 +44,8 @@ const STEP_TO_DETAILER_STEP: Record<Step, DetailerStep> = {
 };
 
 export default function ChargenDetailer() {
-	const { playerState, updatePlayerState } = useGameContext();
+	const { gameState, updateGameState, playerState, updatePlayerState } =
+		useGameContext();
 	return (
 		<Stack p="md" h="100%" justify="space-between">
 			<Stack>
@@ -84,7 +85,17 @@ export default function ChargenDetailer() {
 			<Button
 				size="lg"
 				color="green"
-				onClick={() => updatePlayerState({ isInitialized: true })}
+				disabled={!playerState || !playerState.name?.given}
+				onClick={() => {
+					const noLocation =
+						!playerState?.location || playerState.location.region.name === "";
+
+					if (noLocation && gameState?.detailer === "map") {
+						updateGameState({ detailer: "profile" });
+					}
+
+					updatePlayerState({ isInitialized: true });
+				}}
 			>
 				Set Out
 			</Button>

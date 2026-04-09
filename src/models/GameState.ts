@@ -1,7 +1,7 @@
 export default interface GameState {
 	// Interface/meta:
 
-	detailer: "inventory" | "profile" | "map" | "journal" | null;
+	detailer: "inventory" | "profile" | "map" | "journal";
 
 	// Locations:
 

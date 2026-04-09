@@ -93,7 +93,7 @@ function PlayerOverview() {
 				</>
 			)}
 
-			{playerState.location && (
+			{playerState.location && playerState.location?.region?.name && (
 				<>
 					<Divider />
 					<Box>
@@ -133,16 +133,6 @@ function DetailerSelector() {
 
 	return (
 		<Stack gap="xs">
-			<StatusItem
-				label="None"
-				icon={<GrDisabledOutline />}
-				isHighlighted={gameState?.detailer === null}
-				onClick={() =>
-					updateGameState({
-						detailer: null,
-					})
-				}
-			/>
 			<StatusItem
 				label="Profile"
 				icon={<GiSkills />}

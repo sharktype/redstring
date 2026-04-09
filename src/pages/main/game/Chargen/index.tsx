@@ -37,6 +37,7 @@ export default function Chargen() {
 				<Stack p="md" gap="lg">
 					{STEPS.map((step) => {
 						const Component = STEP_TO_COMPONENT[step];
+
 						return (
 							<Component
 								key={step}

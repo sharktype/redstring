@@ -4,7 +4,7 @@ import { db } from "../database.ts";
 import type { StoredGameState } from "../../models/GameState.ts";
 
 const DEFAULT_GAME_STATE: Omit<StoredGameState, "id"> = {
-	detailer: null,
+	detailer: "profile",
 	scale: 10,
 };
 
