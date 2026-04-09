@@ -306,7 +306,7 @@ export default function LocationMap() {
 											>
 												Continue
 											</Button>
-											
+
 											{canSleep && (
 												<Button
 													variant="light"

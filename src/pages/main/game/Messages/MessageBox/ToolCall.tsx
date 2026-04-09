@@ -108,6 +108,35 @@ const TOOL_DISPLAY: Record<
 		color: "violet",
 		content: `Storyteller updated some secret information...`,
 	}),
+	progress_time: (args, result) => {
+		const castResult = result as { hour: number; minute: number };
+
+		const hours = (args.hours as number) || 0;
+		const minutes = (args.minutes as number) || 0;
+
+		const parts = [];
+
+		if (hours) {
+			parts.push(`${hours}h`);
+		}
+
+		if (minutes) {
+			parts.push(`${minutes}m`);
+		}
+
+		const advanced = parts.length ? parts.join(" ") : "0m";
+
+		const displayHour = castResult.hour % 12 || 12;
+		const amPm = castResult.hour < 12 ? "AM" : "PM";
+
+		const displayMinute = String(castResult.minute).padStart(2, "0");
+
+		return {
+			icon: "🕐",
+			color: "cyan",
+			content: `Advanced ${advanced} to ${displayHour}:${displayMinute} ${amPm}`,
+		};
+	},
 };
 
 function mapToolCallResultToDisplay(
