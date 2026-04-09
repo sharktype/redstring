@@ -67,15 +67,23 @@ export default function usePresystemMessage() {
 		}
 
 		if (regions.length > 0) {
+			const regionById = new Map(regions.map((r) => [r.id, r]));
 			const sortedRegions = [...regions].sort(
 				(a, b) => a.position.x - b.position.x,
 			);
 
 			const regionList = sortedRegions
-				.map(
-					(region) =>
-						`- ${region.name} (${region.type}) [${region.position.x}, ${region.position.y}]`,
-				)
+				.map((region) => {
+					const connections = region.connectedRegionIds
+						.map((id) => regionById.get(id)?.name)
+						.filter(Boolean)
+						.join(", ");
+					const connectionText = connections
+						? `, connects to ${connections}`
+						: "";
+
+					return `- ${region.name} (${region.type}) [${region.position.x}, ${region.position.y}]${connectionText}`;
+				})
 				.join("\n");
 
 			parts.push(`**Regions in game:**\n${regionList}`);
