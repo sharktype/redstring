@@ -1,4 +1,5 @@
 import { Box, Textarea, Title } from "@mantine/core";
+import { useEffect, useState } from "react";
 import { usePlayerState } from "../../db/hooks/usePlayerState";
 
 /**
@@ -22,6 +23,12 @@ import { usePlayerState } from "../../db/hooks/usePlayerState";
  */
 export default function Profile() {
 	const { playerState, updatePlayerState } = usePlayerState();
+	const dbValue = playerState?.stats?.textual ?? "";
+	const [localValue, setLocalValue] = useState(dbValue);
+
+	useEffect(() => {
+		setLocalValue(dbValue);
+	}, [dbValue]);
 
 	return (
 		<Box h="100%">
@@ -32,10 +39,9 @@ export default function Profile() {
 			<Textarea
 				label="Character Notes"
 				description="Note: Also writable by the Storyteller."
-				value={playerState?.stats?.textual ?? ""}
-				onChange={(event) =>
-					updatePlayerState({ stats: { textual: event.currentTarget.value } })
-				}
+				value={localValue}
+				onChange={(event) => setLocalValue(event.currentTarget.value)}
+				onBlur={() => updatePlayerState({ stats: { textual: localValue } })}
 				placeholder="Freeform character notes..."
 				minRows={8}
 				autosize

@@ -35,6 +35,7 @@ export default function useSubmit() {
 			const storytellerAgent = agentConfigs.find(
 				(agent) => agent.type === "storyteller",
 			);
+
 			if (!storytellerAgent || !storytellerAgent.providerConfigId) {
 				return;
 			}
@@ -75,6 +76,7 @@ export default function useSubmit() {
 				toolContext,
 			);
 			const reader = readableStream.getReader();
+
 			let fullResponse = "";
 
 			try {
@@ -85,6 +87,7 @@ export default function useSubmit() {
 					}
 
 					fullResponse += value.replaceAll("—", " - ").replaceAll("–", " - ");
+
 					setStreamingMessage(fullResponse.trim());
 				}
 			} catch (error) {
@@ -115,16 +118,22 @@ export default function useSubmit() {
 
 	const submit = useCallback(
 		async (messagesToSubmit: Message[]) => {
-			if (messagesToSubmit.length === 0 || isStreaming) {
+			if (isStreaming) {
 				return;
 			}
 
-			await streamResponse(messagesToSubmit, {
+			const history = messagesToSubmit.length > 0 ? messagesToSubmit : messages;
+
+			if (history.length === 0) {
+				return;
+			}
+
+			await streamResponse(history, {
 				role: "assistant",
 				sentAt: new Date(),
 			});
 		},
-		[isStreaming, streamResponse],
+		[isStreaming, messages, streamResponse],
 	);
 
 	const regenerate = useCallback(
