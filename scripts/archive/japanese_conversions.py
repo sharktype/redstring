@@ -7,9 +7,15 @@ from pathlib import Path
 
 GITHUB_BASE_URL = "https://raw.githubusercontent.com/shuheilocale/japanese-personal-name-dataset/refs/heads/main/"
 
-SURNAME_URL = f"{GITHUB_BASE_URL}/japanese_personal_name_dataset/dataset/last_name_org.csv"
-MALE_URL = f"{GITHUB_BASE_URL}/japanese_personal_name_dataset/dataset/first_name_man_org.csv"
-FEMALE_URL = f"{GITHUB_BASE_URL}/japanese_personal_name_dataset/dataset/first_name_woman_org.csv"
+SURNAME_URL = (
+    f"{GITHUB_BASE_URL}/japanese_personal_name_dataset/dataset/last_name_org.csv"
+)
+MALE_URL = (
+    f"{GITHUB_BASE_URL}/japanese_personal_name_dataset/dataset/first_name_man_org.csv"
+)
+FEMALE_URL = (
+    f"{GITHUB_BASE_URL}/japanese_personal_name_dataset/dataset/first_name_woman_org.csv"
+)
 
 OUT_PATH = Path(__file__).parent / "tmp_names"
 

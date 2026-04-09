@@ -1,15 +1,17 @@
 import {
 	ActionIcon,
 	Box,
+	Checkbox,
 	Flex,
 	Group,
+	Modal,
 	Select,
 	Stack,
 	TextInput,
 	Title,
 } from "@mantine/core";
 import { useState } from "react";
-import { FaDice, FaEraser, FaLock, FaLockOpen } from "react-icons/fa";
+import { FaDice, FaEraser, FaLock, FaLockOpen, FaMagic } from "react-icons/fa";
 import type { ChargenStepProps } from ".";
 import { DEFAULT_GENDER_IDENTITIES } from "../../../../models/PlayerState";
 import {
@@ -17,26 +19,33 @@ import {
 	SUPPORTED_CULTURES,
 	generateRandomName,
 } from "../../../../handlers/names";
+import { generatePartialFantasyName } from "../../../../handlers/names/fantasify";
 
 export default function NameStep({ playerState, onChange }: ChargenStepProps) {
 	const [isGivenNameLocked, setIsGivenNameLocked] = useState(false);
 	const [isSurnameLocked, setIsSurnameLocked] = useState(false);
 	const [isGenderLocked, setIsGenderLocked] = useState(false);
+	const [willFantasify, setWillFantasify] = useState(true);
+	const [isEasterEggModalOpen, setIsEasterEggModalOpen] = useState(false);
 	const [selectedCulture, setSelectedCulture] = useState<
 		Culture | "mixed" | null
 	>(null);
 
-	const allLocked = isGivenNameLocked && isSurnameLocked && isGenderLocked;
+	// We disable the buttons if everything is locked, as nothing can happen.
 
-	const genderOptions = DEFAULT_GENDER_IDENTITIES.map((g) => ({
-		value: g.identity,
-		label: g.identity.charAt(0).toUpperCase() + g.identity.slice(1),
+	const isFullyLocked = isGivenNameLocked && isSurnameLocked && isGenderLocked;
+
+	const genderOptions = DEFAULT_GENDER_IDENTITIES.map((gender) => ({
+		value: gender.identity,
+		label: gender.identity.charAt(0).toUpperCase() + gender.identity.slice(1),
 	}));
 
 	const cultureOptions = [
-		...SUPPORTED_CULTURES.map((c) => ({
-			value: c,
-			label: c.charAt(0).toUpperCase() + c.slice(1),
+		...SUPPORTED_CULTURES.map((culture) => ({
+			value: culture,
+			label: culture.includes(": ")
+				? culture
+				: culture.charAt(0).toUpperCase() + culture.slice(1),
 		})),
 		{ value: "mixed", label: "Mixed" },
 	];
@@ -48,6 +57,7 @@ export default function NameStep({ playerState, onChange }: ChargenStepProps) {
 		const { givenName, surname, gender } = generateRandomName(
 			isGenderLocked ? playerState.gender : undefined,
 			cultureArg,
+			willFantasify,
 		);
 
 		// Ignore parts of the newly-generated name if those fields are locked.
@@ -99,6 +109,15 @@ export default function NameStep({ playerState, onChange }: ChargenStepProps) {
 				<Group justify="space-between">
 					<Title order={4}>Name</Title>
 					<Group gap="xs">
+						<Checkbox
+							label="Fantasify?"
+							checked={willFantasify}
+							onChange={(event) =>
+								setWillFantasify(event.currentTarget.checked)
+							}
+							size="xs"
+							mr="xs"
+						/>
 						<Select
 							placeholder="Culture"
 							data={cultureOptions}
@@ -106,25 +125,61 @@ export default function NameStep({ playerState, onChange }: ChargenStepProps) {
 							onChange={(val) =>
 								setSelectedCulture(val as Culture | "mixed" | null)
 							}
-							clearable
 							size="xs"
-							w={120}
+							clearable
 						/>
 						<ActionIcon
 							variant="subtle"
 							color="gray"
 							title="Clear"
 							onClick={clear}
-							disabled={allLocked}
+							disabled={isFullyLocked}
 						>
 							<FaEraser size={16} />
 						</ActionIcon>
 						<ActionIcon
 							variant="subtle"
 							color="gray"
+							title="Fantasify current name"
+							onClick={() => {
+								const given = playerState.name?.given ?? "";
+								const surname = playerState.name?.surname ?? "";
+
+								if (!given && !surname) {
+									return;
+								}
+
+								if (given.length > 32 || surname.length > 32) {
+									// Don't allow extremely long names in a funny way.
+
+									setIsEasterEggModalOpen(true);
+
+									return;
+								}
+
+								onChange({
+									name: {
+										given:
+											isGivenNameLocked || !given
+												? given
+												: generatePartialFantasyName(given, selectedCulture),
+										surname:
+											isSurnameLocked || !surname
+												? surname
+												: generatePartialFantasyName(surname, selectedCulture),
+									},
+								});
+							}}
+							disabled={!playerState.name?.given && !playerState.name?.surname}
+						>
+							<FaMagic size={16} />
+						</ActionIcon>
+						<ActionIcon
+							variant="subtle"
+							color="gray"
 							title="Randomise"
 							onClick={randomize}
-							disabled={allLocked}
+							disabled={isFullyLocked}
 						>
 							<FaDice size={16} />
 						</ActionIcon>
@@ -195,6 +250,18 @@ export default function NameStep({ playerState, onChange }: ChargenStepProps) {
 					</Group>
 				</Flex>
 			</Stack>
+			<Modal
+				title={<b>Stop, Please</b>}
+				opened={isEasterEggModalOpen}
+				onClose={() => setIsEasterEggModalOpen(false)}
+				centered
+			>
+				Okay,
+				<b>
+					{playerState.name?.given} {playerState.name?.surname}
+				</b>
+				, I think you've had enough.
+			</Modal>
 		</Box>
 	);
 }
