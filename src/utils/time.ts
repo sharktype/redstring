@@ -1,22 +1,53 @@
-export function formatTime(hour: number, minute: number): string {
+export function isNight(hour: number): boolean {
+	return hour >= 18 || hour < 6;
+}
+
+export function timeEmoji(hour: number): string {
+	if (hour >= 6 && hour < 12) {
+		return "🌅";
+	}
+
+	if (hour >= 12 && hour < 18) {
+		return "☀️";
+	}
+
+	if (hour >= 18 && hour < 21) {
+		return "🌇";
+	}
+
+	return "🌙";
+}
+
+export function formatTime(
+	hour: number,
+	minute: number,
+	withEmoji: boolean = false,
+): string {
 	const period = hour >= 12 ? "PM" : "AM";
-	const h = hour % 12 || 12;
-	const m = minute.toString().padStart(2, "0");
-	return `${h}:${m} ${period}`;
+	const timeString = `${hour % 12 || 12}:${minute.toString().padStart(2, "0")} ${period}`;
+
+	if (withEmoji) {
+		return `${timeEmoji(hour)} ${timeString}`;
+	}
+
+	return timeString;
 }
 
 export function formatElapsed(hours: number): string {
-	const h = Math.floor(hours);
-	const m = Math.round((hours - h) * 60);
+	const hour = Math.floor(hours);
+	const minute = Math.round((hours - hour) * 60);
 
-	if (h > 0 && m > 0) {
-		return `${h}h ${m}m`;
+	if (hour > 0 && minute > 0) {
+		return `${hour}h ${minute}m`;
 	}
-	if (h > 0) {
-		return `${h}h`;
+
+	if (hour > 0) {
+		return `${hour}h`;
 	}
-	if (m > 0) {
-		return `${m}m`;
+
+	if (minute > 0) {
+		return `${minute}m`;
 	}
+
 	return "less than a minute";
 }

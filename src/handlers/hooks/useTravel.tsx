@@ -7,7 +7,7 @@ import {
 } from "../../models/Location";
 import { getDistance, humanizeDistance } from "../../utils/distance";
 import progressTime from "../tools/progressTime";
-import { formatTime, formatElapsed } from "../../utils/time";
+import { formatTime, formatElapsed, isNight } from "../../utils/time";
 
 // TODO: We can definitely tidy this up.
 // TODO: Additionally, we should use a fourth type of message: a Travel message which may be its own component, or a
@@ -316,10 +316,7 @@ export default function useTravel() {
 		playerState?.location?.transitRegion != null &&
 		playerState.location.transitTotalDistance != null;
 
-	const isNight = (() => {
-		const hour = playerState?.time?.hour ?? 12;
-		return hour >= 18 || hour < 6;
-	})();
+	const isNightTime = isNight(playerState?.time?.hour ?? 12);
 
 	const sleepOnRoad = useCallback(async () => {
 		if (
@@ -468,7 +465,7 @@ export default function useTravel() {
 	}, [playerState, updatePlayerState, addMessage]);
 
 	const canSleep = (() => {
-		if (!isNight || !isInTransit) {
+		if (!isNightTime || !isInTransit) {
 			return false;
 		}
 
@@ -492,7 +489,6 @@ export default function useTravel() {
 		turnAround,
 		sleepOnRoad,
 		isInTransit,
-		isNight,
 		canSleep,
 	};
 }

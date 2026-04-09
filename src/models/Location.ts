@@ -1,4 +1,5 @@
 import type Tier from "./Tier";
+import { isNight } from "../utils/time";
 
 export type ConnectionSafety =
 	| "safe"
@@ -19,9 +20,7 @@ export function getEffectiveSafety(
 	safety: ConnectionSafety,
 	hour: number,
 ): ConnectionSafety {
-	const isNight = hour >= 18 || hour < 6;
-
-	if (!isNight || safety === "lethal") {
+	if (!isNight(hour) || safety === "lethal") {
 		return safety;
 	}
 

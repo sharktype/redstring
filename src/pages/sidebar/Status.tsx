@@ -19,6 +19,7 @@ import {
 	FaUser,
 } from "react-icons/fa";
 import useGameContext from "../../context/hooks/useGameContext.tsx";
+import { formatTime } from "../../utils/time.ts";
 
 export default function Status() {
 	return (
@@ -83,10 +84,8 @@ function PlayerOverview() {
 								<b>Time</b>
 							</Text>
 						</Flex>
-						<Text size="sm" ff="monospace">
-							{(playerState.time.hour % 12 || 12).toString().padStart(2, "0")}:
-							{playerState.time.minute.toString().padStart(2, "0")}{" "}
-							{playerState.time.hour < 12 ? "AM" : "PM"}
+						<Text size="sm">
+							{formatTime(playerState.time.hour, playerState.time.minute, true)}
 						</Text>
 					</Box>
 				</>
