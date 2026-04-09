@@ -1,4 +1,13 @@
-import { Card, Text, List, Code, Title, Stack, Divider } from "@mantine/core";
+import {
+	Card,
+	Text,
+	List,
+	Code,
+	Title,
+	Stack,
+	Divider,
+	ListItem,
+} from "@mantine/core";
 import type Message from "../../../../../models/Message";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
@@ -32,12 +41,16 @@ export default function MessageCard({ message, bg }: MessageCardProps) {
 						h6: ({ node: _, ...props }) => <Title order={6} {...props} />,
 						p: ({ node: _, ...props }) => <Text {...props} />,
 						ul: ({ node: _, ...props }) => (
-							<List withPadding {...{ props, type: "unordered" }} />
+							<List withPadding {...{ props, type: "unordered" }}>
+								{props.children}
+							</List>
 						),
 						ol: ({ node: _, ...props }) => (
-							<List withPadding {...{ props, type: "ordered" }} />
+							<List withPadding {...{ props, type: "ordered" }}>
+								{props.children}
+							</List>
 						),
-						li: ({ node: _, ...props }) => <List.Item {...props} />,
+						li: ({ node: _, ...props }) => <ListItem {...props} />,
 						hr: ({ node: _, ...props }) => <Divider {...props} />,
 						code: ({ node: _, ...props }) => <Code {...props} />,
 
