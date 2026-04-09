@@ -35,6 +35,21 @@ export default interface PlayerState {
 	location?: {
 		region: Region;
 
+		/**
+		 * If the player is in transit, this will be the region to which they are going.
+		 */
+		transitRegion?: Region;
+
+		/**
+		 * The distance the player has traveled towards the transit region.
+		 */
+		transitDistance?: number;
+
+		/**
+		 * In metres, but will be multiplied by the game state's scale.
+		 */
+		transitTotalDistance?: number;
+
 		/** The building the player is in. If this is null, they are in an exterior cell. */
 		building: Building | null;
 	};
