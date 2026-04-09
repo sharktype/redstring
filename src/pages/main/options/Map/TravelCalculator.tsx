@@ -11,7 +11,6 @@ const travelModes = [
 	{ value: "carriage", label: "Carriage", speed: 10 },
 	{ value: "horse", label: "Horse", speed: 15 },
 	{ value: "ship", label: "Galley", speed: 7 },
-	{ value: "car", label: "Car", speed: 80 },
 ] as const;
 
 export default function TravelCalculator() {

@@ -3,18 +3,37 @@ import { useState } from "react";
 import { FaDice, FaEraser, FaLock, FaLockOpen } from "react-icons/fa";
 import type { ChargenStepProps } from ".";
 import useGameContext from "../../../../context/hooks/useGameContext";
+import { humanizeDistance } from "../../../../utils/distance";
 import { pick } from "../../../../utils/random";
 
 export default function LocationStep({
 	playerState,
 	onChange,
 }: ChargenStepProps) {
-	const { regions } = useGameContext();
+	const { regions, gameState } = useGameContext();
 	const [isLocked, setIsLocked] = useState(false);
 
-	const options = regions.map((region) => ({
-		value: String(region.id),
-		label: region.name,
+	const grouped = regions.reduce<Record<string, typeof regions>>(
+		(accumulator, regions) => {
+			(accumulator[regions.type] ??= []).push(regions);
+
+			return accumulator;
+		},
+		{},
+	);
+
+	const options = Object.entries(grouped).map(([type, items]) => ({
+		group: type.charAt(0).toUpperCase() + type.slice(1),
+		items: items.map((region) => {
+			const distance =
+				Math.sqrt(region.position.x ** 2 + region.position.y ** 2) *
+				(gameState?.scale ?? 1);
+
+			return {
+				value: String(region.id),
+				label: `${region.name} (${humanizeDistance(distance)} from centre)`,
+			};
+		}),
 	}));
 
 	const currentRegionId = playerState.location?.region?.id;
