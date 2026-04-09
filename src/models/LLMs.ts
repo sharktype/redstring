@@ -142,6 +142,25 @@ export const TOOLS = [
 			},
 		},
 	},
+	{
+		type: "function",
+		function: {
+			name: "generate_name",
+			description:
+				"Generate three random fantasy character names. Each name comes with a gender. You must pick one of the three.",
+			parameters: {
+				type: "object",
+				properties: {
+					gender: {
+						type: "string",
+						enum: ["male", "female"],
+						description:
+							"The gender of names to generate. If omitted, each name is randomly male or female.",
+					},
+				},
+			},
+		},
+	},
 ] as const satisfies ToolDefinition[];
 
 export type ToolName = (typeof TOOLS)[number]["function"]["name"];
@@ -224,4 +243,5 @@ type ToolParameters = {
 type ToolProperties = {
 	type: "string" | "number" | "boolean";
 	description: string;
+	enum?: readonly string[];
 };

@@ -137,6 +137,13 @@ const TOOL_DISPLAY: Record<
 			content: `Advanced ${advanced} to ${displayHour}:${displayMinute} ${amPm}`,
 		};
 	},
+	generate_name: () => {
+		return {
+			icon: "🪪",
+			color: "teal",
+			content: `Storyteller generated some names...`,
+		};
+	},
 };
 
 function mapToolCallResultToDisplay(

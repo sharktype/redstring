@@ -12,6 +12,7 @@ import rollD20 from "../tools/rollD20.ts";
 import doArithmetic from "../tools/doArithmetic.ts";
 import modifyMoney from "../tools/modifyMoney.ts";
 import progressTime from "../tools/progressTime.ts";
+import generateName from "../tools/generateName.ts";
 
 export const OPENROUTER_API_URL =
 	"https://openrouter.ai/api/v1/chat/completions";
@@ -337,6 +338,11 @@ export class OpenRouterConfig implements ProviderConfig {
 			toolContext.updatePlayerTime(result.hour, result.minute);
 
 			return JSON.stringify({ result });
+		},
+		generate_name: (args) => {
+			const gender = args.gender as "male" | "female" | undefined;
+
+			return JSON.stringify({ result: generateName(gender) });
 		},
 	};
 
