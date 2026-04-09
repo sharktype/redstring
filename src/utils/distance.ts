@@ -18,3 +18,28 @@ export function humanizeDistance(meters: number): string {
 
 	return `${(meters / 1000).toFixed(1)}km`;
 }
+
+export function estimateTravelTime(
+	distanceMeters: number,
+	speedKmh: number,
+): string {
+	const distanceKm = distanceMeters / 1000;
+
+	const hours = speedKmh > 0 ? distanceKm / speedKmh : 0;
+	const hoursPart = Math.floor(hours);
+	const minutesPart = Math.floor((hours - hoursPart) * 60);
+
+	if (hoursPart > 0 && minutesPart > 0) {
+		return `~${hoursPart}h ${minutesPart}m`;
+	}
+
+	if (hoursPart > 0) {
+		return `~${hoursPart}h`;
+	}
+
+	if (minutesPart > 0) {
+		return `~${minutesPart}m`;
+	}
+
+	return "<1m";
+}

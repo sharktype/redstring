@@ -1,3 +1,4 @@
+import { useState } from "react";
 import {
 	Title,
 	Stack,
@@ -8,17 +9,31 @@ import {
 	Center,
 	Loader,
 	Flex,
+	Modal,
+	List,
 } from "@mantine/core";
-import { getDistance, humanizeDistance } from "../../utils/distance";
+import { useDisclosure } from "@mantine/hooks";
+import {
+	getDistance,
+	humanizeDistance,
+	estimateTravelTime,
+} from "../../utils/distance";
 import useGameContext from "../../context/hooks/useGameContext";
 import { useRegions } from "../../db/hooks/useRegions";
-import type { ConnectionSafety } from "../../models/Location";
+import type { ConnectionSafety, Region } from "../../models/Location";
 import { getDirection } from "../../utils/direction";
 import TravelCalculator from "../main/options/Map/TravelCalculator";
 
 export default function LocationMap() {
 	const { playerState, gameState } = useGameContext();
 	const { regions } = useRegions();
+	const [isTripModalOpened, { open, close }] = useDisclosure(false);
+	const [selectedTrip, setSelectedTrip] = useState<{
+		region: Region;
+		distance: number;
+		direction: string;
+		safety: ConnectionSafety;
+	} | null>(null);
 
 	const hasLocation = playerState?.location?.region.id;
 
@@ -137,7 +152,16 @@ export default function LocationMap() {
 													variant="default"
 													fullWidth
 													justify="space-between"
-													onClick={() => playerState.move(region.id!)}
+													onClick={() => {
+														setSelectedTrip({
+															region,
+															distance,
+															direction,
+															safety,
+														});
+
+														open();
+													}}
 													rightSection={
 														<Group gap="xs" wrap="nowrap">
 															<Text size="xs" fw={500} component="span">
@@ -180,6 +204,83 @@ export default function LocationMap() {
 					</Stack>
 				)}
 				<TravelCalculator />
+
+				<Modal
+					opened={isTripModalOpened}
+					onClose={close}
+					title={<Text fw={700}>Travel Confirmation</Text>}
+				>
+					{selectedTrip &&
+						(() => {
+							const meters = selectedTrip.distance * (gameState?.scale ?? 1);
+							const walkingSpeed = 5;
+							const destType =
+								selectedTrip.region.type && selectedTrip.region.type !== "other"
+									? selectedTrip.region.type
+									: "region";
+
+							return (
+								<Stack>
+									<Text>
+										Travel to the <b>{destType}</b> of{" "}
+										<b>{selectedTrip.region.name}</b>?
+									</Text>
+
+									{selectedTrip.region.description && (
+										<Text size="sm" c="dimmed">
+											{selectedTrip.region.description}
+										</Text>
+									)}
+
+									<List size="sm" spacing="xs">
+										<List.Item>
+											<Text size="sm">
+												<b>Direction:</b> {selectedTrip.direction}
+											</Text>
+										</List.Item>
+										<List.Item>
+											<Text size="sm">
+												<b>Distance:</b> {humanizeDistance(meters)}
+											</Text>
+										</List.Item>
+										<List.Item>
+											<Text size="sm">
+												<b>Safety:</b>{" "}
+												<Text
+													component="span"
+													size="sm"
+													c={safetyColors[selectedTrip.safety]}
+												>
+													{selectedTrip.safety.charAt(0).toUpperCase() +
+														selectedTrip.safety.slice(1)}
+												</Text>
+											</Text>
+										</List.Item>
+										<List.Item>
+											<Text size="sm">
+												<b>Estimated time on foot:</b>{" "}
+												{estimateTravelTime(meters, walkingSpeed)}
+											</Text>
+										</List.Item>
+									</List>
+
+									<Group justify="flex-end" mt="md">
+										<Button variant="default" onClick={close}>
+											Cancel
+										</Button>
+										<Button
+											onClick={() => {
+												playerState.move(selectedTrip.region.id!);
+												close();
+											}}
+										>
+											Travel
+										</Button>
+									</Group>
+								</Stack>
+							);
+						})()}
+				</Modal>
 			</Flex>
 		</Box>
 	);

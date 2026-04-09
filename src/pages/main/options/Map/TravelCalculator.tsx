@@ -1,6 +1,9 @@
 import { useMemo, useState } from "react";
 import { NumberInput, Select, Text } from "@mantine/core";
-import { humanizeDistance } from "../../../../utils/distance";
+import {
+	humanizeDistance,
+	estimateTravelTime,
+} from "../../../../utils/distance";
 
 // Measured in: km/h.
 
@@ -14,33 +17,17 @@ const travelModes = [
 ] as const;
 
 export default function TravelCalculator() {
-	const [mode, setMode] = useState<string>("foot");
+	const [selectedMode, setSelectedMode] = useState<string>("foot");
 	const [distance, setDistance] = useState<number>(0);
 
 	const distanceLabel = useMemo(() => humanizeDistance(distance), [distance]);
 
 	// By foot is a reasonable default.
 
-	const speed = travelModes.find((m) => m.value === mode)?.speed ?? 5;
-
-	const distanceKm = distance / 1000;
-	const hoursForDistance = speed > 0 ? distanceKm / speed : 0;
-
-	const hoursPart = Math.floor(hoursForDistance);
-	const minutesPart = Math.floor((hoursForDistance - hoursPart) * 60);
-
-	let estimate = "";
-	if (distance > 0) {
-		if (hoursPart > 0 && minutesPart > 0) {
-			estimate = `~${hoursPart}h ${minutesPart}m`;
-		} else if (hoursPart > 0) {
-			estimate = `~${hoursPart}h`;
-		} else if (minutesPart > 0) {
-			estimate = `~${minutesPart}m`;
-		} else {
-			estimate = "<1m";
-		}
-	}
+	const speed =
+		travelModes.find((travelMode) => travelMode.value === selectedMode)
+			?.speed ?? 5;
+	const estimate = distance > 0 ? estimateTravelTime(distance, speed) : "";
 
 	return (
 		<>
@@ -54,8 +41,8 @@ export default function TravelCalculator() {
 					value: mode.value,
 					label: mode.label,
 				}))}
-				value={mode}
-				onChange={(value) => value && setMode(value)}
+				value={selectedMode}
+				onChange={(value) => value && setSelectedMode(value)}
 				mt="xs"
 			/>
 			<NumberInput
@@ -63,10 +50,10 @@ export default function TravelCalculator() {
 				label={`Distance (${distanceLabel})`}
 				description="In metres"
 				mt={4}
-				onChange={(val) => {
-					if (typeof val === "number" && !Number.isNaN(val)) {
-						setDistance(val);
-					} else if (val === "" || val === null) {
+				onChange={(value) => {
+					if (typeof value === "number" && !Number.isNaN(value)) {
+						setDistance(value);
+					} else if (value === "" || value === null) {
 						setDistance(0);
 					}
 				}}
