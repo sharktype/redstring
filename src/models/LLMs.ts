@@ -56,9 +56,40 @@ export const TOOLS = [
 			},
 		},
 	},
+	{
+		type: "function",
+		function: {
+			name: "spend_money",
+			description:
+				"Check if the player can afford a cost, and optionally deduct it. Use is_dry to check affordability without spending.",
+			parameters: {
+				type: "object",
+				properties: {
+					cost: {
+						type: "number",
+						description: "The amount of gold to spend.",
+					},
+					is_dry: {
+						type: "boolean",
+						description:
+							"If true, only checks whether the player can afford the cost without actually spending. Defaults to false.",
+					},
+				},
+				required: ["cost"],
+			},
+		},
+	},
 ] as const satisfies ToolDefinition[];
 
 export type ToolName = (typeof TOOLS)[number]["function"]["name"];
+
+/**
+ * Context provided to tools when they are executed where they need to cause React-specific side effects.
+ */
+export interface ToolContext {
+	playerMoney: number;
+	updatePlayerMoney: (newAmount: number) => void;
+}
 
 /**
  * A message which can be passed directly to the API.

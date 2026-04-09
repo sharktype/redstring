@@ -2,10 +2,12 @@ import { useCallback } from "react";
 import useGameContext from "../../context/hooks/useGameContext";
 import useLlmContext from "../../context/hooks/useLlmContext";
 import { useMessages } from "../../db/hooks/useMessages";
+import type { ToolContext } from "../../models/LLMs";
 import type Message from "../../models/Message";
 
 export default function useSubmit() {
-	const { agentConfigs, messages, addMessage } = useGameContext();
+	const { agentConfigs, messages, addMessage, playerState, updatePlayerState } =
+		useGameContext();
 	const {
 		isStreaming,
 		startStreaming,
@@ -35,7 +37,17 @@ export default function useSubmit() {
 
 			// Note to devs: this needs to be totally agnostic to the provider.
 
-			const readableStream = await storytellerAgent.submit(historyToSubmit);
+			const toolContext: ToolContext = {
+				playerMoney: playerState?.money ?? 0,
+				updatePlayerMoney: (newAmount: number) => {
+					updatePlayerState({ money: newAmount });
+				},
+			};
+
+			const readableStream = await storytellerAgent.submit(
+				historyToSubmit,
+				toolContext,
+			);
 			const reader = readableStream.getReader();
 			let fullResponse = "";
 
@@ -65,6 +77,8 @@ export default function useSubmit() {
 		[
 			addMessage,
 			agentConfigs,
+			playerState,
+			updatePlayerState,
 			setStreamingMessage,
 			setStreamingPosition,
 			startStreaming,

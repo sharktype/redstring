@@ -3,6 +3,7 @@ import type {
 	AVAILABLE_AGENT_TYPES,
 	StoredAgentConfig,
 } from "../models/AgentConfig.ts";
+import type { ToolContext } from "../models/LLMs.ts";
 import type Message from "../models/Message.ts";
 import type ProviderConfig from "../models/ProviderConfig.ts";
 
@@ -49,15 +50,21 @@ export default class Agent implements AgentConfig {
 		});
 	}
 
-	async submit(messages: Message[]): Promise<ReadableStream<string>> {
+	async submit(
+		messages: Message[],
+		toolContext?: ToolContext,
+	): Promise<ReadableStream<string>> {
 		if (!this.provider) {
 			throw new Error("no provider configured for agent type " + this.type);
 		}
 
-		return this.provider.submit([
-			{ role: "system", content: this.prompt, sentAt: new Date() },
-			...messages,
-		]);
+		return this.provider.submit(
+			[
+				{ role: "system", content: this.prompt, sentAt: new Date() },
+				...messages,
+			],
+			toolContext,
+		);
 	}
 
 	async test() {

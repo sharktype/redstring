@@ -58,6 +58,28 @@ const TOOL_DISPLAY: Record<
 		color: "blue",
 		content: `${args.expression} = ${result}`,
 	}),
+	spend_money: (args, result) => {
+		const castResult = result as { canAfford: boolean; remaining: number };
+		const isDry = args.is_dry as boolean | undefined;
+
+		if (isDry) {
+			return {
+				icon: "💰",
+				color: castResult.canAfford ? "green" : "red",
+				content: castResult.canAfford
+					? `Can afford ${args.cost} gold (cost would leave ${castResult.remaining} gold)`
+					: `Cannot afford ${args.cost} gold (need ${-castResult.remaining} more gold)`,
+			};
+		}
+
+		return {
+			icon: "💰",
+			color: castResult.canAfford ? "green" : "red",
+			content: castResult.canAfford
+				? `Spent ${args.cost} gold (${castResult.remaining} remaining)`
+				: `Spent ${args.cost} gold (in debt by ${-castResult.remaining} gold)`,
+		};
+	},
 };
 
 function mapToolCallResultToDisplay(

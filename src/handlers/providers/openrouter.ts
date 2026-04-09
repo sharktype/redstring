@@ -5,10 +5,12 @@ import {
 	TOOLS,
 	type ApiMessage,
 	type ToolCall,
+	type ToolContext,
 	type ToolName,
 } from "../../models/LLMs.ts";
 import rollD20 from "../tools/rollD20.ts";
 import doArithmetic from "../tools/doArithmetic.ts";
+import spendMoney from "../tools/spendMoney.ts";
 
 export const OPENROUTER_API_URL =
 	"https://openrouter.ai/api/v1/chat/completions";
@@ -45,7 +47,10 @@ export class OpenRouterConfig implements ProviderConfig {
 		});
 	}
 
-	async submit(messages: Message[]): Promise<ReadableStream<string>> {
+	async submit(
+		messages: Message[],
+		toolContext?: ToolContext,
+	): Promise<ReadableStream<string>> {
 		// Code largely lifted and adapted from docs. See: https://openrouter.ai/docs/api/reference/streaming
 
 		const apiMessages: ApiMessage[] =
@@ -55,7 +60,8 @@ export class OpenRouterConfig implements ProviderConfig {
 
 		const callProvider = (options: Record<string, unknown>) =>
 			this.call(options);
-		const executeTool = (toolCall: ToolCall) => this.execute(toolCall);
+		const executeTool = (toolCall: ToolCall) =>
+			this.execute(toolCall, toolContext);
 
 		return new ReadableStream<string>({
 			async start(controller) {
@@ -237,7 +243,7 @@ export class OpenRouterConfig implements ProviderConfig {
 		return data.choices?.[0]?.message?.content || null;
 	}
 
-	execute(toolCall: ToolCall): string {
+	execute(toolCall: ToolCall, toolContext?: ToolContext): string {
 		const callArguments: Record<string, unknown> = JSON.parse(
 			toolCall.function.arguments || "{}",
 		);
@@ -250,14 +256,14 @@ export class OpenRouterConfig implements ProviderConfig {
 			});
 		}
 
-		return executor(callArguments);
+		return executor(callArguments, toolContext);
 	}
 
 	// This ensures that tools are exhaustively implemented:
 
 	private static readonly TOOL_EXECUTORS: Record<
 		ToolName,
-		(args: Record<string, unknown>) => string
+		(args: Record<string, unknown>, toolContext?: ToolContext) => string
 	> = {
 		roll_d20: (args) => {
 			const count = (args.die_count ?? 1) as number;
@@ -274,6 +280,22 @@ export class OpenRouterConfig implements ProviderConfig {
 			} catch (e) {
 				return JSON.stringify({ error: `cannot do arithmetic: ${e}` });
 			}
+		},
+		spend_money: (args, toolContext) => {
+			if (!toolContext) {
+				return JSON.stringify({ error: "no player context available" });
+			}
+
+			const cost = args.cost as number;
+			const isDry = (args.is_dry ?? false) as boolean;
+			const result = spendMoney(toolContext.playerMoney, cost, isDry);
+
+			if (!isDry && result.canAfford) {
+				toolContext.playerMoney = result.remaining;
+				toolContext.updatePlayerMoney(result.remaining);
+			}
+
+			return JSON.stringify({ result });
 		},
 	};
 
