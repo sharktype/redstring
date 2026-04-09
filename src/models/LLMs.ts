@@ -121,6 +121,27 @@ export const TOOLS = [
 			},
 		},
 	},
+	{
+		type: "function",
+		function: {
+			name: "progress_time",
+			description:
+				"Advance the in-game clock by a given number of hours and/or minutes. The clock wraps around at 24 hours.",
+			parameters: {
+				type: "object",
+				properties: {
+					hours: {
+						type: "number",
+						description: "The number of hours to advance. Defaults to 0.",
+					},
+					minutes: {
+						type: "number",
+						description: "The number of minutes to advance. Defaults to 0.",
+					},
+				},
+			},
+		},
+	},
 ] as const satisfies ToolDefinition[];
 
 export type ToolName = (typeof TOOLS)[number]["function"]["name"];
@@ -130,10 +151,12 @@ export type ToolName = (typeof TOOLS)[number]["function"]["name"];
  */
 export interface ToolContext {
 	playerMoney: number;
+	playerTime: { hour: number; minute: number };
 
 	updatePlayerMoney: (newAmount: number) => void;
 	updatePlayerNotes: (content: string) => void;
 	updateSecret: (slug: string, content: string) => void;
+	updatePlayerTime: (hour: number, minute: number) => void;
 }
 
 /**

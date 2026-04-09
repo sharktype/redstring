@@ -48,6 +48,7 @@ export default function useSubmit() {
 
 			const toolContext: ToolContext = {
 				playerMoney: playerState?.money ?? 0,
+				playerTime: playerState?.time ?? { hour: 0, minute: 0 },
 				updatePlayerMoney: (newAmount: number) => {
 					updatePlayerState({ money: newAmount });
 				},
@@ -58,6 +59,9 @@ export default function useSubmit() {
 					updateGameState({
 						secrets: { ...gameState?.secrets, [slug]: content },
 					});
+				},
+				updatePlayerTime: (hour: number, minute: number) => {
+					updatePlayerState({ time: { hour, minute } });
 				},
 			};
 

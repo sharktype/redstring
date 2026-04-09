@@ -16,7 +16,6 @@ This version removes the placeholders off the interface so everything that is cl
 - Moderate: A non-map node based location editor that allows selecting the current location.
 - Moderate: Implement possibility of random encounters when moving, and system messages of moving happening.
   - This includes adding functionality to the "cycle" button on the map form.
-- Moderate: Implement rudimentary character creation.
 - Moderate: Implement summarisation.
 - Moderate: Add skills and flags.
   - Including a new tool call that does skill checks instead of a straight up d20 roll.

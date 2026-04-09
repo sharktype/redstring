@@ -11,6 +11,7 @@ import {
 import rollD20 from "../tools/rollD20.ts";
 import doArithmetic from "../tools/doArithmetic.ts";
 import modifyMoney from "../tools/modifyMoney.ts";
+import progressTime from "../tools/progressTime.ts";
 
 export const OPENROUTER_API_URL =
 	"https://openrouter.ai/api/v1/chat/completions";
@@ -317,6 +318,25 @@ export class OpenRouterConfig implements ProviderConfig {
 			toolContext.updateSecret(slug, content);
 
 			return JSON.stringify({ result: "ok" });
+		},
+		progress_time: (args, toolContext) => {
+			if (!toolContext) {
+				return JSON.stringify({ error: "no player context available" });
+			}
+
+			const hours = (args.hours ?? 0) as number;
+			const minutes = (args.minutes ?? 0) as number;
+			const result = progressTime(
+				toolContext.playerTime.hour,
+				toolContext.playerTime.minute,
+				hours,
+				minutes,
+			);
+
+			toolContext.playerTime = result;
+			toolContext.updatePlayerTime(result.hour, result.minute);
+
+			return JSON.stringify({ result });
 		},
 	};
 
