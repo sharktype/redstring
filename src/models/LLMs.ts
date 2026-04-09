@@ -59,23 +59,24 @@ export const TOOLS = [
 	{
 		type: "function",
 		function: {
-			name: "spend_money",
+			name: "modify_money",
 			description:
-				"Check if the player can afford a cost, and optionally deduct it. Use is_dry to check affordability without spending.",
+				"Modify the player's gold. Positive amounts add gold (earning/receiving), negative amounts deduct gold (spending). Use is_dry to check affordability without actually modifying.",
 			parameters: {
 				type: "object",
 				properties: {
-					cost: {
+					amount: {
 						type: "number",
-						description: "The amount of gold to spend.",
+						description:
+							"The amount of gold to modify. Positive to give, negative to spend.",
 					},
 					is_dry: {
 						type: "boolean",
 						description:
-							"If true, only checks whether the player can afford the cost without actually spending. Defaults to false.",
+							"If true, only checks the result without actually modifying. Defaults to false.",
 					},
 				},
-				required: ["cost"],
+				required: ["amount"],
 			},
 		},
 	},

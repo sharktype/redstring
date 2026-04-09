@@ -10,7 +10,7 @@ import {
 } from "../../models/LLMs.ts";
 import rollD20 from "../tools/rollD20.ts";
 import doArithmetic from "../tools/doArithmetic.ts";
-import spendMoney from "../tools/spendMoney.ts";
+import modifyMoney from "../tools/modifyMoney.ts";
 
 export const OPENROUTER_API_URL =
 	"https://openrouter.ai/api/v1/chat/completions";
@@ -281,16 +281,16 @@ export class OpenRouterConfig implements ProviderConfig {
 				return JSON.stringify({ error: `cannot do arithmetic: ${e}` });
 			}
 		},
-		spend_money: (args, toolContext) => {
+		modify_money: (args, toolContext) => {
 			if (!toolContext) {
 				return JSON.stringify({ error: "no player context available" });
 			}
 
-			const cost = args.cost as number;
+			const amount = args.amount as number;
 			const isDry = (args.is_dry ?? false) as boolean;
-			const result = spendMoney(toolContext.playerMoney, cost, isDry);
+			const result = modifyMoney(toolContext.playerMoney, amount, isDry);
 
-			if (!isDry && result.canAfford) {
+			if (!isDry) {
 				toolContext.playerMoney = result.remaining;
 				toolContext.updatePlayerMoney(result.remaining);
 			}

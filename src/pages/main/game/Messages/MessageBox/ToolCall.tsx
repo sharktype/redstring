@@ -58,26 +58,44 @@ const TOOL_DISPLAY: Record<
 		color: "blue",
 		content: `${args.expression} = ${result}`,
 	}),
-	spend_money: (args, result) => {
+	modify_money: (args, result) => {
 		const castResult = result as { canAfford: boolean; remaining: number };
+		const amount = args.amount as number;
 		const isDry = args.is_dry as boolean | undefined;
+		const isSpending = amount < 0;
 
 		if (isDry) {
+			if (isSpending) {
+				return {
+					icon: "💰",
+					color: castResult.canAfford ? "green" : "red",
+					content: castResult.canAfford
+						? `Can afford ${-amount} gold (now ${castResult.remaining})`
+						: `Cannot afford ${-amount} gold (need ${-castResult.remaining} more gold)`,
+				};
+			}
+
+			return {
+				icon: "💰",
+				color: "green",
+				content: `Would receive ${amount} gold (now ${castResult.remaining})`,
+			};
+		}
+
+		if (isSpending) {
 			return {
 				icon: "💰",
 				color: castResult.canAfford ? "green" : "red",
 				content: castResult.canAfford
-					? `Can afford ${args.cost} gold (cost would leave ${castResult.remaining} gold)`
-					: `Cannot afford ${args.cost} gold (need ${-castResult.remaining} more gold)`,
+					? `Spent ${-amount} gold (now ${castResult.remaining})`
+					: `Spent ${-amount} gold (in debt by ${-castResult.remaining} gold)`,
 			};
 		}
 
 		return {
 			icon: "💰",
-			color: castResult.canAfford ? "green" : "red",
-			content: castResult.canAfford
-				? `Spent ${args.cost} gold (${castResult.remaining} remaining)`
-				: `Spent ${args.cost} gold (in debt by ${-castResult.remaining} gold)`,
+			color: "green",
+			content: `Received ${amount} gold (now ${castResult.remaining})`,
 		};
 	},
 	write_notes: () => ({
