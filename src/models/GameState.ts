@@ -1,15 +1,12 @@
 export default interface GameState {
-	// Interface/meta:
-
-	detailer: "inventory" | "profile" | "map" | "journal";
-
-	// Locations:
-
-	scale: number;
-
-	// LLM context:
+	// Active game state:
 
 	secrets: Record<string, string>;
+
+	// Options:
+
+	detailer: "inventory" | "profile" | "map" | "journal";
+	scale: number;
 }
 
 export type StoredGameState = GameState & {

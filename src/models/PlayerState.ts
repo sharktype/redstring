@@ -1,3 +1,4 @@
+import type Item from "./Item";
 import type { Building, Region } from "./Location";
 
 export default interface PlayerState {
@@ -39,6 +40,7 @@ export default interface PlayerState {
 	};
 
 	money?: number;
+	inventory?: { item: Item; quantity: number }[];
 
 	move(locationId: number): boolean;
 	enter(buildingSlug: string): boolean;

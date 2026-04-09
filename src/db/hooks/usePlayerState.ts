@@ -8,6 +8,7 @@ import type { StoredPlayerState } from "../../models/PlayerState.ts";
 
 const DEFAULT_PLAYER_STATE: Omit<StoredPlayerState, "id"> = {
 	isInitialized: false,
+	inventory: [],
 	location: {
 		region: {
 			name: "",
