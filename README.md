@@ -8,17 +8,6 @@ FOSS LLM-powered opinionated story/scenario player based on a specific RPG philo
 
 ### Up Next
 
-This version has feature parity with the legacy Staircase version with a few extra goodies.
-
-- Easy (as described): Equipped, inventory, stats, and memory that is given to the AI on every response.
-  - Memory in the alpha is not correctly given to the agent; it should be given right before the current message. More
-    thought should be given to where the supplementary information is given to the Storyteller.
-  - Really the equipped shouldn't be part of this (not fun to manage), nor is inventory. So it's just stats and memory.
-    Stats should exist by itself as something more consolidated. Memory should exist as a "are you sure you want to
-    edit this?" thing on the Journal, plus some tool calls to be able to read and write from it.
-
-### After That
-
 This version removes the placeholders off the interface so everything that is clickable actually does something.
 
 - Easy Bug: Differentiate between when to use use- hooks directly versus the `GameContext` provided functions.
@@ -50,7 +39,7 @@ After this version, we have a public alpha.
 
 - Implement allowing Storyteller or some other agent to modify characters, locations, etc. as needed.
 - The map feature could be improved: rather than needing a separate map generator and manually creating, the whole
-  worldgen feature could be built into the engine entirely.
+  world-gen feature could be built into the engine entirely.
 - Character generator: a separate LLM that can be called as a tool call to generate a random character, which itself
   uses tool calls to generate names and personalities, etc. and these get saved in Characters.
 - Modules: a "module" is a collection of default injections into either the system prompt, the pre-prompt, and so on.

@@ -4,6 +4,7 @@ import useLlmContext from "../../context/hooks/useLlmContext";
 import { useMessages } from "../../db/hooks/useMessages";
 import type { ToolContext } from "../../models/LLMs";
 import type Message from "../../models/Message";
+import usePresystemMessage from "./usePresystemMessage";
 
 export default function useSubmit() {
 	const {
@@ -23,6 +24,7 @@ export default function useSubmit() {
 		setStreamingPosition,
 	} = useLlmContext();
 	const { deleteMessage } = useMessages();
+	const { buildPresystemMessage } = usePresystemMessage();
 
 	const streamResponse = useCallback(
 		async (
@@ -59,8 +61,13 @@ export default function useSubmit() {
 				},
 			};
 
+			const presystemMessage = buildPresystemMessage();
+			const messagesWithPresystem = presystemMessage
+				? [...historyToSubmit, presystemMessage]
+				: historyToSubmit;
+
 			const readableStream = await storytellerAgent.submit(
-				historyToSubmit,
+				messagesWithPresystem,
 				toolContext,
 			);
 			const reader = readableStream.getReader();
@@ -92,6 +99,7 @@ export default function useSubmit() {
 		[
 			addMessage,
 			agentConfigs,
+			buildPresystemMessage,
 			playerState,
 			updatePlayerState,
 			setStreamingMessage,
