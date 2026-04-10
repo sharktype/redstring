@@ -28,7 +28,7 @@ import useSubmit from "../../handlers/hooks/useSubmit";
 import TravelCalculator from "../main/options/Map/TravelCalculator";
 
 export default function LocationMap() {
-	const { playerState, gameState } = useGameContext();
+	const { playerState, gameState, messages } = useGameContext();
 	const { regions } = useRegions();
 	const {
 		beginTravel,
@@ -41,7 +41,10 @@ export default function LocationMap() {
 	const { submit } = useSubmit();
 
 	const submitAfterTravel = async () => {
-		await submit([]);
+		await submit([
+			...messages,
+			{ role: "user", content: "(Continue.)", sentAt: new Date() },
+		]);
 	};
 
 	const [isTripModalOpened, { open: openTripModal, close: closeTripModal }] =
