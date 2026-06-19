@@ -1,5 +1,5 @@
-import { Box, Container, Flex } from "@mantine/core";
-import { useCallback, useEffect, useRef } from "react";
+import { Box, Center, Container, Flex, Loader } from "@mantine/core";
+import { useCallback, useEffect, useLayoutEffect, useRef } from "react";
 import { useMessages } from "../../../../db/hooks/useMessages";
 import MessageBox from "./MessageBox";
 import type Message from "../../../../models/Message";
@@ -15,7 +15,7 @@ const SCROLL_THRESHOLD_PIXELS = 128;
 
 export default function Messages() {
 	const { isStreaming, streamingMessage, streamingPosition } = useLlmContext();
-	const { messages, addMessage } = useMessages();
+	const { messages, isLoading, addMessage } = useMessages();
 	const { submit: submitToStoryteller } = useSubmit();
 
 	const textareaRef = useRef<HTMLTextAreaElement>(null);
@@ -25,6 +25,8 @@ export default function Messages() {
 	const messagesEndRef = useRef<HTMLDivElement>(null);
 	const scrollContainerRef = useRef<HTMLDivElement>(null);
 	const isUserScrolledUpRef = useRef(false);
+	const isFirstLoadRef = useRef(true);
+	const wasStreamingRef = useRef(false);
 
 	// Logic for message list behaviour:
 
@@ -63,13 +65,31 @@ export default function Messages() {
 		};
 	}, [isAtBottom]);
 
-	useEffect(() => {
-		// Auto-scroll when messages change.
+	useLayoutEffect(() => {
+		// Auto-scroll when messages change. Use useLayoutEffect so this runs
+		// synchronously after DOM mutations but before paint — otherwise removing
+		// the oldest message from the DOM causes a visible scroll jump upward
+		// before the auto-scroll can correct it.
 
 		if (!isUserScrolledUpRef.current) {
-			scrollToBottom();
+			const useInstant = isFirstLoadRef.current || wasStreamingRef.current;
+			scrollToBottom(useInstant ? "instant" : "smooth");
+
+			if (isFirstLoadRef.current && messages.length > 0) {
+				isFirstLoadRef.current = false;
+			}
 		}
+
+		wasStreamingRef.current = false;
 	}, [messages, scrollToBottom]);
+
+	useEffect(() => {
+		// Track when streaming ends so the next message update scrolls instantly.
+
+		if (!isStreaming) {
+			wasStreamingRef.current = true;
+		}
+	}, [isStreaming]);
 
 	useEffect(() => {
 		// Complex auto-scroll for quick streaming messages.
@@ -210,11 +230,17 @@ export default function Messages() {
 						pt="xl"
 						style={{ overflowY: "auto" }}
 					>
-						{messagesWithStreaming.length === 0 && (
+						{isLoading && (
+							<Center h="100%">
+								<Loader />
+							</Center>
+						)}
+
+						{!isLoading && messagesWithStreaming.length === 0 && (
 							<h1>Your story awaits...</h1>
 						)}
 
-						{messagesWithStreaming.map((message) => {
+						{messagesWithStreaming.slice(-10).map((message) => {
 							return (
 								<MessageBox
 									key={`message-${message.role}-${message.id}-${message.sentAt.toISOString()}`}
