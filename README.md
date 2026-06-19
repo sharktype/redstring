@@ -4,6 +4,25 @@ FOSS LLM-powered opinionated story/scenario player based on a specific RPG philo
 
 - [Philosophies](./docs/PHILOSOPHIES.md)
 
+## Direction
+
+From the current direction, we have found things that work and do not work. So in the future:
+
+- Location tracking is to be completely removed in the engine.
+- Time tracking is good. Weather tracking is to be added.
+- The name generator is good, and tool calls should use it more effectively.
+- Inventory is likely to be very brittle and not work very well. It is better to handwave such things in most roleplays
+  anyway. More important is the state of the character, gold/money, and armour/weapons/clothing.
+- Secrets and planning is half-baked. It works, yes, but we can do much better.
+
+The main new feature that I think will have value is calling agents to do thinking for the short and long-term plan of
+the story, and next the ability to store context for things in a vector database rather than summarisations which
+necessarily lose resolution over time.
+
+The secondary improvement would be the "dialogue mode" that allows much quicker communication. The idea I have for this
+at the moment is one agent call to provide a dialogue context that can be exited at any time, and subsequent calls have
+a much smaller window of knowledge about the world and what has gone on.
+
 ## Future Versions
 
 ### Up Next
