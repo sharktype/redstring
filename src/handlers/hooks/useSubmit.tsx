@@ -50,6 +50,7 @@ export default function useSubmit() {
 			const toolContext: ToolContext = {
 				playerMoney: playerState?.money ?? 0,
 				playerTime: playerState?.time ?? { hour: 0, minute: 0 },
+				secrets: { ...(gameState?.secrets ?? {}) },
 				updatePlayerMoney: (newAmount: number) => {
 					updatePlayerState({ money: newAmount });
 				},
@@ -57,8 +58,9 @@ export default function useSubmit() {
 					updatePlayerState({ stats: { textual: content } });
 				},
 				updateSecret: (slug: string, content: string) => {
+					toolContext.secrets[slug] = content;
 					updateGameState({
-						secrets: { ...gameState?.secrets, [slug]: content },
+						secrets: { ...toolContext.secrets },
 					});
 				},
 				updatePlayerTime: (hour: number, minute: number) => {
@@ -93,14 +95,14 @@ export default function useSubmit() {
 			} catch (error) {
 				console.error("error reading from stream:", error);
 			} finally {
+				stopStreaming();
+
 				if (fullResponse.trim() !== "") {
 					await addMessage({
 						content: fullResponse.trim(),
 						...responseMeta,
 					});
 				}
-
-				stopStreaming();
 			}
 		},
 		[
