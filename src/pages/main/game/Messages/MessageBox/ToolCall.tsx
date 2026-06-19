@@ -98,11 +98,11 @@ const TOOL_DISPLAY: Record<
 			content: `Received ${amount} gold (now ${castResult.remaining})`,
 		};
 	},
-	write_notes: () => ({
-		icon: "📝",
-		color: "yellow",
-		content: "Updated character notes",
-	}),
+	// write_notes: () => ({
+	// 	icon: "📝",
+	// 	color: "yellow",
+	// 	content: "Updated character notes",
+	// }),
 	write_secret: () => ({
 		icon: "🔒",
 		color: "violet",

@@ -80,25 +80,25 @@ export const TOOLS = [
 			},
 		},
 	},
-	{
-		type: "function",
-		function: {
-			name: "write_notes",
-			description:
-				"Overwrite the player's character notes with new content. This replaces the entire notes field.",
-			parameters: {
-				type: "object",
-				properties: {
-					content: {
-						type: "string",
-						description:
-							"The new content to write to the player's character notes.",
-					},
-				},
-				required: ["content"],
-			},
-		},
-	},
+	// {
+	// 	type: "function",
+	// 	function: {
+	// 		name: "write_notes",
+	// 		description:
+	// 			"Overwrite the player's character notes with new content. This replaces the entire notes field.",
+	// 		parameters: {
+	// 			type: "object",
+	// 			properties: {
+	// 				content: {
+	// 					type: "string",
+	// 					description:
+	// 						"The new content to write to the player's character notes.",
+	// 				},
+	// 			},
+	// 			required: ["content"],
+	// 		},
+	// 	},
+	// },
 	{
 		type: "function",
 		function: {
@@ -171,6 +171,7 @@ export type ToolName = (typeof TOOLS)[number]["function"]["name"];
 export interface ToolContext {
 	playerMoney: number;
 	playerTime: { hour: number; minute: number };
+	secrets: Record<string, string>;
 
 	updatePlayerMoney: (newAmount: number) => void;
 	updatePlayerNotes: (content: string) => void;
