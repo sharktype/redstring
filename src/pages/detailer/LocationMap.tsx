@@ -43,7 +43,7 @@ export default function LocationMap() {
 	const submitAfterTravel = async () => {
 		await submit([
 			...messages,
-			{ role: "user", content: "(Continue.)", sentAt: new Date() },
+			{ role: "user", content: "[OoC: Illustrate the last system message.]", sentAt: new Date() },
 		]);
 	};
 
