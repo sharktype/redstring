@@ -3,8 +3,13 @@ import { db } from "../database.ts";
 import type Message from "../../models/Message.ts";
 
 export function useMessages() {
-	const messages =
-		useLiveQuery(() => db.messages.orderBy("sentAt").toArray(), []) ?? [];
+	const rawMessages = useLiveQuery(
+		() => db.messages.orderBy("sentAt").toArray(),
+		[],
+	);
+
+	const isLoading = rawMessages === undefined;
+	const messages = rawMessages ?? [];
 
 	const addMessage = async (message: Omit<Message, "id">) => {
 		return db.messages.add(message);
@@ -24,6 +29,7 @@ export function useMessages() {
 
 	return {
 		messages,
+		isLoading,
 		addMessage,
 		updateMessage,
 		deleteMessage,
