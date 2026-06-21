@@ -42,6 +42,11 @@ No. Keeping track of the need to eat and drink is not that fun. The only need th
 Food and water are an attention tax that can kill pace and are "just another thing" to remember. Sleep is thematically
 more interesting as it interacts with money, exhaustion/player stats, and the time of day.
 
+### How are armour pieces equipped?
+
+Simply put, they aren't. Armour is equipped one or nothing; a set or none of the pieces. There are no gauntlets,
+helms, and so on. However, non-armour accessories are allowed if they are story-only, e.g., a wedding ring.
+
 ## Skills
 
 **TL;DR**: Skills are totally player-determined, except the combat-related ones.
