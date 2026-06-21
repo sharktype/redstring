@@ -95,7 +95,7 @@ function PlayerOverview() {
 							</Text>
 						</Flex>
 						<Text size="sm" ff="monospace">
-							{playerState.money} gold
+							{playerState.money.toLocaleString()} g
 						</Text>
 					</Box>
 				</>

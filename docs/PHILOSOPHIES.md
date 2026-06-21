@@ -23,7 +23,7 @@ Instead, we will have a single integer currency. Optionally, currency can have w
 carry so much of it. This can be fun: needing to go to a bank location or spreading out money for rich players, where
 one such bank might be geographically far from where you need to buy something.
 
-The name of this currency is "knocks." It is priced similarly to yen in real life, with 100 knocks roughly equating to
+The name of this currency is "gold." It is priced similarly to yen in real life, with 100 gold roughly equating to
 a dollar in real life, keeping in mind lower cost of goods.
 
 ## Inventory

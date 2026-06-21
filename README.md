@@ -10,7 +10,10 @@ From the current direction, we have found things that work and do not work. So i
 
 - Locations are tracked as "facts" that are improvised and added to the facts tree as we go rather than determined at
   the start.
-- Time tracking is good. Weather tracking is to be added.
+- Items are effectively either clothing/armour, weapons, directly impacting stats, consumable, or quest items in reality
+  and a system for tracking them outside of Profile is likely unnecessary. Put focus onto a proper character profile
+  system.
+- Time tracking must be done by the storyteller and should be done more consistently than it has been done.
 - The name generator is good, and tool calls should use it more effectively.
 - Inventory is likely to be very brittle and not work very well. It is better to handwave such things in most roleplays
   anyway. More important is the state of the character, gold/money, and armour/weapons/clothing.

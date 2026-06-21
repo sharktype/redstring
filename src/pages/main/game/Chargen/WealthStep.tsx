@@ -51,7 +51,11 @@ export default function WealthStep({
 				</Group>
 				<NumberInput
 					label="Gold"
-					description="A decimal currency approximately equal to current-day Euros."
+					description="A decimal currency approximately equal to current-day dollars."
+					suffix=" g"
+					thousandsGroupStyle="thousand"
+					thousandSeparator=","
+					allowNegative={false}
 					placeholder="0"
 					min={0}
 					value={playerState.money ?? ""}
