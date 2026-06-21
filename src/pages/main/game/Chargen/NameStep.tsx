@@ -196,11 +196,12 @@ export default function NameStep({ playerState, onChange }: ChargenStepProps) {
 							<TextInput
 								label="Given name"
 								placeholder="Given name"
-								value={playerState.name?.given ?? ""}
-								onChange={(e) =>
+								key={playerState.name?.given}
+								defaultValue={playerState.name?.given ?? ""}
+								onBlur={(event) =>
 									onChange({
 										name: {
-											given: e.currentTarget.value,
+											given: event.currentTarget.value,
 											surname: playerState.name?.surname ?? "",
 										},
 									})
@@ -222,12 +223,13 @@ export default function NameStep({ playerState, onChange }: ChargenStepProps) {
 							<TextInput
 								label="Surname"
 								placeholder="Surname"
-								value={playerState.name?.surname ?? ""}
-								onChange={(e) =>
+								key={playerState.name?.surname}
+								defaultValue={playerState.name?.surname ?? ""}
+								onBlur={(event) =>
 									onChange({
 										name: {
 											given: playerState.name?.given ?? "",
-											surname: e.currentTarget.value,
+											surname: event.currentTarget.value,
 										},
 									})
 								}
