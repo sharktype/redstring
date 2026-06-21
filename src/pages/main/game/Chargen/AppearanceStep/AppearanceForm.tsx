@@ -157,7 +157,7 @@ export default function AppearanceForm() {
 
 			<Group grow align="start" gap="xs">
 				<TextInput
-					label="Skin Colour"
+					label="Skin Tone"
 					placeholder="e.g. pale, dark brown, olive"
 					value={appearance.skinColour ?? ""}
 					onChange={(e) =>

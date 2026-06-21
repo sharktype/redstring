@@ -1,13 +1,25 @@
-import { Flex, Stack } from "@mantine/core";
+import { Flex, Stack, Title } from "@mantine/core";
 import type { ComponentType } from "react";
 import useGameContext from "../../../../context/hooks/useGameContext";
-import { PAGE_STEPS, type Step } from "../../../../models/Chargen";
+import {
+	type ChargenPage,
+	PAGE_STEPS,
+	type Step,
+} from "../../../../models/Chargen";
 import type { StoredPlayerState } from "../../../../models/PlayerState";
 import AppearanceStep from "./AppearanceStep";
 import ExtraStatsStep from "./ExtraStatsStep";
 import NameStep from "./NameStep";
 import TimeStep from "./TimeStep";
 import WealthStep from "./WealthStep";
+
+const PAGE_LABELS: Record<ChargenPage, string> = {
+	identity: "Identity",
+	background: "Background",
+	stats: "Stats",
+	inventory: "Inventory",
+	scenario: "Scenario",
+};
 
 export interface ChargenStepProps {
 	playerState: StoredPlayerState;
@@ -36,8 +48,9 @@ export default function Chargen() {
 	const steps = PAGE_STEPS[chargenPage];
 
 	return (
-		<Flex flex={1} h="100%" align="center" justify="center" p="md">
-			<Stack gap="lg" w="100%" maw={800}>
+		<Flex flex={1} h="100%" justify="center" p="md">
+			<Stack gap="lg" w="100%" mt="xl" maw={800}>
+				<Title order={2}>{PAGE_LABELS[chargenPage]}</Title>
 				{steps.map((step) => {
 					const Component = STEP_TO_COMPONENT[step];
 					return (

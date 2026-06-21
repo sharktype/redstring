@@ -7,7 +7,6 @@ import {
 	Select,
 	Stack,
 	Switch,
-	Text,
 	Textarea,
 	TextInput,
 	Title,
@@ -108,7 +107,7 @@ export default function AppearanceStep(_props: ChargenStepProps) {
 								}
 							/>
 							<Select
-								label="Gender Expression"
+								label="Expression"
 								placeholder="Select"
 								clearable
 								data={[
@@ -142,10 +141,6 @@ export default function AppearanceStep(_props: ChargenStepProps) {
 
 						{isNsfw && (
 							<>
-								<Text size="xs" c="dimmed">
-									NSFW options are visible below.
-								</Text>
-
 								<Select
 									label="Genitals"
 									placeholder="Select"
