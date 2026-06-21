@@ -1,10 +1,20 @@
-import { Box, Button, Group, Modal, Stack, Text, Title } from "@mantine/core";
+import {
+	Box,
+	Button,
+	Group,
+	Modal,
+	Stack,
+	Switch,
+	Text,
+	Title,
+} from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
 import type { ReactNode } from "react";
 import { FaMap } from "react-icons/fa";
 import { FiKey } from "react-icons/fi";
 import { GiWorld } from "react-icons/gi";
 import { useNavigate } from "react-router";
+import useGameContext from "../../context/hooks/useGameContext.tsx";
 import { useMessages } from "../../db/hooks/useMessages.ts";
 import { usePlayerState } from "../../db/hooks/usePlayerState.ts";
 
@@ -17,6 +27,9 @@ export default function Options() {
 	] = useDisclosure(false);
 	const { clearMessages } = useMessages();
 	const { clearPlayerState } = usePlayerState();
+	const { gameState, updateGameState } = useGameContext();
+
+	const isNsfw = gameState?.isNsfw ?? false;
 
 	const handleResetMessages = async () => {
 		await clearMessages();
@@ -34,6 +47,21 @@ export default function Options() {
 				Options
 			</Title>
 			<Stack gap="xl">
+				<Box>
+					<Group align="center" gap="xs" mb="md">
+						<Switch
+							label="NSFW Mode"
+							checked={isNsfw}
+							onChange={(e) =>
+								updateGameState({
+									isNsfw: e.currentTarget.checked,
+								})
+							}
+							color="red"
+							ml="xs"
+						/>
+					</Group>
+				</Box>
 				<Box>
 					<Title order={4} mb="md">
 						LLM(s)

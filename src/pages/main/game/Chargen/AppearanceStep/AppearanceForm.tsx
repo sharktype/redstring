@@ -3,9 +3,15 @@ import type PlayerState from "../../../../../models/PlayerState";
 import BodyFields from "./BodyFields";
 import DetailFields from "./DetailFields";
 import FeminineFields from "./FeminineFields";
+import type { LockProps } from "./locks";
 import MasculineFields from "./MasculineFields";
 
-export default function AppearanceForm() {
+interface AppearanceFormProps extends LockProps {}
+
+export default function AppearanceForm({
+	locks,
+	toggleLock,
+}: AppearanceFormProps) {
 	const { playerState, updatePlayerState } = useGameContext();
 
 	const genderExpression = playerState?.genderExpression;
@@ -28,20 +34,37 @@ export default function AppearanceForm() {
 
 	return (
 		<>
-			<BodyFields appearance={appearance} setAppearance={setAppearance} />
+			<BodyFields
+				appearance={appearance}
+				setAppearance={setAppearance}
+				locks={locks}
+				toggleLock={toggleLock}
+			/>
 
 			{isMasculine && (
 				<MasculineFields
 					appearance={appearance}
 					setAppearance={setAppearance}
+					locks={locks}
+					toggleLock={toggleLock}
 				/>
 			)}
 
 			{isFeminine && (
-				<FeminineFields appearance={appearance} setAppearance={setAppearance} />
+				<FeminineFields
+					appearance={appearance}
+					setAppearance={setAppearance}
+					locks={locks}
+					toggleLock={toggleLock}
+				/>
 			)}
 
-			<DetailFields appearance={appearance} setAppearance={setAppearance} />
+			<DetailFields
+				appearance={appearance}
+				setAppearance={setAppearance}
+				locks={locks}
+				toggleLock={toggleLock}
+			/>
 		</>
 	);
 }

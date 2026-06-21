@@ -1,7 +1,9 @@
 import { Group, TextInput } from "@mantine/core";
+import LockIcon from "../../../../../components/LockIcon";
 import type PlayerState from "../../../../../models/PlayerState";
+import type { LockProps } from "./locks";
 
-interface DetailFieldsProps {
+interface DetailFieldsProps extends LockProps {
 	appearance: NonNullable<PlayerState["appearance"]>;
 	setAppearance: (
 		updates: Partial<NonNullable<PlayerState["appearance"]>>,
@@ -11,53 +13,87 @@ interface DetailFieldsProps {
 export default function DetailFields({
 	appearance,
 	setAppearance,
+	locks,
+	toggleLock,
 }: DetailFieldsProps) {
 	return (
 		<>
 			<Group grow align="start" gap="xs">
-				<TextInput
-					label="Skin Tone"
-					placeholder="e.g. pale, dark brown, olive"
-					value={appearance.skinColour ?? ""}
-					onChange={(event) =>
-						setAppearance({
-							skinColour: event.currentTarget.value,
-						})
-					}
-				/>
-				<TextInput
-					label="Complexion"
-					placeholder="e.g. clear, freckled, scarred"
-					value={appearance.complexion ?? ""}
-					onChange={(event) =>
-						setAppearance({
-							complexion: event.currentTarget.value,
-						})
-					}
-				/>
+				<Group gap={4} wrap="nowrap">
+					<TextInput
+						label="Skin Tone"
+						placeholder="e.g. pale, dark brown, olive"
+						value={appearance.skinColour ?? ""}
+						onChange={(e) =>
+							setAppearance({
+								skinColour: e.currentTarget.value,
+							})
+						}
+						disabled={locks.skinColour}
+						style={{ flex: 1 }}
+					/>
+					<LockIcon
+						isLocked={locks.skinColour}
+						toggle={() => toggleLock("skinColour")}
+					/>
+				</Group>
+				<Group gap={4} wrap="nowrap">
+					<TextInput
+						label="Complexion"
+						placeholder="e.g. clear, freckled, scarred"
+						value={appearance.complexion ?? ""}
+						onChange={(e) =>
+							setAppearance({
+								complexion: e.currentTarget.value,
+							})
+						}
+						disabled={locks.complexion}
+						style={{ flex: 1 }}
+					/>
+					<LockIcon
+						isLocked={locks.complexion}
+						toggle={() => toggleLock("complexion")}
+					/>
+				</Group>
 			</Group>
 
 			<Group grow align="start" gap="xs">
-				<TextInput
-					label="Hair Style"
-					placeholder="e.g. long, braided, bald"
-					value={appearance.hairStyle ?? ""}
-					onChange={(event) =>
-						setAppearance({
-							hairStyle: event.currentTarget.value,
-						})
-					}
-				/>
-				<TextInput
-					label="Hair Colour"
-					placeholder="e.g. black, auburn, silver"
-					value={appearance.hairColour ?? ""}
-					onChange={(event) =>
-						setAppearance({
-							hairColour: event.currentTarget.value,
-						})
-					}
-				/>
+				<Group gap={4} wrap="nowrap">
+					<TextInput
+						label="Hair Style"
+						placeholder="e.g. long, braided, bald"
+						value={appearance.hairStyle ?? ""}
+						onChange={(e) =>
+							setAppearance({
+								hairStyle: e.currentTarget.value,
+							})
+						}
+						disabled={locks.hairStyle}
+						style={{ flex: 1 }}
+					/>
+					<LockIcon
+						isLocked={locks.hairStyle}
+						toggle={() => toggleLock("hairStyle")}
+					/>
+				</Group>
+				<Group gap={4} wrap="nowrap">
+					<TextInput
+						label="Hair Colour"
+						placeholder="e.g. black, auburn, silver"
+						value={appearance.hairColour ?? ""}
+						onChange={(event) =>
+							setAppearance({
+								hairColour: event.currentTarget.value,
+							})
+						}
+						disabled={locks.hairColour}
+						style={{ flex: 1 }}
+					/>
+					<LockIcon
+						isLocked={locks.hairColour}
+						toggle={() => toggleLock("hairColour")}
+					/>
+				</Group>
 			</Group>
 		</>
 	);

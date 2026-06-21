@@ -6,6 +6,7 @@ export default interface GameState {
 	// Options:
 
 	detailer: "inventory" | "profile" | "journal";
+	isNsfw: boolean;
 }
 
 export type StoredGameState = GameState & {

@@ -11,7 +11,8 @@ import {
 	Title,
 } from "@mantine/core";
 import { useState } from "react";
-import { FaDice, FaEraser, FaLock, FaLockOpen, FaMagic } from "react-icons/fa";
+import { FaDice, FaEraser, FaMagic } from "react-icons/fa";
+import LockIcon from "../../../../components/LockIcon";
 import { type Culture, generateRandomName } from "../../../../handlers/names";
 import { generatePartialFantasyName } from "../../../../handlers/names/fantasify";
 import { IRL_CULTURES } from "../../../../handlers/names/irl";
@@ -95,21 +96,6 @@ export default function NameStep({ playerState, onChange }: ChargenStepProps) {
 
 		onChange({ name: undefined, gender: undefined });
 	};
-
-	const lockIcon = (isLocked: boolean, toggleLock: () => void) => (
-		<ActionIcon
-			variant="subtle"
-			color={isLocked ? "red" : "gray"}
-			title={isLocked ? "Unlock" : "Lock"}
-			mt="lg"
-			onClick={(e) => {
-				e.preventDefault();
-				toggleLock();
-			}}
-		>
-			{isLocked ? <FaLock /> : <FaLockOpen />}
-		</ActionIcon>
-	);
 
 	return (
 		<>
@@ -222,12 +208,15 @@ export default function NameStep({ playerState, onChange }: ChargenStepProps) {
 								style={{ flex: 1, minWidth: 0 }}
 								disabled={isGivenNameLocked}
 							/>
-							{lockIcon(isGivenNameLocked, () => {
-								const next = !isGivenNameLocked;
+							<LockIcon
+								isLocked={isGivenNameLocked}
+								toggle={() => {
+									const next = !isGivenNameLocked;
 
-								setIsGivenNameLocked(next);
-								setIsGenderLocked(next);
-							})}
+									setIsGivenNameLocked(next);
+									setIsGenderLocked(next);
+								}}
+							/>
 						</Group>
 						<Group gap={4} wrap="nowrap">
 							<TextInput
@@ -245,7 +234,10 @@ export default function NameStep({ playerState, onChange }: ChargenStepProps) {
 								style={{ flex: 1 }}
 								disabled={isSurnameLocked}
 							/>
-							{lockIcon(isSurnameLocked, () => setIsSurnameLocked((v) => !v))}
+							<LockIcon
+								isLocked={isSurnameLocked}
+								toggle={() => setIsSurnameLocked((v) => !v)}
+							/>
 						</Group>
 						<Group gap={4} wrap="nowrap">
 							<Select
@@ -253,9 +245,9 @@ export default function NameStep({ playerState, onChange }: ChargenStepProps) {
 								placeholder="Gender"
 								data={genderOptions}
 								value={playerState.gender?.identity ?? null}
-								onChange={(val) => {
+								onChange={(value) => {
 									const gender = DEFAULT_GENDER_IDENTITIES.find(
-										(gender) => gender.identity === val,
+										(gender) => gender.identity === value,
 									);
 
 									if (gender) {
@@ -264,9 +256,10 @@ export default function NameStep({ playerState, onChange }: ChargenStepProps) {
 								}}
 								disabled={isGivenNameLocked || isGenderLocked}
 							/>
-							{lockIcon(isGenderLocked, () =>
-								setIsGenderLocked((value) => !value),
-							)}
+							<LockIcon
+								isLocked={isGenderLocked}
+								toggle={() => setIsGenderLocked((v) => !v)}
+							/>
 						</Group>
 					</Flex>
 				</Stack>

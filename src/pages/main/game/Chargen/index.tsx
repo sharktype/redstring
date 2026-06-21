@@ -49,7 +49,7 @@ export default function Chargen() {
 
 	return (
 		<Flex flex={1} h="100%" justify="center" p="md">
-			<Stack gap="lg" w="100%" mt="xl" maw={800}>
+			<Stack gap="lg" w="100%" mt="xl" maw={980}>
 				<Title order={2}>{PAGE_LABELS[chargenPage]}</Title>
 				{steps.map((step) => {
 					const Component = STEP_TO_COMPONENT[step];

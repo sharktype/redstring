@@ -3,29 +3,38 @@ import {
 	Box,
 	Flex,
 	Group,
-	NumberInput,
-	Select,
 	Stack,
-	Switch,
 	Textarea,
-	TextInput,
 	Title,
 } from "@mantine/core";
 import { useState } from "react";
 import { FaDice, FaEraser } from "react-icons/fa";
+import LockIcon from "../../../../../components/LockIcon";
 import useGameContext from "../../../../../context/hooks/useGameContext";
+import type PlayerState from "../../../../../models/PlayerState";
 import type { GenderExpression } from "../../../../../models/PlayerState";
 import type { ChargenStepProps } from "..";
 import AppearanceForm from "./AppearanceForm";
+import type { LockKey, Locks } from "./locks";
+import { ALL_LOCK_KEYS, defaultLocks } from "./locks";
+import NsfwFields from "./NsfwFields";
 import PortraitUploader from "./PortraitUploader";
 import { randomiseAppearance } from "./randomize";
+import TopRowFields from "./TopRowFields";
 
 export default function AppearanceStep(_props: ChargenStepProps) {
-	const { playerState, updatePlayerState } = useGameContext();
-	const [isNsfw, setIsNsfw] = useState(false);
+	const { playerState, updatePlayerState, gameState } = useGameContext();
+	const isNsfw = gameState?.isNsfw ?? false;
+	const [locks, setLocks] = useState<Locks>(defaultLocks);
 
 	const appearance = playerState?.appearance ?? {};
-	const genderExpr = playerState?.genderExpression;
+	const genderExpression = playerState?.genderExpression;
+
+	const toggleLock = (key: LockKey) => {
+		setLocks((prev) => ({ ...prev, [key]: !prev[key] }));
+	};
+
+	const isAllLocked = ALL_LOCK_KEYS.every((key) => locks[key]);
 
 	const setAppearance = (updates: Partial<NonNullable<typeof appearance>>) => {
 		updatePlayerState({
@@ -36,20 +45,76 @@ export default function AppearanceStep(_props: ChargenStepProps) {
 	const handleGenderExpressionChange = (expression: string | null) => {
 		const next = (expression as GenderExpression) ?? undefined;
 
-		updatePlayerState({ genderExpression: next });
-
-		if (next !== "masculine" && next !== "androgynous") {
-			setAppearance({ shoulders: undefined, facialHair: undefined });
+		if (!locks.genderExpression) {
+			updatePlayerState({ genderExpression: next });
 		}
 
-		if (next !== "feminine" && next !== "androgynous") {
-			setAppearance({ bust: undefined, hips: undefined });
+		const clear: Partial<NonNullable<typeof appearance>> = {};
+
+		if (!locks.shoulders && next !== "masculine" && next !== "androgynous") {
+			clear.shoulders = undefined;
+			clear.facialHair = undefined;
+		}
+
+		if (!locks.bust && next !== "feminine" && next !== "androgynous") {
+			clear.bust = undefined;
+			clear.hips = undefined;
+		}
+
+		if (Object.keys(clear).length > 0) {
+			setAppearance(clear);
 		}
 	};
 
-	const hasPenis =
-		appearance.genitals === "penisCircumcised" ||
-		appearance.genitals === "penisUncircumcised";
+	const randomize = () => {
+		const expressionForRandomization = locks.genderExpression
+			? genderExpression
+			: undefined;
+
+		const { appearance: generated, genderExpression: generatedExpression } =
+			randomiseAppearance(
+				expressionForRandomization,
+				appearance.species,
+				isNsfw,
+			);
+
+		const updates: {
+			appearance?: Partial<NonNullable<PlayerState["appearance"]>>;
+			genderExpression?: GenderExpression;
+		} = {};
+
+		const merged = mergeIntoLocked(
+			appearance as NonNullable<PlayerState["appearance"]>,
+			generated,
+			locks,
+		);
+
+		if (Object.keys(merged).length > 0) {
+			updates.appearance = merged;
+		}
+
+		if (!locks.genderExpression && generatedExpression) {
+			updates.genderExpression = generatedExpression;
+		}
+
+		updatePlayerState(updates);
+	};
+
+	const clear = () => {
+		setLocks(defaultLocks());
+		updatePlayerState({
+			appearance: undefined,
+			genderExpression: undefined,
+		});
+	};
+
+	const handleAgeChange = (age: number | undefined) => {
+		setAppearance({ age });
+	};
+
+	const handleSpeciesChange = (species: string) => {
+		setAppearance({ species });
+	};
 
 	return (
 		<Box
@@ -67,12 +132,8 @@ export default function AppearanceStep(_props: ChargenStepProps) {
 							variant="subtle"
 							color="gray"
 							title="Clear"
-							onClick={() => {
-								updatePlayerState({
-									appearance: undefined,
-									genderExpression: undefined,
-								});
-							}}
+							onClick={clear}
+							disabled={isAllLocked}
 						>
 							<FaEraser size={16} />
 						</ActionIcon>
@@ -80,11 +141,8 @@ export default function AppearanceStep(_props: ChargenStepProps) {
 							variant="subtle"
 							color="gray"
 							title="Randomise"
-							onClick={() => {
-								updatePlayerState(
-									randomiseAppearance(genderExpr, appearance.species, isNsfw),
-								);
-							}}
+							onClick={randomize}
+							disabled={isAllLocked}
 						>
 							<FaDice size={16} />
 						</ActionIcon>
@@ -104,167 +162,51 @@ export default function AppearanceStep(_props: ChargenStepProps) {
 					</Stack>
 
 					<Stack gap="xs" style={{ flex: 2.5, minWidth: 300 }}>
-						<Group grow align="start" gap="xs">
-							<NumberInput
-								label="Age"
-								placeholder="Age"
-								min={18}
-								value={appearance.age ?? ""}
-								onChange={(val) =>
-									setAppearance({
-										age: typeof val === "number" ? val : undefined,
-									})
-								}
-							/>
-							<TextInput
-								label="Species"
-								placeholder="Human"
-								value={appearance.species ?? ""}
-								onChange={(e) =>
-									setAppearance({
-										species: e.currentTarget.value,
-									})
-								}
-							/>
-							<Select
-								label="Expression"
-								placeholder="Select"
-								clearable
-								data={[
-									{
-										value: "feminine",
-										label: "Feminine",
-									},
-									{
-										value: "masculine",
-										label: "Masculine",
-									},
-									{
-										value: "androgynous",
-										label: "Androgynous",
-									},
-								]}
-								value={genderExpr ?? null}
-								onChange={handleGenderExpressionChange}
-							/>
-						</Group>
-
-						<AppearanceForm />
-
-						<Switch
-							label="NSFW Mode"
-							checked={isNsfw}
-							onChange={(event) => {
-								const next = event.currentTarget.checked;
-
-								setIsNsfw(next);
-
-								if (!next) {
-									setAppearance({
-										genitals: undefined,
-										cockSize: undefined,
-									});
-								}
-							}}
-							size="sm"
-							mt="xs"
+						<TopRowFields
+							age={appearance.age}
+							species={appearance.species}
+							genderExpression={genderExpression}
+							onAgeChange={handleAgeChange}
+							onSpeciesChange={handleSpeciesChange}
+							onGenderExpressionChange={handleGenderExpressionChange}
+							locks={locks}
+							toggleLock={toggleLock}
 						/>
+
+						<AppearanceForm locks={locks} toggleLock={toggleLock} />
 
 						{isNsfw && (
-							<>
-								<Select
-									label="Genitals"
-									placeholder="Select"
-									clearable
-									data={[
-										{
-											value: "vulva",
-											label: "Vulva",
-										},
-										{
-											value: "penisCircumcised",
-											label: "Penis (circumcised)",
-										},
-										{
-											value: "penisUncircumcised",
-											label: "Penis (uncircumcised)",
-										},
-										{
-											value: "none",
-											label: "None",
-										},
-									]}
-									value={appearance.genitals ?? null}
-									onChange={(value) => {
-										const next = value as NonNullable<
-											typeof appearance
-										>["genitals"];
-										const reset: Partial<NonNullable<typeof appearance>> = {
-											genitals: next,
-										};
-										if (
-											next !== "penisCircumcised" &&
-											next !== "penisUncircumcised"
-										) {
-											reset.cockSize = undefined;
-										}
-										setAppearance(reset);
-									}}
-								/>
-
-								{hasPenis && (
-									<Select
-										label="Cock Size"
-										placeholder="Select"
-										clearable
-										data={[
-											{
-												value: "verySmall",
-												label: "Very Small",
-											},
-											{
-												value: "small",
-												label: "Small",
-											},
-											{
-												value: "average",
-												label: "Average",
-											},
-											{
-												value: "large",
-												label: "Large",
-											},
-											{
-												value: "veryLarge",
-												label: "Very Large",
-											},
-										]}
-										value={appearance.cockSize ?? null}
-										onChange={(value) =>
-											setAppearance({
-												cockSize: value as NonNullable<
-													typeof appearance
-												>["cockSize"],
-											})
-										}
-									/>
-								)}
-							</>
+							<NsfwFields
+								appearance={
+									appearance as NonNullable<PlayerState["appearance"]>
+								}
+								setAppearance={setAppearance}
+								locks={locks}
+								toggleLock={toggleLock}
+							/>
 						)}
 
-						<Textarea
-							label="Clothing Style"
-							description="The default style in which your character dresses."
-							placeholder="e.g. white fine blouse and thin leather cloak"
-							minRows={2}
-							autosize
-							value={appearance.clothingStyle ?? ""}
-							onChange={(e) =>
-								setAppearance({
-									clothingStyle: e.currentTarget.value,
-								})
-							}
-						/>
+						<Group gap={4} wrap="nowrap">
+							<Textarea
+								label="Clothing Style"
+								description="The default style in which your character dresses."
+								placeholder="e.g. white fine blouse and thin leather cloak"
+								minRows={2}
+								autosize
+								value={appearance.clothingStyle ?? ""}
+								onChange={(e) =>
+									setAppearance({
+										clothingStyle: e.currentTarget.value,
+									})
+								}
+								disabled={locks.clothingStyle}
+								style={{ flex: 1 }}
+							/>
+							<LockIcon
+								isLocked={locks.clothingStyle}
+								toggle={() => toggleLock("clothingStyle")}
+							/>
+						</Group>
 
 						<Textarea
 							label="Custom"
@@ -284,4 +226,41 @@ export default function AppearanceStep(_props: ChargenStepProps) {
 			</Stack>
 		</Box>
 	);
+}
+
+function mergeIntoLocked(
+	current: NonNullable<PlayerState["appearance"]>,
+	generated: Partial<NonNullable<PlayerState["appearance"]>>,
+	locks: Locks,
+): Partial<NonNullable<PlayerState["appearance"]>> {
+	const merged: Partial<NonNullable<PlayerState["appearance"]>> = {};
+
+	const copyIfUnlocked = <
+		K extends keyof NonNullable<PlayerState["appearance"]>,
+	>(
+		key: K,
+	) => {
+		if (!locks[key as LockKey]) {
+			merged[key] = (generated[key] ?? current[key]) as never;
+		}
+	};
+
+	copyIfUnlocked("age");
+	copyIfUnlocked("species");
+	copyIfUnlocked("size");
+	copyIfUnlocked("build");
+	copyIfUnlocked("height");
+	copyIfUnlocked("shoulders");
+	copyIfUnlocked("facialHair");
+	copyIfUnlocked("bust");
+	copyIfUnlocked("hips");
+	copyIfUnlocked("skinColour");
+	copyIfUnlocked("complexion");
+	copyIfUnlocked("hairStyle");
+	copyIfUnlocked("hairColour");
+	copyIfUnlocked("genitals");
+	copyIfUnlocked("cockSize");
+	copyIfUnlocked("clothingStyle");
+
+	return merged;
 }
