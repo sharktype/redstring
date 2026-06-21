@@ -1,14 +1,91 @@
-import { Alert, Anchor, Container, Stack, Text, Title } from "@mantine/core";
+import {
+	Alert,
+	Anchor,
+	Button,
+	Container,
+	Stack,
+	Text,
+	Title,
+} from "@mantine/core";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { CgInfo } from "react-icons/cg";
+import { MdSaveAlt } from "react-icons/md";
 import { useNavigate } from "react-router";
 import { useAgentConfig } from "../../../../db/hooks/useAgentConfigs";
-import AgentInput from "./AgentInput";
+import AgentInput, { type AgentInputHandle } from "./AgentInput";
 
 export default function Agents() {
 	const navigate = useNavigate();
 
 	const storyteller = useAgentConfig("storyteller");
-	const summarizer = useAgentConfig("summarizer");
+	const planner = useAgentConfig("planner");
+	const dialogue = useAgentConfig("dialogue");
+
+	const storytellerRef = useRef<AgentInputHandle>(null);
+	const plannerRef = useRef<AgentInputHandle>(null);
+	const dialogueRef = useRef<AgentInputHandle>(null);
+
+	const [dirtyAgents, setDirtyAgents] = useState<Set<string>>(new Set());
+	const [isSavingAll, setIsSavingAll] = useState(false);
+
+	const setAgentDirty = useCallback((agentType: string, dirty: boolean) => {
+		setDirtyAgents((prev) => {
+			const alreadyDirty = prev.has(agentType);
+
+			if (dirty === alreadyDirty) {
+				return prev;
+			}
+
+			const next = new Set(prev);
+
+			if (dirty) {
+				next.add(agentType);
+			} else {
+				next.delete(agentType);
+			}
+
+			return next;
+		});
+	}, []);
+
+	const handleStorytellerDirty = useCallback(
+		(dirty: boolean) => setAgentDirty("storyteller", dirty),
+		[setAgentDirty],
+	);
+	const handlePlannerDirty = useCallback(
+		(dirty: boolean) => setAgentDirty("planner", dirty),
+		[setAgentDirty],
+	);
+	const handleDialogueDirty = useCallback(
+		(dirty: boolean) => setAgentDirty("dialogue", dirty),
+		[setAgentDirty],
+	);
+
+	useEffect(() => {
+		const msg = "You have unsaved changes!";
+		const handler = (e: BeforeUnloadEvent) => {
+			e.preventDefault();
+			e.returnValue = msg;
+
+			return msg;
+		};
+		if (dirtyAgents.size > 0) {
+			window.addEventListener("beforeunload", handler);
+
+			return () => window.removeEventListener("beforeunload", handler);
+		}
+	}, [dirtyAgents]);
+
+	const handleSaveAll = useCallback(async () => {
+		setIsSavingAll(true);
+
+		const refs = [storytellerRef, plannerRef, dialogueRef];
+		await Promise.all(refs.map((ref) => ref.current?.save()));
+
+		setIsSavingAll(false);
+	}, []);
+
+	const isAnyDirty = dirtyAgents.size > 0;
 
 	const providersLink = (
 		<Anchor onClick={() => navigate("/options/providers")}>Providers</Anchor>
@@ -29,9 +106,20 @@ export default function Agents() {
 					</Text>
 				</Stack>
 			</Alert>
+			{isAnyDirty && (
+				<Alert
+					color="yellow"
+					title="You have unsaved changes!"
+					icon={<CgInfo />}
+					mb="lg"
+					variant="filled"
+				/>
+			)}
 			<Stack gap="xl">
 				<AgentInput
+					ref={storytellerRef}
 					agentConfig={storyteller}
+					onDirtyChange={handleStorytellerDirty}
 					description={
 						<>
 							<Text>
@@ -40,37 +128,61 @@ export default function Agents() {
 							</Text>
 							<Text>
 								It is strongly recommended to use as powerful of an LLM as
-								budget allows for this agent.
+								budget allows for this agent. Reasoning is recommended for
+								prompts with a lot of rules or complexity.
 							</Text>
 						</>
 					}
 				/>
 				<AgentInput
-					agentConfig={summarizer}
+					ref={plannerRef}
+					agentConfig={planner}
+					onDirtyChange={handlePlannerDirty}
 					description={
 						<>
-							<Text>This agent summarises M messages every N messages.</Text>
 							<Text>
-								You should set N &gt;= M; anything else is done at your own
-								risk. A setting of <code>M=24</code> and <code>N=48</code> is a
-								solid default.
+								This agent plans the story direction before the storyteller
+								writes narrative. Its plans are persistent. It also creates the
+								context window for dialogue mode to be given to the Dialogue
+								agent.
 							</Text>
 							<Text>
-								The quality of summaries greatly affects the storytelling LLM's
-								ability to maintain context over long stories.
-							</Text>
-							<Text>
-								It is recommended to use as capable of an LLM as budget allows
-								for this agent.
+								A moderate/cheap agent works well for this role. Reasoning is
+								strongly recommended.
 							</Text>
 						</>
 					}
-					numericalFields={{
-						N: 48,
-						M: 24,
-					}}
+				/>
+				<AgentInput
+					ref={dialogueRef}
+					agentConfig={dialogue}
+					onDirtyChange={handleDialogueDirty}
+					description={
+						<>
+							<Text>
+								This agent writes character dialogue and conversations with far
+								less context than the other agents.
+							</Text>
+							<Text>
+								Regardless of cheap or expensive, a <i>fast</i> agent works best
+								for this role. Reasoning is not recommended.
+							</Text>
+						</>
+					}
 				/>
 			</Stack>
+			<Button
+				mt="xl"
+				fullWidth
+				color="yellow"
+				leftSection={<MdSaveAlt />}
+				onClick={handleSaveAll}
+				loading={isSavingAll}
+				disabled={!isAnyDirty}
+				size="md"
+			>
+				Save All
+			</Button>
 		</Container>
 	);
 }

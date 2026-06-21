@@ -14,14 +14,10 @@ export default class Agent implements AgentConfig {
 	providerConfigId?: number;
 	provider?: ProviderConfig;
 	prompt: string;
-	parameters: {
-		numerical: Record<string, { value: number; default: number }>;
-	};
 
 	constructor(config: StoredAgentConfig, provider?: ProviderConfig) {
 		this.type = config.type;
 		this.prompt = config.prompt;
-		this.parameters = config.parameters;
 
 		if (config.id !== undefined) {
 			this.id = config.id;

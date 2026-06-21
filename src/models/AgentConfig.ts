@@ -14,9 +14,6 @@ export default interface AgentConfig {
 	id?: number;
 	providerConfigId?: number;
 	prompt: string;
-	parameters: {
-		numerical: Record<string, { value: number; default: number }>;
-	};
 
 	submit(
 		messages: Message[],
@@ -28,10 +25,16 @@ export default interface AgentConfig {
 
 export type StoredAgentConfig = Omit<AgentConfig, "call" | "test" | "submit">;
 
-export const AVAILABLE_AGENT_TYPES = ["storyteller", "summarizer"] as const;
+export const AVAILABLE_AGENT_TYPES = [
+	"storyteller",
+	"planner",
+	"dialogue",
+] as const;
 
 // TODO: These are placeholders for now. They should read from files.
 
 export const DEFAULT_STORYTELLER_PROMPT = "You are a creative storyteller.";
 
-export const DEFAULT_SUMMARIZER_PROMPT = "You are a summarization agent.";
+export const DEFAULT_PLANNER_PROMPT = "You are a planning agent.";
+
+export const DEFAULT_DIALOGUE_PROMPT = "You are a dialogue writing agent.";

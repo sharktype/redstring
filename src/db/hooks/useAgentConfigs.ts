@@ -3,14 +3,16 @@ import { useEffect } from "react";
 import type { StoredAgentConfig } from "../../models/AgentConfig.ts";
 import {
 	AVAILABLE_AGENT_TYPES,
+	DEFAULT_DIALOGUE_PROMPT,
+	DEFAULT_PLANNER_PROMPT,
 	DEFAULT_STORYTELLER_PROMPT,
-	DEFAULT_SUMMARIZER_PROMPT,
 } from "../../models/AgentConfig.ts";
 import { db } from "../database.ts";
 
 const DEFAULT_PROMPTS: Record<string, string> = {
 	storyteller: DEFAULT_STORYTELLER_PROMPT,
-	summarizer: DEFAULT_SUMMARIZER_PROMPT,
+	planner: DEFAULT_PLANNER_PROMPT,
+	dialogue: DEFAULT_DIALOGUE_PROMPT,
 };
 
 export function useAgentConfigs() {
@@ -56,7 +58,6 @@ export function useAgentConfig(type: (typeof AVAILABLE_AGENT_TYPES)[number]) {
 				await db.agentConfigs.add({
 					type,
 					prompt: DEFAULT_PROMPTS[type] ?? "",
-					parameters: { numerical: {} },
 				});
 			}
 		});

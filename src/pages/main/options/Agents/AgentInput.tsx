@@ -1,39 +1,47 @@
-import {
-	ActionIcon,
-	Alert,
-	Group,
-	NumberInput,
-	Select,
-	Stack,
-} from "@mantine/core";
+import { ActionIcon, Alert, Group, Select, Stack } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
-import { useEffect, useState } from "react";
+import {
+	memo,
+	type Ref,
+	useCallback,
+	useEffect,
+	useImperativeHandle,
+	useState,
+} from "react";
 import { AiFillWarning } from "react-icons/ai";
 import { BiEdit, BiPlay, BiSave } from "react-icons/bi";
 import useGameContext from "../../../../context/hooks/useGameContext.tsx";
 import { useAgentConfigs } from "../../../../db/hooks/useAgentConfigs.ts";
 import {
+	DEFAULT_DIALOGUE_PROMPT,
+	DEFAULT_PLANNER_PROMPT,
 	DEFAULT_STORYTELLER_PROMPT,
-	DEFAULT_SUMMARIZER_PROMPT,
 	type StoredAgentConfig,
 } from "../../../../models/AgentConfig.ts";
 import AgentEditModal from "./AgentEditModal.tsx";
 
 const DEFAULT_PROMPTS: Record<string, string> = {
 	storyteller: DEFAULT_STORYTELLER_PROMPT,
-	summarizer: DEFAULT_SUMMARIZER_PROMPT,
+	planner: DEFAULT_PLANNER_PROMPT,
+	dialogue: DEFAULT_DIALOGUE_PROMPT,
 };
+
+export interface AgentInputHandle {
+	save: () => Promise<void>;
+}
 
 interface AgentInputProps {
 	agentConfig?: StoredAgentConfig;
 	description: React.ReactNode;
-	numericalFields?: Record<string, number>;
+	onDirtyChange?: (dirty: boolean) => void;
+	ref?: Ref<AgentInputHandle>;
 }
 
-export default function AgentInput({
+function AgentInput({
 	agentConfig,
 	description,
-	numericalFields,
+	onDirtyChange,
+	ref,
 }: AgentInputProps) {
 	const [isSaving, setIsSaving] = useState(false);
 	const [isTesting, setIsTesting] = useState(false);
@@ -69,84 +77,41 @@ export default function AgentInput({
 		setSelectedProvider(savedProvider);
 	}, [savedProvider]);
 
-	// NUMERICAL PARAMETERS
-
-	const savedNumerical = agentConfig?.parameters?.numerical ?? {};
-	const [numericalParameters, setNumericalParameters] = useState<
-		Record<string, number>
-	>(() => {
-		if (!numericalFields) {
-			return {};
-		}
-
-		return Object.fromEntries(
-			Object.entries(numericalFields).map(([k, defaultVal]) => [
-				k,
-				savedNumerical[k]?.value ?? defaultVal,
-			]),
-		);
-	});
-
-	useEffect(() => {
-		if (numericalFields) {
-			const numerical = agentConfig?.parameters?.numerical ?? {};
-			setNumericalParameters(
-				Object.fromEntries(
-					Object.entries(numericalFields).map(([k, defaultVal]) => [
-						k,
-						numerical[k]?.value ?? defaultVal,
-					]),
-				),
-			);
-		}
-	}, [agentConfig?.parameters?.numerical, numericalFields]);
-
 	// DIRTY CHECK
 
 	const isProviderDirty = selectedProvider !== savedProvider;
-	const isNumericalDirty = Object.entries(numericalParameters).some(
-		([key, value]) =>
-			value !== (savedNumerical[key]?.value ?? numericalFields?.[key]),
-	);
 	const isPromptDirty = prompt !== savedPrompt;
-	const isDirty = isProviderDirty || isNumericalDirty || isPromptDirty;
+	const isDirty = isProviderDirty || isPromptDirty;
+
+	useEffect(() => {
+		onDirtyChange?.(isDirty);
+	}, [isDirty, onDirtyChange]);
 
 	// SAVE HANDLER
 
 	const { updateAgentConfig } = useAgentConfigs();
 
-	const handleSave = () => {
+	const handleSave = useCallback(async () => {
 		setIsSaving(true);
 
 		if (!agentConfig?.id) {
 			alert("Agent config not found. Please refresh the page and try again.");
 			setIsSaving(false);
 
-			return;
+			return Promise.resolve();
 		}
 
-		const updatedNumerical: Record<string, { value: number; default: number }> =
-			{};
-		Object.entries(numericalParameters).forEach(([key, value]) => {
-			updatedNumerical[key] = {
-				value,
-				default: numericalFields?.[key] ?? value,
-			};
-		});
-
-		updateAgentConfig(agentConfig.id, {
+		await updateAgentConfig(agentConfig.id, {
 			providerConfigId: selectedProvider
 				? parseInt(selectedProvider)
 				: undefined,
 			prompt,
-			parameters: {
-				...agentConfig.parameters,
-				numerical: updatedNumerical,
-			},
-		}).then(() => {
-			setIsSaving(false);
 		});
-	};
+
+		setIsSaving(false);
+	}, [agentConfig?.id, prompt, selectedProvider, updateAgentConfig]);
+
+	useImperativeHandle(ref, () => ({ save: handleSave }), [handleSave]);
 
 	const savedAgentConfig = agentConfigs.find(
 		(config) => config.id === agentConfig?.id,
@@ -163,7 +128,15 @@ export default function AgentInput({
 			</Alert>
 			<Group>
 				<Select
-					label={label + (isDirty ? "*" : "")}
+					label={
+						<span
+							style={
+								isDirty ? { color: "var(--mantine-color-red-6)" } : undefined
+							}
+						>
+							{label} {isDirty ? "*" : ""}
+						</span>
+					}
 					data={providerOptions}
 					value={selectedProvider}
 					onChange={setSelectedProvider}
@@ -177,24 +150,6 @@ export default function AgentInput({
 					clearable
 					searchable
 				/>
-				{numericalFields &&
-					Object.entries(numericalFields).map(([key, defaultValue]) => (
-						<NumberInput
-							key={key}
-							label={key}
-							value={numericalParameters[key] ?? defaultValue}
-							onChange={(val) => {
-								if (typeof val === "number") {
-									setNumericalParameters((previous) => ({
-										...previous,
-										[key]: val,
-									}));
-								}
-							}}
-							maw="64px"
-							disabled={isSaving || providerOptions.length === 0}
-						/>
-					))}
 				<Group gap={6} mt="lg" pt={2}>
 					<ActionIcon
 						variant="outline"
@@ -265,3 +220,5 @@ export default function AgentInput({
 		</Stack>
 	);
 }
+
+export default memo(AgentInput);
