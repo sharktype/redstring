@@ -3,16 +3,23 @@ import {
 	Button,
 	FileInput,
 	Image,
+	Modal,
 	Stack,
 	Tabs,
 	TabsList,
 	TabsPanel,
 	TabsTab,
 	Text,
+	Textarea,
 } from "@mantine/core";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import useGameContext from "../../../../../context/hooks/useGameContext";
-import type { PortraitType } from "../../../../../models/PlayerState";
+import type PlayerState from "../../../../../models/PlayerState";
+import type {
+	GenderExpression,
+	PortraitType,
+} from "../../../../../models/PlayerState";
+import { buildImageGenPrompt } from "./buildImageGenPrompt";
 
 interface PortraitUploaderProps {
 	isNsfwMode: boolean;
@@ -35,6 +42,7 @@ export default function PortraitUploader({
 		nude: null,
 		base: null,
 	});
+	const [promptModalOpen, setPromptModalOpen] = useState(false);
 
 	useEffect(() => {
 		if (!nsfw) {
@@ -183,9 +191,61 @@ export default function PortraitUploader({
 				justify="start"
 				size="sm"
 				color="grey"
+				onClick={() => setPromptModalOpen(true)}
 			>
 				Preview instructions
 			</Button>
+
+			<PromptModal
+				opened={promptModalOpen}
+				onClose={() => setPromptModalOpen(false)}
+				appearance={playerState?.appearance}
+				genderExpression={playerState?.genderExpression}
+			/>
 		</Stack>
+	);
+}
+
+interface PromptModalProps {
+	opened: boolean;
+	onClose: () => void;
+	appearance: PlayerState["appearance"];
+	genderExpression: GenderExpression | undefined;
+}
+
+function PromptModal({
+	opened,
+	onClose,
+	appearance,
+	genderExpression,
+}: PromptModalProps) {
+	const prompt = useMemo(() => {
+		const merged: NonNullable<PlayerState["appearance"]> = {
+			...appearance,
+		};
+		return buildImageGenPrompt(merged, genderExpression);
+	}, [appearance, genderExpression]);
+
+	return (
+		<Modal
+			opened={opened}
+			onClose={onClose}
+			title="Image Generation Prompt"
+			size="lg"
+		>
+			<Stack gap="xs">
+				<Text size="sm" c="dimmed">
+					This is the description that would be sent to the image generation
+					provider.
+				</Text>
+				<Textarea
+					value={prompt}
+					readOnly
+					minRows={2}
+					autosize
+					aria-label="Generated prompt"
+				/>
+			</Stack>
+		</Modal>
 	);
 }
