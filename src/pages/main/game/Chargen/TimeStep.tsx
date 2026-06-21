@@ -1,17 +1,12 @@
 import { ActionIcon, Box, Group, Stack, Title } from "@mantine/core";
 import { TimePicker } from "@mantine/dates";
 import { useState } from "react";
-import { FaClock, FaDice, FaEraser, FaLock, FaLockOpen } from "react-icons/fa";
+import { FaClock, FaDice, FaLock, FaLockOpen } from "react-icons/fa";
 import type { ChargenStepProps } from ".";
 
-export default function DateTimeStep({
-	playerState,
-	onChange,
-}: ChargenStepProps) {
+export default function TimeStep({ playerState, onChange }: ChargenStepProps) {
 	const [isDropdownOpened, setIsDropdownOpened] = useState(false);
 	const [isLocked, setIsLocked] = useState(false);
-
-	// This value allows for null time to exist.
 
 	const value =
 		playerState.time != null
@@ -27,10 +22,6 @@ export default function DateTimeStep({
 		});
 	};
 
-	const clear = () => {
-		onChange({ time: undefined });
-	};
-
 	return (
 		<Box
 			p="md"
@@ -39,17 +30,8 @@ export default function DateTimeStep({
 		>
 			<Stack gap="xs">
 				<Group justify="space-between">
-					<Title order={4}>Date &amp; Time</Title>
+					<Title order={4}>Time</Title>
 					<Group gap="xs">
-						<ActionIcon
-							onClick={clear}
-							disabled={isLocked}
-							variant="subtle"
-							color="gray"
-							title="Clear"
-						>
-							<FaEraser size={16} />
-						</ActionIcon>
 						<ActionIcon
 							onClick={randomize}
 							disabled={isLocked}
@@ -71,8 +53,8 @@ export default function DateTimeStep({
 				</Group>
 
 				<TimePicker
-					label="Time"
-					description="Leaving this empty turns off the time system."
+					label="Starting time"
+					description="Required — sets the in-game clock."
 					rightSection={
 						<ActionIcon
 							onClick={() => setIsDropdownOpened(true)}
@@ -102,6 +84,8 @@ export default function DateTimeStep({
 					format="12h"
 					withDropdown
 					disabled={isLocked}
+					withSeconds={false}
+					required
 				/>
 			</Stack>
 		</Box>
