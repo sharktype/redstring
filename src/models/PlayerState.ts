@@ -12,6 +12,46 @@ export default interface PlayerState {
 
 	gender?: GenderIdentity;
 
+	genderExpression?: GenderExpression;
+
+	/** Base64 data URLs for each portrait variant. */
+	portraits?: {
+		nude?: string;
+		comfort?: string;
+		travel?: string;
+		battle?: string;
+	};
+
+	appearance?: {
+		age?: number;
+		species?: string;
+		size?: "slight" | "average" | "large";
+		build?: "soft" | "average" | "toned" | "muscular";
+		height?:
+			| "veryShort"
+			| "short"
+			| "belowAverage"
+			| "average"
+			| "aboveAverage"
+			| "tall"
+			| "veryTall";
+		shoulders?: "narrow" | "average" | "broad";
+		bust?: "flat" | "small" | "medium" | "large" | "veryLarge";
+		hips?: "narrow" | "average" | "wide";
+		skinColour?: string;
+		complexion?: string;
+		hairStyle?: string;
+		hairColour?: string;
+		facialHair?: string;
+		clothingStyle?: string;
+		custom?: string;
+
+		// NSFW:
+
+		genitals?: "vulva" | "penisCircumcised" | "penisUncircumcised" | "none";
+		cockSize?: "verySmall" | "small" | "average" | "large" | "veryLarge";
+	};
+
 	stats?: {
 		/**
 		 * Free-form text describing any stats the user wants to track.
@@ -101,3 +141,10 @@ export const DEFAULT_GENDER_IDENTITIES: GenderIdentity[] = [
 		},
 	},
 ];
+
+/**
+ * The appearance of gender based on physical characteristics rather than identity.
+ */
+export type GenderExpression = "feminine" | "masculine" | "androgynous";
+
+export type PortraitType = keyof NonNullable<PlayerState["portraits"]>;
