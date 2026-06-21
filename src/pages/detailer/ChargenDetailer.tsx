@@ -11,6 +11,7 @@ import type { IconType } from "react-icons";
 import { BiBook } from "react-icons/bi";
 import { CgProfile } from "react-icons/cg";
 import { GiArmorVest, GiBodySwapping } from "react-icons/gi";
+import { MdQueryStats } from "react-icons/md";
 import useGameContext from "../../context/hooks/useGameContext";
 import {
 	CHARGEN_PAGES,
@@ -47,6 +48,12 @@ const PAGE_META: Record<ChargenPage, ChargenPageMeta> = {
 		description: "Hair, body & features",
 		icon: GiBodySwapping,
 		color: "pink",
+	},
+	stats: {
+		label: "Stats",
+		description: "Attributes & abilities",
+		icon: MdQueryStats,
+		color: "violet",
 	},
 	inventory: {
 		label: "Inventory",
