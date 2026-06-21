@@ -76,11 +76,11 @@ export function buildImageGenPrompt(
 		}
 	}
 
-	if (appearance.size && appearance.size !== "average") {
-		parts.push(`${appearance.size} body size`);
+	if (appearance.weight) {
+		parts.push(`${appearance.weight} body weight`);
 	}
 
-	if (appearance.build && appearance.build !== "average") {
+	if (appearance.build) {
 		parts.push(`${appearance.build} body build`);
 	}
 

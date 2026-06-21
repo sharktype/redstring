@@ -144,7 +144,7 @@ const DEFAULT_COCK_SIZES: Appearance["cockSize"][] = [
 	"veryLarge",
 ];
 
-const DEFAULT_SIZES: Appearance["size"][] = ["small", "average", "large"];
+const DEFAULT_SIZES: Appearance["weight"][] = ["skinny", "average", "heavy"];
 
 const DEFAULT_BUILDS: Appearance["build"][] = [
 	"soft",
@@ -202,7 +202,7 @@ export function randomiseAppearance(
 		age: ageForSpecies(existingSpecies ?? species),
 		species,
 		genderExpression: expression,
-		size: pick(DEFAULT_SIZES),
+		weight: pick(DEFAULT_SIZES),
 		build: pick(DEFAULT_BUILDS),
 		height: pick(DEFAULT_HEIGHTS),
 		skinColour: pick(DEFAULT_SKIN_TONES),

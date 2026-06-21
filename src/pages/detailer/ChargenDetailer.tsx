@@ -86,7 +86,7 @@ const STEP_META: Record<Step, StepMeta> = {
 				!genderExpression ||
 				!appearance?.age ||
 				!appearance?.species ||
-				!appearance?.size ||
+				!appearance?.weight ||
 				!appearance?.build ||
 				!appearance?.height
 			) {

@@ -44,7 +44,7 @@ export interface Appearance {
 	species?: string;
 	genderExpression?: GenderExpression;
 
-	size?: "small" | "average" | "large";
+	weight?: "skinny" | "average" | "heavy";
 	build?: "soft" | "average" | "toned" | "muscular";
 	height?:
 		| "veryShort"

@@ -25,22 +25,22 @@ export default function BodyFields({
 					placeholder="Select"
 					clearable
 					data={[
-						{ value: "small", label: "Small" },
+						{ value: "skinny", label: "Skinny" },
 						{ value: "average", label: "Average" },
-						{ value: "large", label: "Large" },
+						{ value: "heavy", label: "Heavy" },
 					]}
-					value={appearance?.size ?? null}
+					value={appearance?.weight ?? null}
 					onChange={(value) => {
 						if (value) {
 							setAppearance({
-								size: value,
+								weight: value,
 							});
 						}
 					}}
-					disabled={locks.size}
+					disabled={locks.weight}
 					style={{ flex: 1 }}
 				/>
-				<LockIcon isLocked={locks.size} toggle={() => toggleLock("size")} />
+				<LockIcon isLocked={locks.weight} toggle={() => toggleLock("weight")} />
 			</Group>
 			<Group gap={4} wrap="nowrap">
 				<Select

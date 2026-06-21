@@ -6,7 +6,7 @@ export const ALL_LOCK_KEYS: (keyof Appearance)[] = [
 	"age",
 	"species",
 	"genderExpression",
-	"size",
+	"weight",
 	"build",
 	"height",
 	"shoulders",
