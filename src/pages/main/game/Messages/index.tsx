@@ -1,6 +1,6 @@
 import { Box, Center, Container, Flex, Loader } from "@mantine/core";
 import { useCallback, useEffect, useLayoutEffect, useRef } from "react";
-import useLlmContext from "../../../../context/hooks/useLlmContext";
+import useLlmContext from "../../../../context/LlmContext/useLlmContext";
 import { useMessages } from "../../../../db/hooks/useMessages";
 import useSubmit from "../../../../handlers/hooks/useSubmit";
 import type Message from "../../../../models/Message";

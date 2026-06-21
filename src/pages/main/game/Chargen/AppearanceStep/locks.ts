@@ -1,31 +1,8 @@
-export type LockKey =
-	| "age"
-	| "species"
-	| "genderExpression"
-	| "size"
-	| "build"
-	| "height"
-	| "shoulders"
-	| "facialHair"
-	| "bust"
-	| "hips"
-	| "skinColour"
-	| "complexion"
-	| "hairStyle"
-	| "hairColour"
-	| "genitals"
-	| "cockSize"
-	| "clothingStyle"
-	| "generateExtra";
+import type { Appearance } from "../../../../../models/PlayerState";
 
-export type Locks = Record<LockKey, boolean>;
+export type Locks = Record<keyof Appearance, boolean>;
 
-export interface LockProps {
-	locks: Locks;
-	toggleLock: (key: LockKey) => void;
-}
-
-export const ALL_LOCK_KEYS: LockKey[] = [
+export const ALL_LOCK_KEYS: (keyof Appearance)[] = [
 	"age",
 	"species",
 	"genderExpression",
@@ -45,6 +22,11 @@ export const ALL_LOCK_KEYS: LockKey[] = [
 	"clothingStyle",
 	"generateExtra",
 ];
+
+export interface LockProps {
+	locks: Locks;
+	toggleLock: (key: keyof Appearance) => void;
+}
 
 export function defaultLocks(): Locks {
 	const locks = {} as Locks;

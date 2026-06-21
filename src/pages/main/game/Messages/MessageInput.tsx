@@ -1,8 +1,8 @@
 import { Box, Button, Textarea } from "@mantine/core";
 import { type RefObject, useEffect, useState } from "react";
 import { BiLock, BiSend } from "react-icons/bi";
-import useGameContext from "../../../../context/hooks/useGameContext";
-import useLlmContext from "../../../../context/hooks/useLlmContext";
+import useGameContext from "../../../../context/GameContext/useGameContext";
+import useLlmContext from "../../../../context/LlmContext/useLlmContext";
 
 interface MessageInputProps {
 	ref: RefObject<HTMLTextAreaElement | null>;

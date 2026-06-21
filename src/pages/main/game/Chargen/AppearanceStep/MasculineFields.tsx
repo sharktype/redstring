@@ -1,23 +1,24 @@
 import { Group, Select, TextInput } from "@mantine/core";
 import LockIcon from "../../../../../components/LockIcon";
-import type PlayerState from "../../../../../models/PlayerState";
+import useGameContext from "../../../../../context/GameContext/useGameContext";
+import type { Appearance } from "../../../../../models/PlayerState";
 import type { LockProps } from "./locks";
 
 interface MasculineFieldsProps extends LockProps {
-	appearance: NonNullable<PlayerState["appearance"]>;
-	setAppearance: (
-		updates: Partial<NonNullable<PlayerState["appearance"]>>,
-	) => void;
+	setAppearance: (updates: Partial<Appearance>) => void;
 }
 
 export default function MasculineFields({
-	appearance,
 	setAppearance,
 	locks,
 	toggleLock,
 }: MasculineFieldsProps) {
+	const { playerState } = useGameContext();
+
+	const appearance = playerState?.appearance;
+
 	return (
-		<>
+		<Group grow align="start" gap="xs">
 			<Group gap={4} wrap="nowrap">
 				<Select
 					label="Shoulders"
@@ -28,12 +29,14 @@ export default function MasculineFields({
 						{ value: "average", label: "Average" },
 						{ value: "broad", label: "Broad" },
 					]}
-					value={appearance.shoulders ?? null}
-					onChange={(value) =>
-						setAppearance({
-							shoulders: value as NonNullable<typeof appearance>["shoulders"],
-						})
-					}
+					value={appearance?.shoulders ?? null}
+					onChange={(value) => {
+						if (value) {
+							setAppearance({
+								shoulders: value,
+							});
+						}
+					}}
 					disabled={locks.shoulders}
 					style={{ flex: 1 }}
 				/>
@@ -46,7 +49,7 @@ export default function MasculineFields({
 				<TextInput
 					label="Facial Hair"
 					placeholder="e.g. clean-shaven, stubble, full beard"
-					value={appearance.facialHair ?? ""}
+					value={appearance?.facialHair ?? ""}
 					onChange={(event) =>
 						setAppearance({
 							facialHair: event.currentTarget.value,
@@ -60,6 +63,6 @@ export default function MasculineFields({
 					toggle={() => toggleLock("facialHair")}
 				/>
 			</Group>
-		</>
+		</Group>
 	);
 }

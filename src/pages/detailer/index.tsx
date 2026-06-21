@@ -1,7 +1,6 @@
 import { Box } from "@mantine/core";
-import useGameContext from "../../context/hooks/useGameContext.tsx";
+import useGameContext from "../../context/GameContext/useGameContext.tsx";
 import ChargenDetailer from "./ChargenDetailer.tsx";
-import Inventory from "./Inventory.tsx";
 import Journal from "./Journal.tsx";
 import Profile from "./Profile.tsx";
 
@@ -14,9 +13,6 @@ export default function Detailer() {
 
 	let chosenComponent = null;
 	switch (gameState?.detailer) {
-		case "inventory":
-			chosenComponent = <Inventory />;
-			break;
 		case "profile":
 			chosenComponent = <Profile />;
 			break;

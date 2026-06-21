@@ -1,5 +1,5 @@
 import { useContext } from "react";
-import { LlmContext } from "../LlmContext/index.ts";
+import { LlmContext } from "./index.ts";
 
 export default function useLlmContext() {
 	const context = useContext(LlmContext);

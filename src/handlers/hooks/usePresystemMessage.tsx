@@ -1,5 +1,5 @@
 import { useCallback } from "react";
-import useGameContext from "../../context/hooks/useGameContext";
+import useGameContext from "../../context/GameContext/useGameContext";
 import type Message from "../../models/Message";
 
 export default function usePresystemMessage() {
@@ -37,15 +37,9 @@ export default function usePresystemMessage() {
 			parts.push(`**Money:** ${playerState.money}`);
 		}
 
-		if (playerState.inventory && playerState.inventory.length > 0) {
-			const items = playerState.inventory
-				.map((entry) => `- ${entry.item.name} x${entry.quantity}`)
-				.join("\n");
-
-			parts.push(`**Inventory:**\n${items}`);
-		}
-
 		if (playerState.stats?.textual) {
+			parts.push("\n");
+
 			parts.push(`**Character notes:**\n${playerState.stats.textual}`);
 		}
 

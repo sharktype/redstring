@@ -1,6 +1,6 @@
 import { Flex, Stack, Title } from "@mantine/core";
 import type { ComponentType } from "react";
-import useGameContext from "../../../../context/hooks/useGameContext";
+import useGameContext from "../../../../context/GameContext/useGameContext";
 import {
 	type ChargenPage,
 	PAGE_STEPS,

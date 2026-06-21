@@ -1,5 +1,5 @@
-import useGameContext from "../../../../../context/hooks/useGameContext";
-import type PlayerState from "../../../../../models/PlayerState";
+import useGameContext from "../../../../../context/GameContext/useGameContext";
+import type { Appearance } from "../../../../../models/PlayerState";
 import BodyFields from "./BodyFields";
 import DetailFields from "./DetailFields";
 import FeminineFields from "./FeminineFields";
@@ -14,19 +14,15 @@ export default function AppearanceForm({
 }: AppearanceFormProps) {
 	const { playerState, updatePlayerState } = useGameContext();
 
-	const genderExpression = playerState?.genderExpression;
-	const appearance = (playerState?.appearance ?? {}) as NonNullable<
-		PlayerState["appearance"]
-	>;
+	const appearance = playerState?.appearance;
+	const genderExpression = appearance?.genderExpression;
 
 	const isMasculine =
 		genderExpression === "masculine" || genderExpression === "androgynous";
 	const isFeminine =
 		genderExpression === "feminine" || genderExpression === "androgynous";
 
-	const setAppearance = (
-		updates: Partial<NonNullable<PlayerState["appearance"]>>,
-	) => {
+	const setAppearance = (updates: Partial<Appearance>) => {
 		updatePlayerState({
 			appearance: { ...playerState?.appearance, ...updates },
 		});
@@ -35,7 +31,6 @@ export default function AppearanceForm({
 	return (
 		<>
 			<BodyFields
-				appearance={appearance}
 				setAppearance={setAppearance}
 				locks={locks}
 				toggleLock={toggleLock}
@@ -43,7 +38,6 @@ export default function AppearanceForm({
 
 			{isMasculine && (
 				<MasculineFields
-					appearance={appearance}
 					setAppearance={setAppearance}
 					locks={locks}
 					toggleLock={toggleLock}
@@ -52,7 +46,6 @@ export default function AppearanceForm({
 
 			{isFeminine && (
 				<FeminineFields
-					appearance={appearance}
 					setAppearance={setAppearance}
 					locks={locks}
 					toggleLock={toggleLock}
@@ -60,7 +53,6 @@ export default function AppearanceForm({
 			)}
 
 			<DetailFields
-				appearance={appearance}
 				setAppearance={setAppearance}
 				locks={locks}
 				toggleLock={toggleLock}

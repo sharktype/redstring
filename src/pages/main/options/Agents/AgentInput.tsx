@@ -10,7 +10,7 @@ import {
 } from "react";
 import { AiFillWarning } from "react-icons/ai";
 import { BiEdit, BiPlay, BiSave } from "react-icons/bi";
-import useGameContext from "../../../../context/hooks/useGameContext.tsx";
+import useGameContext from "../../../../context/GameContext/useGameContext.tsx";
 import { useAgentConfigs } from "../../../../db/hooks/useAgentConfigs.ts";
 import {
 	DEFAULT_DIALOGUE_PROMPT,

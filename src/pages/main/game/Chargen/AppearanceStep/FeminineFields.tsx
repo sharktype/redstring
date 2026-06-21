@@ -1,21 +1,21 @@
 import { Group, Select } from "@mantine/core";
 import LockIcon from "../../../../../components/LockIcon";
-import type PlayerState from "../../../../../models/PlayerState";
+import useGameContext from "../../../../../context/GameContext/useGameContext";
+import type { Appearance } from "../../../../../models/PlayerState";
 import type { LockProps } from "./locks";
 
 interface FeminineFieldsProps extends LockProps {
-	appearance: NonNullable<PlayerState["appearance"]>;
-	setAppearance: (
-		updates: Partial<NonNullable<PlayerState["appearance"]>>,
-	) => void;
+	setAppearance: (updates: Partial<Appearance>) => void;
 }
 
 export default function FeminineFields({
-	appearance,
 	setAppearance,
 	locks,
 	toggleLock,
 }: FeminineFieldsProps) {
+	const { playerState } = useGameContext();
+
+	const appearance = playerState?.appearance;
 	return (
 		<Group grow align="start" gap="xs">
 			<Group gap={4} wrap="nowrap">
@@ -30,12 +30,14 @@ export default function FeminineFields({
 						{ value: "large", label: "Large" },
 						{ value: "veryLarge", label: "Very Large" },
 					]}
-					value={appearance.bust ?? null}
-					onChange={(value) =>
-						setAppearance({
-							bust: value as NonNullable<typeof appearance>["bust"],
-						})
-					}
+					value={appearance?.bust ?? null}
+					onChange={(value) => {
+						if (value) {
+							setAppearance({
+								bust: value,
+							});
+						}
+					}}
 					disabled={locks.bust}
 					style={{ flex: 1 }}
 				/>
@@ -51,12 +53,14 @@ export default function FeminineFields({
 						{ value: "average", label: "Average" },
 						{ value: "wide", label: "Wide" },
 					]}
-					value={appearance.hips ?? null}
-					onChange={(value) =>
-						setAppearance({
-							hips: value as NonNullable<typeof appearance>["hips"],
-						})
-					}
+					value={appearance?.hips ?? null}
+					onChange={(value) => {
+						if (value) {
+							setAppearance({
+								hips: value,
+							});
+						}
+					}}
 					disabled={locks.hips}
 					style={{ flex: 1 }}
 				/>

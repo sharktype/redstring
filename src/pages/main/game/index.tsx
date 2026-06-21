@@ -1,5 +1,5 @@
 import { Flex } from "@mantine/core";
-import useGameContext from "../../../context/hooks/useGameContext";
+import useGameContext from "../../../context/GameContext/useGameContext";
 import Detailer from "../../detailer";
 import Chargen from "./Chargen";
 import Messages from "./Messages";

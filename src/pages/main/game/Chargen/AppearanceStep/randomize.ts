@@ -1,8 +1,8 @@
-import type PlayerState from "../../../../../models/PlayerState";
-import type { GenderExpression } from "../../../../../models/PlayerState";
+import type {
+	Appearance,
+	GenderExpression,
+} from "../../../../../models/PlayerState";
 import { pick, randomInt } from "../../../../../utils/random";
-
-type Appearance = NonNullable<PlayerState["appearance"]>;
 
 const DEFAULT_SKIN_TONES = [
 	"pale",
@@ -129,14 +129,14 @@ const DEFAULT_FEMININE_CLOTHING = [
 	"riding dress with a tailored jacket",
 ];
 
-const DEFAULT_GENITALS: NonNullable<Appearance["genitals"]>[] = [
+const DEFAULT_GENITALS: Appearance["genitals"][] = [
 	"vulva",
 	"penisCircumcised",
 	"penisUncircumcised",
 	"none",
 ];
 
-const DEFAULT_COCK_SIZES: NonNullable<Appearance["cockSize"]>[] = [
+const DEFAULT_COCK_SIZES: Appearance["cockSize"][] = [
 	"verySmall",
 	"small",
 	"average",
@@ -144,20 +144,16 @@ const DEFAULT_COCK_SIZES: NonNullable<Appearance["cockSize"]>[] = [
 	"veryLarge",
 ];
 
-const DEFAULT_SIZES: NonNullable<Appearance["size"]>[] = [
-	"slight",
-	"average",
-	"large",
-];
+const DEFAULT_SIZES: Appearance["size"][] = ["small", "average", "large"];
 
-const DEFAULT_BUILDS: NonNullable<Appearance["build"]>[] = [
+const DEFAULT_BUILDS: Appearance["build"][] = [
 	"soft",
 	"average",
 	"toned",
 	"muscular",
 ];
 
-const DEFAULT_HEIGHTS: NonNullable<Appearance["height"]>[] = [
+const DEFAULT_HEIGHTS: Appearance["height"][] = [
 	"veryShort",
 	"short",
 	"belowAverage",
@@ -194,10 +190,7 @@ export function randomiseAppearance(
 	genderExpression: GenderExpression | undefined,
 	existingSpecies?: string,
 	isNsfw?: boolean,
-): {
-	appearance: Partial<Appearance>;
-	genderExpression?: GenderExpression;
-} {
+): Partial<Appearance> {
 	const expression = genderExpression ?? pick(DEFAULT_EXPRESSIONS);
 	const isMasculine =
 		expression === "masculine" || expression === "androgynous";
@@ -208,6 +201,7 @@ export function randomiseAppearance(
 	const appearance: Partial<Appearance> = {
 		age: ageForSpecies(existingSpecies ?? species),
 		species,
+		genderExpression: expression,
 		size: pick(DEFAULT_SIZES),
 		build: pick(DEFAULT_BUILDS),
 		height: pick(DEFAULT_HEIGHTS),
@@ -220,9 +214,7 @@ export function randomiseAppearance(
 	};
 
 	if (isMasculine) {
-		appearance.shoulders = pick(SHOULDER_VALUES) as NonNullable<
-			Appearance["shoulders"]
-		>;
+		appearance.shoulders = pick(SHOULDER_VALUES) as Appearance["shoulders"];
 		appearance.facialHair = pick(DEFAULT_FACIAL_HAIR);
 	} else {
 		appearance.shoulders = undefined;
@@ -230,8 +222,8 @@ export function randomiseAppearance(
 	}
 
 	if (isFeminine) {
-		appearance.bust = pick(BUST_VALUES) as NonNullable<Appearance["bust"]>;
-		appearance.hips = pick(HIP_VALUES) as NonNullable<Appearance["hips"]>;
+		appearance.bust = pick(BUST_VALUES) as Appearance["bust"];
+		appearance.hips = pick(HIP_VALUES) as Appearance["hips"];
 	} else {
 		appearance.bust = undefined;
 		appearance.hips = undefined;
@@ -248,7 +240,7 @@ export function randomiseAppearance(
 		}
 	}
 
-	return { appearance, genderExpression: expression };
+	return appearance;
 }
 
 function ageForSpecies(species: string | undefined): number {

@@ -11,7 +11,7 @@ import {
 	Title,
 } from "@mantine/core";
 import { useState } from "react";
-import useGameContext from "../../context/hooks/useGameContext.tsx";
+import useGameContext from "../../context/GameContext/useGameContext.tsx";
 
 export default function Journal() {
 	const { gameState, updateGameState } = useGameContext();

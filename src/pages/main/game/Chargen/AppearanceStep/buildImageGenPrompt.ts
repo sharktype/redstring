@@ -1,8 +1,4 @@
-import type PlayerState from "../../../../../models/PlayerState";
-import type {
-	GenderExpression,
-	PortraitType,
-} from "../../../../../models/PlayerState";
+import type { Appearance, Portraits } from "../../../../../models/PlayerState";
 
 const HEIGHT_LABELS: Record<string, string> = {
 	veryShort: "very short",
@@ -39,9 +35,8 @@ const COCK_SIZE_LABELS: Record<string, string> = {
 };
 
 export function buildImageGenPrompt(
-	appearance: NonNullable<PlayerState["appearance"]>,
-	genderExpression: GenderExpression | undefined,
-	portraitType: PortraitType = "base",
+	appearance: Appearance,
+	portraitType: keyof Portraits = "base",
 ): string {
 	const parts: string[] = [
 		"no text",
@@ -49,6 +44,11 @@ export function buildImageGenPrompt(
 		"very aesthetic",
 		"masterpiece",
 	];
+
+	const genderExpression = appearance.genderExpression;
+	const hasPenis =
+		appearance.genitals === "penisCircumcised" ||
+		appearance.genitals === "penisUncircumcised";
 
 	const species = appearance.species?.toLowerCase() || "human";
 	if (species != "human") {
@@ -59,20 +59,28 @@ export function buildImageGenPrompt(
 		const isYoung = appearance.age != null && appearance.age < 25;
 
 		if (genderExpression === "feminine") {
-			parts.push(isYoung ? "1girl" : "1woman");
+			if (hasPenis) {
+				parts.push("1futanari");
+			} else {
+				parts.push(isYoung ? "1girl" : "1woman");
+			}
 		} else if (genderExpression === "masculine") {
-			parts.push(isYoung ? "1boy" : "1man");
+			if (!hasPenis) {
+				parts.push("1cuntboy");
+			} else {
+				parts.push(isYoung ? "1boy" : "1man");
+			}
 		} else {
 			parts.push("1person");
 		}
 	}
 
 	if (appearance.size && appearance.size !== "average") {
-		parts.push(`${appearance.size} size`);
+		parts.push(`${appearance.size} body size`);
 	}
 
 	if (appearance.build && appearance.build !== "average") {
-		parts.push(`${appearance.build} build`);
+		parts.push(`${appearance.build} body build`);
 	}
 
 	if (appearance.height && appearance.height !== "average") {
@@ -120,13 +128,12 @@ export function buildImageGenPrompt(
 		parts.push(`${appearance.hairColour} hair colour`);
 	}
 
-	const hasPenis =
-		appearance.genitals === "penisCircumcised" ||
-		appearance.genitals === "penisUncircumcised";
-
 	if (hasPenis && appearance.cockSize) {
+		const penisType =
+			appearance.genitals === "penisCircumcised" ? "circumcized" : "foreskin";
+
 		parts.push(
-			`${COCK_SIZE_LABELS[appearance.cockSize] ?? appearance.cockSize} penis`,
+			`has ${COCK_SIZE_LABELS[appearance.cockSize] ?? appearance.cockSize} ${penisType} penis`,
 		);
 	}
 

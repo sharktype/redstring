@@ -1,5 +1,3 @@
-import type Item from "./Item";
-
 export default interface PlayerState {
 	isInitialized?: boolean;
 
@@ -8,48 +6,9 @@ export default interface PlayerState {
 		surname: string;
 	};
 
-	// TODO: Support custom gender identities.
-
 	gender?: GenderIdentity;
-
-	genderExpression?: GenderExpression;
-
-	/** Base64 data URLs for each portrait variant. */
-	portraits?: {
-		nude?: string;
-		base?: string;
-	};
-
-	appearance?: {
-		age?: number;
-		species?: string;
-		size?: "slight" | "average" | "large";
-		build?: "soft" | "average" | "toned" | "muscular";
-		height?:
-			| "veryShort"
-			| "short"
-			| "belowAverage"
-			| "average"
-			| "aboveAverage"
-			| "tall"
-			| "veryTall";
-		shoulders?: "narrow" | "average" | "broad";
-		bust?: "flat" | "small" | "medium" | "large" | "veryLarge";
-		hips?: "narrow" | "average" | "wide";
-		skinColour?: string;
-		complexion?: string;
-		hairStyle?: string;
-		hairColour?: string;
-		facialHair?: string;
-		clothingStyle?: string;
-		custom?: string;
-		generateExtra?: string;
-
-		// NSFW:
-
-		genitals?: "vulva" | "penisCircumcised" | "penisUncircumcised" | "none";
-		cockSize?: "verySmall" | "small" | "average" | "large" | "veryLarge";
-	};
+	appearance?: Appearance;
+	portraits?: Portraits;
 
 	stats?: {
 		/**
@@ -68,12 +27,58 @@ export default interface PlayerState {
 	};
 
 	money?: number;
-	inventory?: { item: Item; quantity: number }[];
 }
 
 export type StoredPlayerState = PlayerState & {
 	id?: number;
 };
+
+/** Base64 data URLs for each portrait variant. */
+export interface Portraits {
+	nude?: string;
+	base?: string;
+}
+
+export interface Appearance {
+	age?: number;
+	species?: string;
+	genderExpression?: GenderExpression;
+
+	size?: "small" | "average" | "large";
+	build?: "soft" | "average" | "toned" | "muscular";
+	height?:
+		| "veryShort"
+		| "short"
+		| "belowAverage"
+		| "average"
+		| "aboveAverage"
+		| "tall"
+		| "veryTall";
+	skinColour?: string;
+	complexion?: string;
+	hairStyle?: string;
+	hairColour?: string;
+	clothingStyle?: string;
+
+	shoulders?: "narrow" | "average" | "broad";
+	facialHair?: string;
+
+	bust?: "flat" | "small" | "medium" | "large" | "veryLarge";
+	hips?: "narrow" | "average" | "wide";
+
+	custom?: string;
+	generateExtra?: string;
+
+	// NSFW:
+
+	genitals?: "vulva" | "penisCircumcised" | "penisUncircumcised" | "none";
+	cockSize?: "verySmall" | "small" | "average" | "large" | "veryLarge";
+}
+
+/**
+ * The appearance of gender based on physical characteristics rather than identity.
+ */
+export type GenderExpression = "feminine" | "masculine" | "androgynous";
 
 export interface GenderIdentity {
 	/**
@@ -140,10 +145,3 @@ export const DEFAULT_GENDER_IDENTITIES: GenderIdentity[] = [
 		},
 	},
 ];
-
-/**
- * The appearance of gender based on physical characteristics rather than identity.
- */
-export type GenderExpression = "feminine" | "masculine" | "androgynous";
-
-export type PortraitType = keyof NonNullable<PlayerState["portraits"]>;

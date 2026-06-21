@@ -1,6 +1,6 @@
 import { Badge, Flex, useMantineColorScheme } from "@mantine/core";
 import { useState } from "react";
-import useLlmContext from "../../../../../context/hooks/useLlmContext";
+import useLlmContext from "../../../../../context/LlmContext/useLlmContext";
 import { useMessages } from "../../../../../db/hooks/useMessages";
 import type Message from "../../../../../models/Message";
 import EditModeForm from "./EditModeForm";

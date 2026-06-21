@@ -8,7 +8,7 @@ import {
 	Title,
 } from "@mantine/core";
 import { CgInfo } from "react-icons/cg";
-import useGameContext from "../../../../context/hooks/useGameContext.tsx";
+import useGameContext from "../../../../context/GameContext/useGameContext.tsx";
 import KeyInput from "./KeyInput.tsx";
 
 export default function ImageProviders() {

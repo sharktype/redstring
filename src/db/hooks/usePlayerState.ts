@@ -8,7 +8,6 @@ import { db } from "../database.ts";
 
 const DEFAULT_PLAYER_STATE: Omit<StoredPlayerState, "id"> = {
 	isInitialized: false,
-	inventory: [],
 };
 
 export function usePlayerState() {

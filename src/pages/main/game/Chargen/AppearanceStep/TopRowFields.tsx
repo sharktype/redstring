@@ -1,27 +1,21 @@
 import { Group, NumberInput, Select, TextInput } from "@mantine/core";
 import LockIcon from "../../../../../components/LockIcon";
-import type { GenderExpression } from "../../../../../models/PlayerState";
+import { usePlayerState } from "../../../../../db/hooks/usePlayerState";
+import type { Appearance } from "../../../../../models/PlayerState";
 import type { LockProps } from "./locks";
 
 interface TopRowFieldsProps extends LockProps {
-	age: number | undefined;
-	species: string | undefined;
-	genderExpression: GenderExpression | undefined;
-	onAgeChange: (age: number | undefined) => void;
-	onSpeciesChange: (species: string) => void;
-	onGenderExpressionChange: (expression: string | null) => void;
+	setAppearance: (appearance: Partial<Appearance>) => void;
 }
 
 export default function TopRowFields({
-	age,
-	species,
-	genderExpression,
-	onAgeChange,
-	onSpeciesChange,
-	onGenderExpressionChange,
+	setAppearance,
 	locks,
 	toggleLock,
 }: TopRowFieldsProps) {
+	const { playerState } = usePlayerState();
+	const { age, species, genderExpression } = playerState?.appearance ?? {};
+
 	return (
 		<Group grow align="start" gap="xs">
 			<Group gap={4} wrap="nowrap">
@@ -30,8 +24,10 @@ export default function TopRowFields({
 					placeholder="Age"
 					min={18}
 					value={age ?? ""}
-					onChange={(val) =>
-						onAgeChange(typeof val === "number" ? val : undefined)
+					onChange={(value) =>
+						setAppearance({
+							age: typeof value === "number" ? value : undefined,
+						})
 					}
 					disabled={locks.age}
 					style={{ flex: 1 }}
@@ -43,7 +39,9 @@ export default function TopRowFields({
 					label="Species"
 					placeholder="Human"
 					value={species ?? ""}
-					onChange={(e) => onSpeciesChange(e.currentTarget.value)}
+					onChange={(event) =>
+						setAppearance({ species: event.currentTarget.value })
+					}
 					disabled={locks.species}
 					style={{ flex: 1 }}
 				/>
@@ -63,7 +61,28 @@ export default function TopRowFields({
 						{ value: "androgynous", label: "Androgynous" },
 					]}
 					value={genderExpression ?? null}
-					onChange={onGenderExpressionChange}
+					onChange={(value) => {
+						const next = value ?? undefined;
+
+						if (next === genderExpression) {
+							return;
+						}
+
+						const updates: Partial<Appearance> = {
+							genderExpression: next,
+						};
+
+						if (next === "feminine") {
+							updates.cockSize = undefined;
+							updates.shoulders = undefined;
+							updates.facialHair = undefined;
+						} else if (next === "masculine") {
+							updates.bust = undefined;
+							updates.hips = undefined;
+						}
+
+						setAppearance(updates);
+					}}
 					disabled={locks.genderExpression}
 					style={{ flex: 1 }}
 				/>

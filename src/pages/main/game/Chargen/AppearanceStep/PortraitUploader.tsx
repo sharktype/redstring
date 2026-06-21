@@ -15,23 +15,21 @@ import {
 	Textarea,
 } from "@mantine/core";
 import { useEffect, useMemo, useState } from "react";
-import useGameContext from "../../../../../context/hooks/useGameContext";
+import useGameContext from "../../../../../context/GameContext/useGameContext";
+import { usePlayerState } from "../../../../../db/hooks/usePlayerState";
 import type Agent from "../../../../../handlers/agents";
-import type PlayerState from "../../../../../models/PlayerState";
-import type {
-	GenderExpression,
-	PortraitType,
-} from "../../../../../models/PlayerState";
+import type { Appearance, Portraits } from "../../../../../models/PlayerState";
 import { buildImageGenPrompt } from "./buildImageGenPrompt";
 
 interface PortraitUploaderProps {
 	isNsfwMode: boolean;
 }
 
-const PORTRAIT_META: Record<PortraitType, { emoji: string; label: string }> = {
-	nude: { emoji: "🔞", label: "Nude" },
-	base: { emoji: "🧍", label: "Base" },
-};
+const PORTRAIT_META: Record<keyof Portraits, { emoji: string; label: string }> =
+	{
+		nude: { emoji: "🔞", label: "Nude" },
+		base: { emoji: "🧍", label: "Base" },
+	};
 
 export default function PortraitUploader({
 	isNsfwMode: nsfw,
@@ -42,9 +40,9 @@ export default function PortraitUploader({
 		(a): a is Agent => a.type === "profiler",
 	);
 
-	const [portraitTab, setPortraitTab] = useState<PortraitType>("base");
+	const [portraitTab, setPortraitTab] = useState<keyof Portraits>("base");
 	const [portraitFiles, setPortraitFiles] = useState<
-		Record<PortraitType, File | null>
+		Record<keyof Portraits, File | null>
 	>({
 		nude: null,
 		base: null,
@@ -61,9 +59,9 @@ export default function PortraitUploader({
 
 	const portraits = playerState?.portraits;
 
-	const tabOptions: PortraitType[] = nsfw ? ["nude", "base"] : ["base"];
+	const tabOptions = nsfw ? ["nude", "base"] : ["base"];
 
-	const handleChange = (tab: PortraitType, file: File | null) => {
+	const handleChange = (tab: keyof Portraits, file: File | null) => {
 		setPortraitFiles((prev) => ({ ...prev, [tab]: file }));
 
 		if (!file) {
@@ -102,15 +100,11 @@ export default function PortraitUploader({
 		setGenerateError(null);
 
 		try {
-			const merged: NonNullable<PlayerState["appearance"]> = {
+			const merged: Appearance = {
 				...playerState.appearance,
 			};
 			const tab = nsfw ? portraitTab : "base";
-			const prompt = buildImageGenPrompt(
-				merged,
-				playerState.genderExpression,
-				tab,
-			);
+			const prompt = buildImageGenPrompt(merged, tab);
 
 			const stream = await profilerAgent.generate(prompt, {
 				width: 832,
@@ -150,18 +144,19 @@ export default function PortraitUploader({
 			{nsfw ? (
 				<Tabs
 					value={portraitTab}
-					onChange={(value) => setPortraitTab(value as PortraitType)}
+					onChange={(value) => setPortraitTab(value as keyof Portraits)}
 				>
 					<TabsList grow>
 						{tabOptions.map((tab) => (
 							<TabsTab key={tab} value={tab}>
-								{PORTRAIT_META[tab].emoji} {PORTRAIT_META[tab].label}
+								{PORTRAIT_META[tab as keyof Portraits].emoji}{" "}
+								{PORTRAIT_META[tab as keyof Portraits].label}
 							</TabsTab>
 						))}
 					</TabsList>
 
 					{tabOptions.map((tab) => {
-						const tabPortrait = portraits?.[tab];
+						const tabPortrait = portraits?.[tab as keyof Portraits];
 						return (
 							<TabsPanel key={tab} value={tab} pt="xs">
 								<Stack gap="xs">
@@ -180,7 +175,7 @@ export default function PortraitUploader({
 										{tabPortrait ? (
 											<Image
 												src={tabPortrait}
-												alt={`${PORTRAIT_META[tab].label} portrait`}
+												alt={`${PORTRAIT_META[tab as keyof Portraits].label} portrait`}
 												w="100%"
 												h="100%"
 												fit="cover"
@@ -196,8 +191,10 @@ export default function PortraitUploader({
 										placeholder="Upload"
 										clearable
 										accept="image/png,image/jpeg,image/webp,image/gif"
-										value={portraitFiles[tab]}
-										onChange={(file) => handleChange(tab, file)}
+										value={portraitFiles[tab as keyof Portraits]}
+										onChange={(file) =>
+											handleChange(tab as keyof Portraits, file)
+										}
 									/>
 								</Stack>
 							</TabsPanel>
@@ -280,8 +277,6 @@ export default function PortraitUploader({
 			<PromptModal
 				opened={promptModalOpen}
 				onClose={() => setPromptModalOpen(false)}
-				appearance={playerState?.appearance}
-				genderExpression={playerState?.genderExpression}
 			/>
 		</Stack>
 	);
@@ -290,22 +285,19 @@ export default function PortraitUploader({
 interface PromptModalProps {
 	opened: boolean;
 	onClose: () => void;
-	appearance: PlayerState["appearance"];
-	genderExpression: GenderExpression | undefined;
 }
 
-function PromptModal({
-	opened,
-	onClose,
-	appearance,
-	genderExpression,
-}: PromptModalProps) {
+function PromptModal({ opened, onClose }: PromptModalProps) {
+	const { playerState } = usePlayerState();
+	const appearance = playerState?.appearance;
+
 	const prompt = useMemo(() => {
-		const merged: NonNullable<PlayerState["appearance"]> = {
+		const merged: Appearance = {
 			...appearance,
 		};
-		return buildImageGenPrompt(merged, genderExpression);
-	}, [appearance, genderExpression]);
+
+		return buildImageGenPrompt(merged);
+	}, [appearance]);
 
 	return (
 		<Modal

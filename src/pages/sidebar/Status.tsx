@@ -10,8 +10,8 @@ import {
 } from "@mantine/core";
 import type { ReactNode } from "react";
 import { FaClock, FaLock, FaScroll, FaUser } from "react-icons/fa";
-import { GiBackpack, GiSkills } from "react-icons/gi";
-import useGameContext from "../../context/hooks/useGameContext.tsx";
+import { GiSkills } from "react-icons/gi";
+import useGameContext from "../../context/GameContext/useGameContext.tsx";
 import { formatTime } from "../../utils/time.ts";
 
 export default function Status() {
@@ -130,16 +130,6 @@ function DetailerSelector() {
 						detailer: "profile",
 					});
 				}}
-			/>
-			<StatusItem
-				label="Inventory"
-				icon={<GiBackpack />}
-				isHighlighted={gameState?.detailer === "inventory"}
-				onClick={() =>
-					updateGameState({
-						detailer: "inventory",
-					})
-				}
 			/>
 			<StatusItem
 				label="Journal"

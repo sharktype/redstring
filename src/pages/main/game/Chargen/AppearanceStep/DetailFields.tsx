@@ -1,21 +1,22 @@
 import { Group, TextInput } from "@mantine/core";
 import LockIcon from "../../../../../components/LockIcon";
-import type PlayerState from "../../../../../models/PlayerState";
+import useGameContext from "../../../../../context/GameContext/useGameContext";
+import type { Appearance } from "../../../../../models/PlayerState";
 import type { LockProps } from "./locks";
 
 interface DetailFieldsProps extends LockProps {
-	appearance: NonNullable<PlayerState["appearance"]>;
-	setAppearance: (
-		updates: Partial<NonNullable<PlayerState["appearance"]>>,
-	) => void;
+	setAppearance: (updates: Partial<Appearance>) => void;
 }
 
 export default function DetailFields({
-	appearance,
 	setAppearance,
 	locks,
 	toggleLock,
 }: DetailFieldsProps) {
+	const { playerState } = useGameContext();
+
+	const appearance = playerState?.appearance;
+
 	return (
 		<>
 			<Group grow align="start" gap="xs">
@@ -23,7 +24,7 @@ export default function DetailFields({
 					<TextInput
 						label="Skin Tone"
 						placeholder="e.g. pale, dark brown, olive"
-						value={appearance.skinColour ?? ""}
+						value={appearance?.skinColour ?? ""}
 						onChange={(e) =>
 							setAppearance({
 								skinColour: e.currentTarget.value,
@@ -41,7 +42,7 @@ export default function DetailFields({
 					<TextInput
 						label="Complexion"
 						placeholder="e.g. clear, freckled, scarred"
-						value={appearance.complexion ?? ""}
+						value={appearance?.complexion ?? ""}
 						onChange={(e) =>
 							setAppearance({
 								complexion: e.currentTarget.value,
@@ -62,7 +63,7 @@ export default function DetailFields({
 					<TextInput
 						label="Hair Style"
 						placeholder="e.g. long, braided, bald"
-						value={appearance.hairStyle ?? ""}
+						value={appearance?.hairStyle ?? ""}
 						onChange={(e) =>
 							setAppearance({
 								hairStyle: e.currentTarget.value,
@@ -80,7 +81,7 @@ export default function DetailFields({
 					<TextInput
 						label="Hair Colour"
 						placeholder="e.g. black, auburn, silver"
-						value={appearance.hairColour ?? ""}
+						value={appearance?.hairColour ?? ""}
 						onChange={(event) =>
 							setAppearance({
 								hairColour: event.currentTarget.value,

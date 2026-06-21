@@ -1,24 +1,25 @@
 import { Group, Select } from "@mantine/core";
 import LockIcon from "../../../../../components/LockIcon";
-import type PlayerState from "../../../../../models/PlayerState";
+import useGameContext from "../../../../../context/GameContext/useGameContext";
+import type { Appearance } from "../../../../../models/PlayerState";
 import type { LockProps } from "./locks";
 
 interface NsfwFieldsProps extends LockProps {
-	appearance: NonNullable<PlayerState["appearance"]>;
-	setAppearance: (
-		updates: Partial<NonNullable<PlayerState["appearance"]>>,
-	) => void;
+	setAppearance: (updates: Partial<Appearance>) => void;
 }
 
 export default function NsfwFields({
-	appearance,
 	setAppearance,
 	locks,
 	toggleLock,
 }: NsfwFieldsProps) {
+	const { playerState } = useGameContext();
+
+	const appearance = playerState?.appearance;
+
 	const hasPenis =
-		appearance.genitals === "penisCircumcised" ||
-		appearance.genitals === "penisUncircumcised";
+		appearance?.genitals === "penisCircumcised" ||
+		appearance?.genitals === "penisUncircumcised";
 
 	return (
 		<>
@@ -39,16 +40,22 @@ export default function NsfwFields({
 						},
 						{ value: "none", label: "None" },
 					]}
-					value={appearance.genitals ?? null}
+					value={appearance?.genitals ?? null}
 					onChange={(value) => {
-						const next = value as NonNullable<typeof appearance>["genitals"];
-						const reset: Partial<NonNullable<typeof appearance>> = {
-							genitals: next,
-						};
-						if (next !== "penisCircumcised" && next !== "penisUncircumcised") {
-							reset.cockSize = undefined;
+						if (value) {
+							const reset: Partial<typeof appearance> = {
+								genitals: value,
+							};
+
+							if (
+								value !== "penisCircumcised" &&
+								value !== "penisUncircumcised"
+							) {
+								reset.cockSize = undefined;
+							}
+
+							setAppearance(reset);
 						}
-						setAppearance(reset);
 					}}
 					disabled={locks.genitals}
 					style={{ flex: 1 }}
@@ -73,11 +80,13 @@ export default function NsfwFields({
 							{ value: "veryLarge", label: "Very Large" },
 						]}
 						value={appearance.cockSize ?? null}
-						onChange={(value) =>
-							setAppearance({
-								cockSize: value as NonNullable<typeof appearance>["cockSize"],
-							})
-						}
+						onChange={(value) => {
+							if (value) {
+								setAppearance({
+									cockSize: value,
+								});
+							}
+						}}
 						disabled={locks.cockSize}
 						style={{ flex: 1 }}
 					/>

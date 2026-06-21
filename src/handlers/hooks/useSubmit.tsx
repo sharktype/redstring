@@ -1,6 +1,6 @@
 import { useCallback } from "react";
-import useGameContext from "../../context/hooks/useGameContext";
-import useLlmContext from "../../context/hooks/useLlmContext";
+import useGameContext from "../../context/GameContext/useGameContext";
+import useLlmContext from "../../context/LlmContext/useLlmContext";
 import { useMessages } from "../../db/hooks/useMessages";
 import type { ToolContext } from "../../models/LLMs";
 import type Message from "../../models/Message";

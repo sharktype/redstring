@@ -14,7 +14,7 @@ import { FaImage, FaMap } from "react-icons/fa";
 import { FiKey } from "react-icons/fi";
 import { GiWorld } from "react-icons/gi";
 import { useNavigate } from "react-router";
-import useGameContext from "../../context/hooks/useGameContext.tsx";
+import useGameContext from "../../context/GameContext/useGameContext.tsx";
 import { useMessages } from "../../db/hooks/useMessages.ts";
 import { usePlayerState } from "../../db/hooks/usePlayerState.ts";
 

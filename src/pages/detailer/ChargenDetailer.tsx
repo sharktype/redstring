@@ -11,7 +11,7 @@ import { BiBook } from "react-icons/bi";
 import { CgProfile } from "react-icons/cg";
 import { GiArmorVest, GiBodySwapping } from "react-icons/gi";
 import { MdQueryStats } from "react-icons/md";
-import useGameContext from "../../context/hooks/useGameContext";
+import useGameContext from "../../context/GameContext/useGameContext";
 import {
 	CHARGEN_PAGES,
 	type ChargenPage,
@@ -80,12 +80,12 @@ const STEP_META: Record<Step, StepMeta> = {
 		isMandatory: true,
 		isComplete: (ps) => {
 			const appearance = ps?.appearance;
-			const genderExpression = ps?.genderExpression;
+			const genderExpression = appearance?.genderExpression;
 
 			if (
+				!genderExpression ||
 				!appearance?.age ||
 				!appearance?.species ||
-				!genderExpression ||
 				!appearance?.size ||
 				!appearance?.build ||
 				!appearance?.height
