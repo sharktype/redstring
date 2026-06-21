@@ -38,14 +38,14 @@ interface ChargenPageMeta {
 const PAGE_META: Record<ChargenPage, ChargenPageMeta> = {
 	identity: {
 		label: "Identity",
-		description: "Name, personality & background",
-		icon: CgProfile,
-		color: "blue",
-	},
-	appearance: {
-		label: "Appearance",
-		description: "Hair, body & features",
+		description: "Name, appearance & body",
 		icon: GiBodySwapping,
+		color: "yellow",
+	},
+	background: {
+		label: "Background",
+		description: "Personality, history & backstory",
+		icon: CgProfile,
 		color: "pink",
 	},
 	stats: {
@@ -58,7 +58,7 @@ const PAGE_META: Record<ChargenPage, ChargenPageMeta> = {
 		label: "Inventory",
 		description: "Starting equipment & wealth",
 		icon: GiArmorVest,
-		color: "orange",
+		color: "blue",
 	},
 	scenario: {
 		label: "Scenario",
@@ -71,8 +71,57 @@ const PAGE_META: Record<ChargenPage, ChargenPageMeta> = {
 const STEP_META: Record<Step, StepMeta> = {
 	name: {
 		label: "Name",
-		color: "blue",
+		color: "yellow",
 		isComplete: (ps) => !!ps?.name?.given && !!ps?.name?.surname,
+	},
+	appearance: {
+		label: "Appearance",
+		color: "yellow",
+		isMandatory: true,
+		isComplete: (ps) => {
+			const appearance = ps?.appearance;
+			const genderExpression = ps?.genderExpression;
+
+			if (
+				!appearance?.age ||
+				!appearance?.species ||
+				!genderExpression ||
+				!appearance?.size ||
+				!appearance?.build ||
+				!appearance?.height
+			) {
+				return false;
+			}
+
+			if (
+				!appearance?.skinColour ||
+				!appearance?.complexion ||
+				!appearance?.hairStyle ||
+				!appearance?.hairColour
+			) {
+				return false;
+			}
+
+			if (
+				genderExpression === "masculine" ||
+				genderExpression === "androgynous"
+			) {
+				if (!appearance.shoulders) {
+					return false;
+				}
+			}
+
+			if (
+				genderExpression === "feminine" ||
+				genderExpression === "androgynous"
+			) {
+				if (!appearance.bust || !appearance.hips) {
+					return false;
+				}
+			}
+
+			return true;
+		},
 	},
 	extraStats: {
 		label: "Extra stats",

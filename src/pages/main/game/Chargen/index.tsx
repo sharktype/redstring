@@ -3,6 +3,7 @@ import type { ComponentType } from "react";
 import useGameContext from "../../../../context/hooks/useGameContext";
 import { PAGE_STEPS, type Step } from "../../../../models/Chargen";
 import type { StoredPlayerState } from "../../../../models/PlayerState";
+import AppearanceStep from "./AppearanceStep";
 import ExtraStatsStep from "./ExtraStatsStep";
 import NameStep from "./NameStep";
 import TimeStep from "./TimeStep";
@@ -15,6 +16,7 @@ export interface ChargenStepProps {
 
 const STEP_TO_COMPONENT: Record<Step, ComponentType<ChargenStepProps>> = {
 	name: NameStep,
+	appearance: AppearanceStep,
 	extraStats: ExtraStatsStep,
 	time: TimeStep,
 	wealth: WealthStep,
