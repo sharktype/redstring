@@ -63,12 +63,17 @@ export default class Agent implements AgentConfig {
 	async generate(
 		prompt: string,
 		parameters?: Record<string, unknown>,
+		allowNsfw?: boolean,
 	): Promise<ReadableStream<string>> {
 		if (!this.provider) {
 			throw new Error("no provider configured for agent type " + this.type);
 		}
 
-		return this.provider.generate(this.prompt + ", " + prompt, parameters);
+		return this.provider.generate(
+			this.prompt + ", " + prompt,
+			parameters,
+			allowNsfw,
+		);
 	}
 
 	async test() {

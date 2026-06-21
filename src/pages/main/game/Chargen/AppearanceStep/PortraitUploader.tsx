@@ -103,10 +103,14 @@ export default function PortraitUploader() {
 			const tab = isNsfwMode ? portraitTab : "base";
 			const prompt = buildImageGenPrompt(merged, tab, isNsfwMode);
 
-			const stream = await profilerAgent.generate(prompt, {
-				width: 832,
-				height: 1216,
-			});
+			const stream = await profilerAgent.generate(
+				prompt,
+				{
+					width: 832,
+					height: 1216,
+				},
+				isNsfwMode || false,
+			);
 
 			const reader = stream.getReader();
 

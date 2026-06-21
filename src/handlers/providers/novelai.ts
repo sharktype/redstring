@@ -17,13 +17,6 @@ const NEGATIVE_PROMPT =
 	"reference sheet, turnaround, front and back, back view, from behind, " +
 	"multiple angles, split screen, dual view, text";
 
-export interface NovelAIImageParams {
-	width?: number;
-	height?: number;
-	scale?: number;
-	steps?: number;
-}
-
 export class NovelAIConfig implements ProviderConfig {
 	type: (typeof AVAILABLE_IMAGE_PROVIDER_TYPES)[number] = "novelai";
 	providerOutput: ProviderOutput = "image";
@@ -73,9 +66,14 @@ export class NovelAIConfig implements ProviderConfig {
 	 */
 	async generate(
 		input: string,
-		parameters: NovelAIImageParams = {},
+		parameters: Record<string, unknown> = {},
+		allowNsfw?: boolean,
 	): Promise<ReadableStream<string>> {
 		const { width = 512, height = 512, scale = 5, steps = 23 } = parameters;
+
+		const negativePrompt = allowNsfw
+			? NEGATIVE_PROMPT
+			: `${NEGATIVE_PROMPT}, nsfw`;
 
 		const response = await this.call({
 			input,
@@ -128,12 +126,12 @@ export class NovelAIConfig implements ProviderConfig {
 				},
 				v4_negative_prompt: {
 					caption: {
-						base_caption: NEGATIVE_PROMPT,
+						base_caption: negativePrompt,
 						char_captions: [],
 					},
 					legacy_uc: false,
 				},
-				negative_prompt: NEGATIVE_PROMPT,
+				negative_prompt: negativePrompt,
 			},
 			url: NOVELAI_GENERATE_URL,
 		});

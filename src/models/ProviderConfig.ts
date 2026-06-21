@@ -28,6 +28,7 @@ export default interface ProviderConfig {
 	generate(
 		input: string,
 		parameters?: Record<string, unknown>,
+		allowNsfw?: boolean,
 	): Promise<ReadableStream<string>>;
 }
 
