@@ -1,5 +1,3 @@
-// TODO: Show different screens based on state, which we do not currently track.
-
 import { Flex } from "@mantine/core";
 import useGameContext from "../../../context/hooks/useGameContext";
 import Detailer from "../../detailer";
@@ -9,15 +7,11 @@ import Messages from "./Messages";
 export default function Game() {
 	const { playerState } = useGameContext();
 
-	let mainComponent = <Messages />;
-
-	if (!playerState || !playerState.isInitialized) {
-		mainComponent = <Chargen />;
-	}
+	const isChargen = !playerState || !playerState.isInitialized;
 
 	return (
 		<Flex h="100vh">
-			{mainComponent}
+			{isChargen ? <Chargen /> : <Messages />}
 
 			<Detailer />
 		</Flex>

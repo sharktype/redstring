@@ -1,11 +1,11 @@
 import { Container, Flex, Stack } from "@mantine/core";
 import type { ComponentType } from "react";
 import useGameContext from "../../../../context/hooks/useGameContext";
-import { STEPS, type Step } from "../../../../models/Chargen";
+import { PAGE_STEPS, type Step } from "../../../../models/Chargen";
 import type { StoredPlayerState } from "../../../../models/PlayerState";
-import DateTimeStep from "./DateTimeStep";
 import ExtraStatsStep from "./ExtraStatsStep";
 import NameStep from "./NameStep";
+import TimeStep from "./TimeStep";
 import WealthStep from "./WealthStep";
 
 export interface ChargenStepProps {
@@ -16,12 +16,12 @@ export interface ChargenStepProps {
 const STEP_TO_COMPONENT: Record<Step, ComponentType<ChargenStepProps>> = {
 	name: NameStep,
 	extraStats: ExtraStatsStep,
-	datetime: DateTimeStep,
+	time: TimeStep,
 	wealth: WealthStep,
 };
 
 export default function Chargen() {
-	const { playerState, updatePlayerState } = useGameContext();
+	const { playerState, updatePlayerState, chargenPage } = useGameContext();
 
 	if (!playerState) {
 		return null;
@@ -31,11 +31,13 @@ export default function Chargen() {
 		updatePlayerState(updates);
 	};
 
+	const steps = PAGE_STEPS[chargenPage];
+
 	return (
 		<Container h="100%">
 			<Flex h="100%" align="center" justify="center">
 				<Stack p="md" gap="lg">
-					{STEPS.map((step) => {
+					{steps.map((step) => {
 						const Component = STEP_TO_COMPONENT[step];
 
 						return (

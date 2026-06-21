@@ -1,5 +1,6 @@
 import { createContext } from "react";
 import type AgentConfig from "../../models/AgentConfig.ts";
+import type { ChargenPage } from "../../models/Chargen.ts";
 import type GameState from "../../models/GameState.ts";
 import type { StoredGameState } from "../../models/GameState.ts";
 import type Message from "../../models/Message.ts";
@@ -22,6 +23,9 @@ export interface GameContextType {
 
 	providerConfigs: ProviderConfig[];
 	agentConfigs: AgentConfig[];
+
+	chargenPage: ChargenPage;
+	setChargenPage: (page: ChargenPage) => void;
 }
 
 export const GameContext = createContext<GameContextType | undefined>(

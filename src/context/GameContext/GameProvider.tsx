@@ -1,4 +1,4 @@
-import { type PropsWithChildren, useMemo } from "react";
+import { type PropsWithChildren, useMemo, useState } from "react";
 import { useAgentConfigs } from "../../db/hooks/useAgentConfigs.ts";
 import { useGameState } from "../../db/hooks/useGameState.ts";
 import { useMessages } from "../../db/hooks/useMessages.ts";
@@ -6,6 +6,7 @@ import { usePlayerState } from "../../db/hooks/usePlayerState.ts";
 import { useProviderConfigs } from "../../db/hooks/useProviderConfigs.ts";
 import Agent from "../../handlers/agents.ts";
 import { OpenRouterConfig } from "../../handlers/providers/openrouter.ts";
+import type { ChargenPage } from "../../models/Chargen.ts";
 import type ProviderConfig from "../../models/ProviderConfig.ts";
 import GameContext from "./index";
 
@@ -20,6 +21,8 @@ export default function GameProvider({ children }: PropsWithChildren) {
 	const { gameState, updateGameState } = useGameState();
 	const { providerConfigs } = useProviderConfigs();
 	const { agentConfigs } = useAgentConfigs();
+
+	const [chargenPage, setChargenPage] = useState<ChargenPage>("identity");
 
 	// Note: Augmented provider is rarely called versus the agents.
 
@@ -64,6 +67,8 @@ export default function GameProvider({ children }: PropsWithChildren) {
 				addMessage,
 				providerConfigs: augmentedProviderConfigs,
 				agentConfigs: augmentedAgentConfigs,
+				chargenPage,
+				setChargenPage,
 			}}
 		>
 			{children}

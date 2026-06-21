@@ -36,7 +36,6 @@ export default function Detailer() {
 			<Box
 				h="100%"
 				bg="var(--mantine-color-body)"
-				p="md"
 				style={{
 					borderLeft: "1px solid var(--app-shell-border-color)",
 				}}
