@@ -8,8 +8,10 @@ import GameProvider from "./context/GameContext/GameProvider.tsx";
 import LlmProvider from "./context/LlmContext/LlmProvider.tsx";
 import AppShellLayout from "./layouts/AppShellLayout.tsx";
 import Game from "./pages/main/game/index.tsx";
-import Agents from "./pages/main/options/Agents/index.tsx";
-import Providers from "./pages/main/options/Providers/index.tsx";
+import ImageAgents from "./pages/main/options/Agents/ImageAgents.tsx";
+import TextAgents from "./pages/main/options/Agents/TextAgents.tsx";
+import ImageProviders from "./pages/main/options/Providers/ImageProviders.tsx";
+import TextProviders from "./pages/main/options/Providers/TextProviders.tsx";
 
 function App() {
 	return (
@@ -20,9 +22,14 @@ function App() {
 						<Route element={<AppShellLayout />}>
 							<Route index element={<Game />} />
 							<Route path="/options">
-								<Route index element={<Providers />} />
-								<Route path="/options/providers" element={<Providers />} />
-								<Route path="/options/agents" element={<Agents />} />
+								<Route index element={<TextProviders />} />
+								<Route path="/options/providers" element={<TextProviders />} />
+								<Route
+									path="/options/image-providers"
+									element={<ImageProviders />}
+								/>
+								<Route path="/options/agents" element={<TextAgents />} />
+								<Route path="/options/image-agents" element={<ImageAgents />} />
 							</Route>
 						</Route>
 					</Routes>

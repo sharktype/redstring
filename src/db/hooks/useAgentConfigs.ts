@@ -1,10 +1,11 @@
 import { useLiveQuery } from "dexie-react-hooks";
 import { useEffect } from "react";
-import type { StoredAgentConfig } from "../../models/AgentConfig.ts";
+import type { AgentType, StoredAgentConfig } from "../../models/AgentConfig.ts";
 import {
-	AVAILABLE_AGENT_TYPES,
 	DEFAULT_DIALOGUE_PROMPT,
+	DEFAULT_ILLUSTRATOR_PROMPT,
 	DEFAULT_PLANNER_PROMPT,
+	DEFAULT_PROFILER_PROMPT,
 	DEFAULT_STORYTELLER_PROMPT,
 } from "../../models/AgentConfig.ts";
 import { db } from "../database.ts";
@@ -13,6 +14,8 @@ const DEFAULT_PROMPTS: Record<string, string> = {
 	storyteller: DEFAULT_STORYTELLER_PROMPT,
 	planner: DEFAULT_PLANNER_PROMPT,
 	dialogue: DEFAULT_DIALOGUE_PROMPT,
+	profiler: DEFAULT_PROFILER_PROMPT,
+	illustrator: DEFAULT_ILLUSTRATOR_PROMPT,
 };
 
 export function useAgentConfigs() {
@@ -41,7 +44,7 @@ export function useAgentConfigs() {
 	};
 }
 
-export function useAgentConfig(type: (typeof AVAILABLE_AGENT_TYPES)[number]) {
+export function useAgentConfig(type: AgentType) {
 	const config = useLiveQuery(
 		() => db.agentConfigs.where({ type }).first(),
 		[type],

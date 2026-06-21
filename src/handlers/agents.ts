@@ -1,14 +1,11 @@
 import type AgentConfig from "../models/AgentConfig.ts";
-import type {
-	AVAILABLE_AGENT_TYPES,
-	StoredAgentConfig,
-} from "../models/AgentConfig.ts";
+import type { AgentType, StoredAgentConfig } from "../models/AgentConfig.ts";
 import type { ToolContext } from "../models/LLMs.ts";
 import type Message from "../models/Message.ts";
 import type ProviderConfig from "../models/ProviderConfig.ts";
 
 export default class Agent implements AgentConfig {
-	type: (typeof AVAILABLE_AGENT_TYPES)[number];
+	type: AgentType;
 
 	id?: number;
 	providerConfigId?: number;

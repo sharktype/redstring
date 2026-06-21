@@ -5,6 +5,7 @@ import { useMessages } from "../../db/hooks/useMessages.ts";
 import { usePlayerState } from "../../db/hooks/usePlayerState.ts";
 import { useProviderConfigs } from "../../db/hooks/useProviderConfigs.ts";
 import Agent from "../../handlers/agents.ts";
+import { NovelAIConfig } from "../../handlers/providers/novelai.ts";
 import { OpenRouterConfig } from "../../handlers/providers/openrouter.ts";
 import type { ChargenPage } from "../../models/Chargen.ts";
 import type ProviderConfig from "../../models/ProviderConfig.ts";
@@ -32,6 +33,14 @@ export default function GameProvider({ children }: PropsWithChildren) {
 				switch (config.type) {
 					case "openrouter":
 						return new OpenRouterConfig(
+							config.name,
+							config.apiKey,
+							config.model,
+							config.id,
+							config.providerOutput ?? "text",
+						);
+					case "novelai":
+						return new NovelAIConfig(
 							config.name,
 							config.apiKey,
 							config.model,

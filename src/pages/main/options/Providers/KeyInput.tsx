@@ -12,17 +12,45 @@ import { BiHide, BiShow, BiTrash } from "react-icons/bi";
 import { BsLightbulb } from "react-icons/bs";
 import { useProviderConfigs } from "../../../../db/hooks/useProviderConfigs";
 import type ProviderConfig from "../../../../models/ProviderConfig";
-import { AVAILABLE_PROVIDER_TYPES } from "../../../../models/ProviderConfig";
+import {
+	AVAILABLE_IMAGE_PROVIDER_TYPES,
+	AVAILABLE_TEXT_PROVIDER_TYPES,
+	type ProviderOutput,
+	type ProviderType,
+} from "../../../../models/ProviderConfig";
 
-export default function KeyInput(props: { providerConfig?: ProviderConfig }) {
-	const { providerConfig } = props;
+export default function KeyInput(props: {
+	providerConfig?: ProviderConfig;
+	providerOutput: ProviderOutput;
+}) {
+	const { providerConfig, providerOutput } = props;
+
+	const providerTypes =
+		providerOutput === "image"
+			? [...AVAILABLE_IMAGE_PROVIDER_TYPES]
+			: [...AVAILABLE_TEXT_PROVIDER_TYPES];
+
+	const MODEL_PLACEHOLDERS: Record<string, string> = {
+		openrouter: "e.g., deepseek/deepseek-v3.2",
+		novelai: "nai-diffusion",
+	};
+
+	const KEY_LABELS: Record<string, string> = {
+		openrouter: "API Key",
+		novelai: "URL",
+	};
 
 	const [isDirtyNaive, setIsDirtyNaive] = useState(false);
 	const [isTesting, setIsTesting] = useState(false);
 	const [showApiKey, setShowApiKey] = useState(false);
+	const [selectedType, setSelectedType] = useState<string>(
+		providerConfig?.type ?? providerTypes[0] ?? "",
+	);
+
+	const modelPlaceholder = MODEL_PLACEHOLDERS[selectedType] ?? "";
+	const keyLabel = KEY_LABELS[selectedType] ?? "API Key";
 
 	const nicknameRef = useRef<HTMLInputElement>(null);
-	const typeRef = useRef<HTMLSelectElement>(null);
 	const modelRef = useRef<HTMLInputElement>(null);
 	const apiKeyRef = useRef<HTMLInputElement>(null);
 
@@ -31,14 +59,15 @@ export default function KeyInput(props: { providerConfig?: ProviderConfig }) {
 
 	const saveAction = () => {
 		const name = nicknameRef.current?.value || "";
-		const type = typeRef.current
-			?.value as (typeof AVAILABLE_PROVIDER_TYPES)[number];
+		const type = selectedType as ProviderType;
 		const model = modelRef.current?.value || "";
 		const apiKey = apiKeyRef.current?.value || "";
 
-		if (providerConfig && providerConfig.id !== undefined) {
-			// This update will also re-augment the values in context which we use for testing.
+		if (!type) {
+			return;
+		}
 
+		if (providerConfig && providerConfig.id !== undefined) {
 			void updateProviderConfig(providerConfig.id, {
 				name,
 				type,
@@ -46,7 +75,13 @@ export default function KeyInput(props: { providerConfig?: ProviderConfig }) {
 				apiKey,
 			});
 		} else {
-			void addProviderConfig({ name, type, model, apiKey });
+			void addProviderConfig({
+				name,
+				type,
+				model,
+				apiKey,
+				providerOutput,
+			});
 		}
 
 		setIsDirtyNaive(false);
@@ -63,7 +98,24 @@ export default function KeyInput(props: { providerConfig?: ProviderConfig }) {
 			if (apiKeyRef.current) {
 				apiKeyRef.current.value = "";
 			}
+
+			setSelectedType(providerTypes[0] ?? "");
 		}
+	};
+
+	const handleTest = async () => {
+		setIsTesting(true);
+
+		const result = await providerConfig!.test();
+		if (result) {
+			alert(`Provider test successful! LLM said:\n\n${result}`);
+		} else {
+			alert(
+				"Provider test failed. Please check your API key and configuration.",
+			);
+		}
+
+		setIsTesting(false);
 	};
 
 	return (
@@ -85,16 +137,19 @@ export default function KeyInput(props: { providerConfig?: ProviderConfig }) {
 				/>
 			</Group>
 			<NativeSelect
-				ref={typeRef}
 				label="Type"
-				data={AVAILABLE_PROVIDER_TYPES}
+				data={providerTypes}
+				value={selectedType}
+				onChange={(e) => {
+					setSelectedType(e.currentTarget.value);
+					setIsDirtyNaive(true);
+				}}
 				disabled={isTesting}
-				onChange={() => setIsDirtyNaive(true)}
 			/>
 			<TextInput
 				ref={modelRef}
 				label="Model"
-				placeholder="e.g., deepseek/deepseek-v3.2"
+				placeholder={modelPlaceholder}
 				defaultValue={providerConfig?.model}
 				disabled={isTesting}
 				onChange={() => setIsDirtyNaive(true)}
@@ -102,7 +157,7 @@ export default function KeyInput(props: { providerConfig?: ProviderConfig }) {
 			<TextInput
 				ref={apiKeyRef}
 				type={showApiKey ? "text" : "password"}
-				label="API Key"
+				label={keyLabel}
 				placeholder="e.g., sk-xxx..."
 				defaultValue={providerConfig?.apiKey}
 				disabled={isTesting}
@@ -127,25 +182,12 @@ export default function KeyInput(props: { providerConfig?: ProviderConfig }) {
 							? "Add (changes unsaved)"
 							: "Edit above to add a new provider"}
 				</Button>
-				{providerConfig && (
+				{providerConfig && providerOutput === "text" && (
 					<Button
 						variant="default"
 						flex={1}
 						disabled={isTesting || isDirtyNaive}
-						onClick={async () => {
-							setIsTesting(true);
-
-							const result = await providerConfig.test();
-							if (result) {
-								alert(`Provider test successful! LLM said:\n\n${result}`);
-							} else {
-								alert(
-									"Provider test failed. Please check your API key and configuration.",
-								);
-							}
-
-							setIsTesting(false);
-						}}
+						onClick={handleTest}
 					>
 						{isTesting ? "Testing..." : "Test"}
 					</Button>

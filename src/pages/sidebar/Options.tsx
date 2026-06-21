@@ -10,7 +10,7 @@ import {
 } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
 import type { ReactNode } from "react";
-import { FaMap } from "react-icons/fa";
+import { FaImage, FaMap } from "react-icons/fa";
 import { FiKey } from "react-icons/fi";
 import { GiWorld } from "react-icons/gi";
 import { useNavigate } from "react-router";
@@ -64,18 +64,28 @@ export default function Options() {
 				</Box>
 				<Box>
 					<Title order={4} mb="md">
-						LLM(s)
+						Artificial Intelligence
 					</Title>
 					<Stack gap="xs">
 						<OptionsItem
-							label="Providers"
+							label="Text Providers"
 							href="/options/providers"
 							icon={<FiKey />}
 						/>
 						<OptionsItem
-							label="Agents"
+							label="Text Agents"
 							href="/options/agents"
 							icon={<FaMap />}
+						/>
+						<OptionsItem
+							label="Image Providers"
+							href="/options/image-providers"
+							icon={<FiKey />}
+						/>
+						<OptionsItem
+							label="Image Agents"
+							href="/options/image-agents"
+							icon={<FaImage />}
 						/>
 					</Stack>
 				</Box>

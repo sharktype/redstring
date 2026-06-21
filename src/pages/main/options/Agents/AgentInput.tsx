@@ -14,16 +14,21 @@ import useGameContext from "../../../../context/hooks/useGameContext.tsx";
 import { useAgentConfigs } from "../../../../db/hooks/useAgentConfigs.ts";
 import {
 	DEFAULT_DIALOGUE_PROMPT,
+	DEFAULT_ILLUSTRATOR_PROMPT,
 	DEFAULT_PLANNER_PROMPT,
+	DEFAULT_PROFILER_PROMPT,
 	DEFAULT_STORYTELLER_PROMPT,
 	type StoredAgentConfig,
 } from "../../../../models/AgentConfig.ts";
+import type { ProviderOutput } from "../../../../models/ProviderConfig.ts";
 import AgentEditModal from "./AgentEditModal.tsx";
 
 const DEFAULT_PROMPTS: Record<string, string> = {
 	storyteller: DEFAULT_STORYTELLER_PROMPT,
 	planner: DEFAULT_PLANNER_PROMPT,
 	dialogue: DEFAULT_DIALOGUE_PROMPT,
+	profiler: DEFAULT_PROFILER_PROMPT,
+	illustrator: DEFAULT_ILLUSTRATOR_PROMPT,
 };
 
 export interface AgentInputHandle {
@@ -35,6 +40,7 @@ interface AgentInputProps {
 	description: React.ReactNode;
 	onDirtyChange?: (dirty: boolean) => void;
 	ref?: Ref<AgentInputHandle>;
+	providerOutput: ProviderOutput;
 }
 
 function AgentInput({
@@ -42,6 +48,7 @@ function AgentInput({
 	description,
 	onDirtyChange,
 	ref,
+	providerOutput,
 }: AgentInputProps) {
 	const [isSaving, setIsSaving] = useState(false);
 	const [isTesting, setIsTesting] = useState(false);
@@ -63,10 +70,12 @@ function AgentInput({
 	// PROVIDER
 
 	const { providerConfigs, agentConfigs } = useGameContext();
-	const providerOptions = providerConfigs.map((config) => ({
-		value: config.id?.toString() ?? "",
-		label: config.name,
-	}));
+	const providerOptions = providerConfigs
+		.filter((config) => config.providerOutput === providerOutput)
+		.map((config) => ({
+			value: config.id?.toString() ?? "",
+			label: config.name,
+		}));
 
 	const savedProvider = agentConfig?.providerConfigId?.toString() ?? null;
 	const [selectedProvider, setSelectedProvider] = useState<string | null>(
@@ -170,43 +179,45 @@ function AgentInput({
 					>
 						<BiEdit />
 					</ActionIcon>
-					<ActionIcon
-						variant="outline"
-						size="sm"
-						color="yellow"
-						onClick={async () => {
-							setIsTesting(true);
+					{providerOutput === "text" && (
+						<ActionIcon
+							variant="outline"
+							size="sm"
+							color="yellow"
+							onClick={async () => {
+								setIsTesting(true);
 
-							if (!savedAgentConfig) {
-								alert(
-									"Agent config not found. Please save the agent before testing.",
-								);
+								if (!savedAgentConfig) {
+									alert(
+										"Agent config not found. Please save the agent before testing.",
+									);
+									setIsTesting(false);
+
+									return;
+								}
+
+								const result = await savedAgentConfig.test();
+								if (result) {
+									alert(`Agent test successful! LLM said:\n\n${result}`);
+								} else {
+									alert(
+										"Agent test failed. Please check your agent and provider configurations.",
+									);
+								}
+
 								setIsTesting(false);
-
-								return;
+							}}
+							disabled={
+								isDirty ||
+								isTesting ||
+								isSaving ||
+								!savedAgentConfig?.providerConfigId
 							}
-
-							const result = await savedAgentConfig.test();
-							if (result) {
-								alert(`Agent test successful! LLM said:\n\n${result}`);
-							} else {
-								alert(
-									"Agent test failed. Please check your agent and provider configurations.",
-								);
-							}
-
-							setIsTesting(false);
-						}}
-						disabled={
-							isDirty ||
-							isTesting ||
-							isSaving ||
-							!savedAgentConfig?.providerConfigId
-						}
-						loading={isTesting}
-					>
-						<BiPlay />
-					</ActionIcon>
+							loading={isTesting}
+						>
+							<BiPlay />
+						</ActionIcon>
+					)}
 				</Group>
 			</Group>
 			<AgentEditModal

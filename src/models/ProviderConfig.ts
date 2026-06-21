@@ -1,13 +1,21 @@
 import type { ToolCall, ToolContext } from "./LLMs";
 import type Message from "./Message";
 
+export type ProviderOutput = "text" | "image";
+
+export type ProviderType =
+	| (typeof AVAILABLE_TEXT_PROVIDER_TYPES)[number]
+	| (typeof AVAILABLE_IMAGE_PROVIDER_TYPES)[number];
+
 export default interface ProviderConfig {
-	type: (typeof AVAILABLE_PROVIDER_TYPES)[number];
+	type: ProviderType;
 
 	id?: number;
 	name: string;
 	apiKey: string;
 	model: string;
+
+	providerOutput: ProviderOutput;
 
 	submit(
 		messages: Message[],
@@ -23,4 +31,9 @@ export type StoredProviderConfig = Omit<
 	"call" | "test" | "execute" | "submit"
 >;
 
-export const AVAILABLE_PROVIDER_TYPES = ["openrouter"] as const;
+export const AVAILABLE_TEXT_PROVIDER_TYPES = ["openrouter"] as const;
+
+export const AVAILABLE_IMAGE_PROVIDER_TYPES = [
+	"openrouter",
+	"novelai",
+] as const;

@@ -7,7 +7,10 @@ import {
 } from "../../models/LLMs.ts";
 import type Message from "../../models/Message.ts";
 import type ProviderConfig from "../../models/ProviderConfig.ts";
-import type { AVAILABLE_PROVIDER_TYPES } from "../../models/ProviderConfig.ts";
+import type {
+	AVAILABLE_TEXT_PROVIDER_TYPES,
+	ProviderOutput,
+} from "../../models/ProviderConfig.ts";
 import doArithmetic from "../tools/doArithmetic.ts";
 import generateName from "../tools/generateName.ts";
 import modifyMoney from "../tools/modifyMoney.ts";
@@ -18,17 +21,25 @@ export const OPENROUTER_API_URL =
 	"https://openrouter.ai/api/v1/chat/completions";
 
 export class OpenRouterConfig implements ProviderConfig {
-	type: (typeof AVAILABLE_PROVIDER_TYPES)[number] = "openrouter";
+	type: (typeof AVAILABLE_TEXT_PROVIDER_TYPES)[number] = "openrouter";
+	providerOutput: ProviderOutput = "text";
 
 	id?: number;
 	name: string;
 	apiKey: string;
 	model: string;
 
-	constructor(name: string, apiKey: string, model: string, id?: number) {
+	constructor(
+		name: string,
+		apiKey: string,
+		model: string,
+		id?: number,
+		providerOutput: ProviderOutput = "text",
+	) {
 		this.name = name;
 		this.apiKey = apiKey;
 		this.model = model;
+		this.providerOutput = providerOutput;
 
 		if (id !== undefined) {
 			this.id = id;
