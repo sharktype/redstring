@@ -25,7 +25,7 @@ export default function AppearanceStep(_props: ChargenStepProps) {
 	const { playerState, updatePlayerState, gameState } = useGameContext();
 	const [locks, setLocks] = useState<Locks>(defaultLocks);
 
-	const isNsfw = gameState?.isNsfw ?? false;
+	const isNsfwMode = gameState?.isNsfw ?? false;
 
 	const appearance = playerState?.appearance ?? {};
 	const genderExpression = appearance.genderExpression;
@@ -50,7 +50,7 @@ export default function AppearanceStep(_props: ChargenStepProps) {
 		const generated = randomiseAppearance(
 			expressionForRandomization,
 			appearance.species,
-			isNsfw,
+			isNsfwMode,
 		);
 
 		const merged = mergeIntoLocked(appearance, generated, locks);
@@ -107,7 +107,7 @@ export default function AppearanceStep(_props: ChargenStepProps) {
 							maxWidth: 320,
 						}}
 					>
-						<PortraitUploader isNsfwMode={isNsfw} />
+						<PortraitUploader />
 					</Stack>
 
 					<Stack gap="xs" style={{ flex: 2.5, minWidth: 300 }}>
@@ -119,7 +119,7 @@ export default function AppearanceStep(_props: ChargenStepProps) {
 
 						<AppearanceForm locks={locks} toggleLock={toggleLock} />
 
-						{isNsfw && (
+						{isNsfwMode && (
 							<NsfwFields
 								setAppearance={setAppearance}
 								locks={locks}

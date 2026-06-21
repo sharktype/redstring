@@ -25,9 +25,12 @@ export default function Options() {
 		unmakeOpened,
 		{ open: openUnmakeCharacter, close: closeUnmakeCharacter },
 	] = useDisclosure(false);
+	const [nsfwOffOpened, { open: openNsfwOff, close: closeNsfwOff }] =
+		useDisclosure(false);
 	const { clearMessages } = useMessages();
 	const { clearPlayerState } = usePlayerState();
-	const { gameState, updateGameState } = useGameContext();
+	const { gameState, updateGameState, playerState, updatePlayerState } =
+		useGameContext();
 
 	const isNsfw = gameState?.isNsfw ?? false;
 
@@ -41,6 +44,22 @@ export default function Options() {
 		closeUnmakeCharacter();
 	};
 
+	const handleNsfwOff = async () => {
+		await updateGameState({ isNsfw: false });
+		await updatePlayerState({
+			appearance: {
+				...playerState?.appearance,
+				genitals: undefined,
+				cockSize: undefined,
+			},
+			portraits: {
+				...playerState?.portraits,
+				nude: undefined,
+			},
+		});
+		closeNsfwOff();
+	};
+
 	return (
 		<Box my="lg" h="90vh" style={{ overflowY: "auto" }}>
 			<Title order={2} mb="lg">
@@ -52,11 +71,15 @@ export default function Options() {
 						<Switch
 							label="NSFW Mode"
 							checked={isNsfw}
-							onChange={(e) =>
-								updateGameState({
-									isNsfw: e.currentTarget.checked,
-								})
-							}
+							onChange={(e) => {
+								if (!e.currentTarget.checked) {
+									openNsfwOff();
+								} else {
+									updateGameState({
+										isNsfw: true,
+									});
+								}
+							}}
 							color="red"
 							ml="xs"
 						/>
@@ -131,6 +154,24 @@ export default function Options() {
 								No
 							</Button>
 							<Button color="red" onClick={handleUnmakeCharacter}>
+								Yes
+							</Button>
+						</Group>
+					</Modal>
+					<Modal
+						opened={nsfwOffOpened}
+						onClose={closeNsfwOff}
+						title="Disable NSFW Mode"
+						centered
+					>
+						<Text mb="lg">
+							Are you sure? Some character details may be lost.
+						</Text>
+						<Group justify="flex-end">
+							<Button variant="default" onClick={closeNsfwOff}>
+								No
+							</Button>
+							<Button color="red" onClick={handleNsfwOff}>
 								Yes
 							</Button>
 						</Group>

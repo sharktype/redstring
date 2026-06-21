@@ -21,23 +21,20 @@ import type Agent from "../../../../../handlers/agents";
 import type { Appearance, Portraits } from "../../../../../models/PlayerState";
 import { buildImageGenPrompt } from "./buildImageGenPrompt";
 
-interface PortraitUploaderProps {
-	isNsfwMode: boolean;
-}
-
 const PORTRAIT_META: Record<keyof Portraits, { emoji: string; label: string }> =
 	{
 		nude: { emoji: "🔞", label: "Nude" },
 		base: { emoji: "🧍", label: "Base" },
 	};
 
-export default function PortraitUploader({
-	isNsfwMode: nsfw,
-}: PortraitUploaderProps) {
-	const { playerState, updatePlayerState, agentConfigs } = useGameContext();
+export default function PortraitUploader() {
+	const { gameState, playerState, updatePlayerState, agentConfigs } =
+		useGameContext();
+
+	const isNsfwMode = gameState?.isNsfw;
 
 	const profilerAgent = agentConfigs.find(
-		(a): a is Agent => a.type === "profiler",
+		(agent): agent is Agent => agent.type === "profiler",
 	);
 
 	const [portraitTab, setPortraitTab] = useState<keyof Portraits>("base");
@@ -52,14 +49,14 @@ export default function PortraitUploader({
 	const [generateError, setGenerateError] = useState<string | null>(null);
 
 	useEffect(() => {
-		if (!nsfw) {
+		if (!isNsfwMode) {
 			setPortraitTab("base");
 		}
-	}, [nsfw]);
+	}, [isNsfwMode]);
 
 	const portraits = playerState?.portraits;
 
-	const tabOptions = nsfw ? ["nude", "base"] : ["base"];
+	const tabOptions = isNsfwMode ? ["nude", "base"] : ["base"];
 
 	const handleChange = (tab: keyof Portraits, file: File | null) => {
 		setPortraitFiles((prev) => ({ ...prev, [tab]: file }));
@@ -103,8 +100,8 @@ export default function PortraitUploader({
 			const merged: Appearance = {
 				...playerState.appearance,
 			};
-			const tab = nsfw ? portraitTab : "base";
-			const prompt = buildImageGenPrompt(merged, tab);
+			const tab = isNsfwMode ? portraitTab : "base";
+			const prompt = buildImageGenPrompt(merged, tab, isNsfwMode);
 
 			const stream = await profilerAgent.generate(prompt, {
 				width: 832,
@@ -141,7 +138,7 @@ export default function PortraitUploader({
 
 	return (
 		<Stack gap="xs">
-			{nsfw ? (
+			{isNsfwMode ? (
 				<Tabs
 					value={portraitTab}
 					onChange={(value) => setPortraitTab(value as keyof Portraits)}
@@ -288,7 +285,10 @@ interface PromptModalProps {
 }
 
 function PromptModal({ opened, onClose }: PromptModalProps) {
+	const { gameState } = useGameContext();
 	const { playerState } = usePlayerState();
+
+	const isNsfwMode = gameState?.isNsfw;
 	const appearance = playerState?.appearance;
 
 	const prompt = useMemo(() => {
@@ -296,8 +296,8 @@ function PromptModal({ opened, onClose }: PromptModalProps) {
 			...appearance,
 		};
 
-		return buildImageGenPrompt(merged);
-	}, [appearance]);
+		return buildImageGenPrompt(merged, "base", isNsfwMode);
+	}, [appearance, isNsfwMode]);
 
 	return (
 		<Modal

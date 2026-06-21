@@ -37,6 +37,7 @@ const COCK_SIZE_LABELS: Record<string, string> = {
 export function buildImageGenPrompt(
 	appearance: Appearance,
 	portraitType: keyof Portraits = "base",
+	isNsfw = true,
 ): string {
 	const parts: string[] = [
 		"no text",
@@ -128,7 +129,7 @@ export function buildImageGenPrompt(
 		parts.push(`${appearance.hairColour} hair colour`);
 	}
 
-	if (hasPenis && appearance.cockSize) {
+	if (isNsfw && hasPenis && appearance.cockSize) {
 		const penisType =
 			appearance.genitals === "penisCircumcised" ? "circumcized" : "foreskin";
 
@@ -137,7 +138,7 @@ export function buildImageGenPrompt(
 		);
 	}
 
-	if (portraitType === "nude") {
+	if (isNsfw && portraitType === "nude") {
 		parts.push("nude, completely naked, nsfw");
 	} else if (appearance.clothingStyle) {
 		parts.push(`wearing ${appearance.clothingStyle}`);
