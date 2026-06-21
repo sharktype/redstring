@@ -24,11 +24,13 @@ export default function TimeStep({ playerState, onChange }: ChargenStepProps) {
 
 	return (
 		<Box
-			p="md"
-			bg="var(--mantine-color-grape-light)"
-			style={{ borderRadius: "16px" }}
+			p="lg"
+			style={{
+				borderRadius: "var(--mantine-radius-md)",
+				border: "1px solid var(--mantine-color-default-border)",
+			}}
 		>
-			<Stack gap="xs">
+			<Stack gap="sm">
 				<Group justify="space-between">
 					<Title order={4}>Time</Title>
 					<Group gap="xs">

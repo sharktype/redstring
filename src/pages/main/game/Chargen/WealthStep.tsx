@@ -23,11 +23,13 @@ export default function WealthStep({
 
 	return (
 		<Box
-			p="md"
-			bg="var(--mantine-color-orange-light)"
-			style={{ borderRadius: "16px" }}
+			p="lg"
+			style={{
+				borderRadius: "var(--mantine-radius-md)",
+				border: "1px solid var(--mantine-color-default-border)",
+			}}
 		>
-			<Stack gap="xs">
+			<Stack gap="sm">
 				<Group justify="space-between">
 					<Title order={4}>Starting Wealth</Title>
 					<Group gap="xs">

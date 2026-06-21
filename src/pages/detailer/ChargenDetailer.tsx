@@ -1,5 +1,4 @@
 import {
-	Box,
 	Button,
 	Flex,
 	Stack,
@@ -127,61 +126,51 @@ export default function ChargenDetailer() {
 							<UnstyledButton
 								key={availablePage}
 								onClick={() => setChargenPage(availablePage)}
+								py="sm"
+								pl="var(--mantine-spacing-md)"
+								mr="md"
+								style={{
+									borderLeft: isSelected
+										? `3px solid var(--mantine-color-${color}-filled)`
+										: "3px solid transparent",
+									transition: "border-color 120ms ease",
+								}}
 							>
-								<Box
-									p="md"
-									bg={
-										isSelected
-											? `var(--mantine-color-${color}-light)`
-											: "var(--mantine-color-default)"
-									}
-									style={{
-										borderRadius: "16px",
-										border: `2px solid ${
-											isSelected
-												? `var(--mantine-color-${color}-filled)`
-												: "var(--mantine-color-default-border)"
-										}`,
-										transition:
-											"border-color 120ms ease, background 120ms ease",
-									}}
-								>
-									<Flex gap="md" align="center" h="100%">
-										<Icon
-											size={32}
-											color={`var(--mantine-color-${color}-filled)`}
+								<Flex gap="md" align="center" h="100%">
+									<Icon
+										size={24}
+										color={`var(--mantine-color-${color}-filled)`}
+										style={{ flexShrink: 0 }}
+									/>
+									<Stack gap={2} style={{ flex: 1, minWidth: 0 }}>
+										<Text fw={600} size="sm" lh={1.2}>
+											{label}
+										</Text>
+										<Text size="xs" c="dimmed" lh={1.3}>
+											{description}
+										</Text>
+									</Stack>
+									{steps.length > 0 && (
+										<Text
+											size="xs"
+											c={
+												mandatoryDone && completedCount === steps.length
+													? "green"
+													: mandatoryDone
+														? "dimmed"
+														: "red"
+											}
 											style={{ flexShrink: 0 }}
-										/>
-										<Stack gap={2} style={{ flex: 1, minWidth: 0 }}>
-											<Text fw={600} size="sm" lh={1.2}>
-												{label}
-											</Text>
-											<Text size="xs" c="dimmed" lh={1.3}>
-												{description}
-											</Text>
-										</Stack>
-										{steps.length > 0 && (
-											<Text
-												size="xs"
-												c={
-													mandatoryDone && completedCount === steps.length
-														? "green"
-														: mandatoryDone
-															? "dimmed"
-															: "red"
-												}
-												style={{ flexShrink: 0 }}
-											>
-												{completedCount}/{steps.length}
-											</Text>
-										)}
-										{steps.length === 0 && (
-											<Text size="xs" c="dimmed" style={{ flexShrink: 0 }}>
-												WIP
-											</Text>
-										)}
-									</Flex>
-								</Box>
+										>
+											{completedCount}/{steps.length}
+										</Text>
+									)}
+									{steps.length === 0 && (
+										<Text size="xs" c="dimmed" style={{ flexShrink: 0 }}>
+											WIP
+										</Text>
+									)}
+								</Flex>
 							</UnstyledButton>
 						);
 					})}

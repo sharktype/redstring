@@ -12,11 +12,13 @@ export default function ExtraStatsStep({
 
 	return (
 		<Box
-			p="md"
-			bg="var(--mantine-color-yellow-light)"
-			style={{ borderRadius: "16px" }}
+			p="lg"
+			style={{
+				borderRadius: "var(--mantine-radius-md)",
+				border: "1px solid var(--mantine-color-default-border)",
+			}}
 		>
-			<Stack gap="xs">
+			<Stack gap="sm">
 				<Group justify="space-between">
 					<Title order={4}>Extra Stats</Title>
 					<Group gap="xs">

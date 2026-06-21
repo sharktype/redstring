@@ -112,156 +112,165 @@ export default function NameStep({ playerState, onChange }: ChargenStepProps) {
 	);
 
 	return (
-		<Box
-			p="md"
-			bg="var(--mantine-color-blue-light)"
-			style={{ borderRadius: "16px" }}
-		>
-			<Stack gap="xs">
-				<Group justify="space-between">
-					<Title order={4}>Name</Title>
-					<Group gap="xs">
-						<Checkbox
-							label="Fantasify?"
-							checked={willFantasify}
-							onChange={(event) =>
-								setWillFantasify(event.currentTarget.checked)
-							}
-							size="xs"
-							mr="xs"
-						/>
-						<Select
-							placeholder="Culture"
-							data={cultureOptions}
-							value={selectedCulture}
-							onChange={(val) =>
-								setSelectedCulture(val as Culture | "mixed" | null)
-							}
-							size="xs"
-							clearable
-						/>
-						<ActionIcon
-							variant="subtle"
-							color="gray"
-							title="Clear"
-							onClick={clear}
-							disabled={isFullyLocked}
-						>
-							<FaEraser size={16} />
-						</ActionIcon>
-						<ActionIcon
-							variant="subtle"
-							color="gray"
-							title="Fantasify current name"
-							onClick={() => {
-								const given = playerState.name?.given ?? "";
-								const surname = playerState.name?.surname ?? "";
-
-								if (!given && !surname) {
-									return;
+		<>
+			<Box
+				p="lg"
+				style={{
+					borderRadius: "var(--mantine-radius-md)",
+					border: "1px solid var(--mantine-color-default-border)",
+				}}
+			>
+				<Stack gap="sm">
+					<Group justify="space-between">
+						<Title order={4}>Name</Title>
+						<Group gap="xs">
+							<Checkbox
+								label="Fantasify?"
+								checked={willFantasify}
+								onChange={(event) =>
+									setWillFantasify(event.currentTarget.checked)
 								}
-
-								if (given.length > 32 || surname.length > 32) {
-									// Don't allow extremely long names in a funny way.
-
-									setIsEasterEggModalOpen(true);
-
-									return;
+								size="xs"
+								mr="xs"
+							/>
+							<Select
+								placeholder="Culture"
+								data={cultureOptions}
+								value={selectedCulture}
+								onChange={(val) =>
+									setSelectedCulture(val as Culture | "mixed" | null)
 								}
+								size="xs"
+								clearable
+							/>
+							<ActionIcon
+								variant="subtle"
+								color="gray"
+								title="Clear"
+								onClick={clear}
+								disabled={isFullyLocked}
+							>
+								<FaEraser size={16} />
+							</ActionIcon>
+							<ActionIcon
+								variant="subtle"
+								color="gray"
+								title="Fantasify current name"
+								onClick={() => {
+									const given = playerState.name?.given ?? "";
+									const surname = playerState.name?.surname ?? "";
 
-								onChange({
-									name: {
-										given:
-											isGivenNameLocked || !given
-												? given
-												: generatePartialFantasyName(given, selectedCulture),
-										surname:
-											isSurnameLocked || !surname
-												? surname
-												: generatePartialFantasyName(surname, selectedCulture),
-									},
-								});
-							}}
-							disabled={!playerState.name?.given && !playerState.name?.surname}
-						>
-							<FaMagic size={16} />
-						</ActionIcon>
-						<ActionIcon
-							variant="subtle"
-							color="gray"
-							title="Randomise"
-							onClick={randomize}
-							disabled={isFullyLocked}
-						>
-							<FaDice size={16} />
-						</ActionIcon>
-					</Group>
-				</Group>
-				<Flex gap="sm" wrap="wrap" align="flex-end">
-					<Group gap={4} wrap="nowrap" style={{ flex: 1 }}>
-						<TextInput
-							label="Given name"
-							placeholder="Given name"
-							value={playerState.name?.given ?? ""}
-							onChange={(e) =>
-								onChange({
-									name: {
-										given: e.currentTarget.value,
-										surname: playerState.name?.surname ?? "",
-									},
-								})
-							}
-							style={{ flex: 1, minWidth: 0 }}
-							disabled={isGivenNameLocked}
-						/>
-						{lockIcon(isGivenNameLocked, () => {
-							const next = !isGivenNameLocked;
+									if (!given && !surname) {
+										return;
+									}
 
-							setIsGivenNameLocked(next);
-							setIsGenderLocked(next);
-						})}
-					</Group>
-					<Group gap={4} wrap="nowrap">
-						<TextInput
-							label="Surname"
-							placeholder="Surname"
-							value={playerState.name?.surname ?? ""}
-							onChange={(e) =>
-								onChange({
-									name: {
-										given: playerState.name?.given ?? "",
-										surname: e.currentTarget.value,
-									},
-								})
-							}
-							style={{ flex: 1 }}
-							disabled={isSurnameLocked}
-						/>
-						{lockIcon(isSurnameLocked, () => setIsSurnameLocked((v) => !v))}
-					</Group>
-					<Group gap={4} wrap="nowrap">
-						<Select
-							label="Gender"
-							placeholder="Gender"
-							data={genderOptions}
-							value={playerState.gender?.identity ?? null}
-							onChange={(val) => {
-								const gender = DEFAULT_GENDER_IDENTITIES.find(
-									(gender) => gender.identity === val,
-								);
+									if (given.length > 32 || surname.length > 32) {
+										// Don't allow extremely long names in a funny way.
 
-								if (gender) {
-									onChange({ gender });
+										setIsEasterEggModalOpen(true);
+
+										return;
+									}
+
+									onChange({
+										name: {
+											given:
+												isGivenNameLocked || !given
+													? given
+													: generatePartialFantasyName(given, selectedCulture),
+											surname:
+												isSurnameLocked || !surname
+													? surname
+													: generatePartialFantasyName(
+															surname,
+															selectedCulture,
+														),
+										},
+									});
+								}}
+								disabled={
+									!playerState.name?.given && !playerState.name?.surname
 								}
-							}}
-							disabled={isGivenNameLocked || isGenderLocked}
-						/>
-						{lockIcon(isGenderLocked, () =>
-							setIsGenderLocked((value) => !value),
-						)}
+							>
+								<FaMagic size={16} />
+							</ActionIcon>
+							<ActionIcon
+								variant="subtle"
+								color="gray"
+								title="Randomise"
+								onClick={randomize}
+								disabled={isFullyLocked}
+							>
+								<FaDice size={16} />
+							</ActionIcon>
+						</Group>
 					</Group>
-				</Flex>
-			</Stack>
+					<Flex gap="sm" wrap="wrap" align="flex-end">
+						<Group gap={4} wrap="nowrap" style={{ flex: 1 }}>
+							<TextInput
+								label="Given name"
+								placeholder="Given name"
+								value={playerState.name?.given ?? ""}
+								onChange={(e) =>
+									onChange({
+										name: {
+											given: e.currentTarget.value,
+											surname: playerState.name?.surname ?? "",
+										},
+									})
+								}
+								style={{ flex: 1, minWidth: 0 }}
+								disabled={isGivenNameLocked}
+							/>
+							{lockIcon(isGivenNameLocked, () => {
+								const next = !isGivenNameLocked;
+
+								setIsGivenNameLocked(next);
+								setIsGenderLocked(next);
+							})}
+						</Group>
+						<Group gap={4} wrap="nowrap">
+							<TextInput
+								label="Surname"
+								placeholder="Surname"
+								value={playerState.name?.surname ?? ""}
+								onChange={(e) =>
+									onChange({
+										name: {
+											given: playerState.name?.given ?? "",
+											surname: e.currentTarget.value,
+										},
+									})
+								}
+								style={{ flex: 1 }}
+								disabled={isSurnameLocked}
+							/>
+							{lockIcon(isSurnameLocked, () => setIsSurnameLocked((v) => !v))}
+						</Group>
+						<Group gap={4} wrap="nowrap">
+							<Select
+								label="Gender"
+								placeholder="Gender"
+								data={genderOptions}
+								value={playerState.gender?.identity ?? null}
+								onChange={(val) => {
+									const gender = DEFAULT_GENDER_IDENTITIES.find(
+										(gender) => gender.identity === val,
+									);
+
+									if (gender) {
+										onChange({ gender });
+									}
+								}}
+								disabled={isGivenNameLocked || isGenderLocked}
+							/>
+							{lockIcon(isGenderLocked, () =>
+								setIsGenderLocked((value) => !value),
+							)}
+						</Group>
+					</Flex>
+				</Stack>
+			</Box>
 			<Modal
 				title={<b>Stop, Please</b>}
 				opened={isEasterEggModalOpen}
@@ -274,6 +283,6 @@ export default function NameStep({ playerState, onChange }: ChargenStepProps) {
 				</b>
 				, I think you've had enough.
 			</Modal>
-		</Box>
+		</>
 	);
 }
