@@ -6,8 +6,8 @@ import {
 	Text,
 	useMantineColorScheme,
 } from "@mantine/core";
+import { BiHome } from "react-icons/bi";
 import { CgDarkMode, CgOptions } from "react-icons/cg";
-import { IoMdArrowBack } from "react-icons/io";
 import { MdOutlineLightMode } from "react-icons/md";
 import { useLocation, useNavigate } from "react-router";
 
@@ -43,7 +43,7 @@ export default function Header(props: { isShownOnMobile?: boolean }) {
 					}}
 					mr="xs"
 				>
-					{isOptions ? <IoMdArrowBack /> : <CgOptions />}
+					{isOptions ? <BiHome /> : <CgOptions />}
 				</ActionIcon>
 			</Group>
 		</Flex>

@@ -53,32 +53,11 @@ export default function Options() {
 				</Box>
 				<Box>
 					<Title order={4} mb="md">
-						World
-					</Title>
-					<Stack gap="xs">
-						<OptionsItem label="Items" icon={<GiWorld />} />
-						<OptionsItem label="Characters" icon={<GiWorld />} />
-					</Stack>
-				</Box>
-				<Box>
-					<Title order={4} mb="md">
-						Gameplay
-					</Title>
-					<Stack gap="xs">
-						<OptionsItem label="Modules" icon={<GiWorld />} />
-						<OptionsItem label="Feature Flags" icon={<GiWorld />} />
-						<OptionsItem label="Chargen" icon={<GiWorld />} />
-					</Stack>
-				</Box>
-				<Box>
-					<Title order={4} mb="md">
 						Import/Export
 					</Title>
 					<Stack gap="xs">
-						<OptionsItem label="Import Options" icon={<GiWorld />} />
-						<OptionsItem label="Import Game" icon={<GiWorld />} />
-						<OptionsItem label="Export Options" icon={<GiWorld />} />
-						<OptionsItem label="Export Game" icon={<GiWorld />} />
+						<OptionsItem label="Import" icon={<GiWorld />} />
+						<OptionsItem label="Export" icon={<GiWorld />} />
 					</Stack>
 				</Box>
 				<Box>
@@ -92,7 +71,6 @@ export default function Options() {
 							icon={<GiWorld />}
 							isDanger
 						/>
-						<OptionsItem label="Reset Options" icon={<GiWorld />} isDanger />
 						<OptionsItem
 							label="Reset Messages"
 							onClick={openResetMessages}
