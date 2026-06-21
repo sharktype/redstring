@@ -17,9 +17,7 @@ export default interface PlayerState {
 	/** Base64 data URLs for each portrait variant. */
 	portraits?: {
 		nude?: string;
-		comfort?: string;
-		travel?: string;
-		battle?: string;
+		base?: string;
 	};
 
 	appearance?: {

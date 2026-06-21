@@ -222,9 +222,9 @@ export default function AppearanceStep(_props: ChargenStepProps) {
 						)}
 
 						<Textarea
-							label="Base Portrait Clothing Style"
-							description="For the generator/yourself, the default style in which your character dresses."
-							placeholder="e.g. white tee for comfort, button down for travel, plate metal for battle"
+							label="Clothing Style"
+							description="The default style in which your character dresses."
+							placeholder="e.g. white fine blouse and thin leather cloak"
 							minRows={2}
 							autosize
 							value={appearance.clothingStyle ?? ""}
