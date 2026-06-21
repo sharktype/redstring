@@ -1,4 +1,3 @@
-import type MessageData from "../../../models/Message.ts";
 import {
 	Badge,
 	Box,
@@ -8,10 +7,11 @@ import {
 	Flex,
 	Textarea,
 } from "@mantine/core";
-import { useLlmContext } from "../../../context/LlmContext.tsx";
-import Markdown from "react-markdown";
 import { useLocalStorage } from "@mantine/hooks";
 import { useState } from "react";
+import Markdown from "react-markdown";
+import { useLlmContext } from "../../../context/LlmContext.tsx";
+import type MessageData from "../../../models/Message.ts";
 
 interface MessageProps {
 	message: MessageData;

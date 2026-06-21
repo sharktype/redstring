@@ -1,8 +1,8 @@
-import { Box, Textarea, Button } from "@mantine/core";
-import { useEffect, useState, type RefObject } from "react";
+import { Box, Button, Textarea } from "@mantine/core";
+import { type RefObject, useEffect, useState } from "react";
 import { BiLock, BiSend } from "react-icons/bi";
-import useLlmContext from "../../../../context/hooks/useLlmContext";
 import useGameContext from "../../../../context/hooks/useGameContext";
+import useLlmContext from "../../../../context/hooks/useLlmContext";
 
 interface MessageInputProps {
 	ref: RefObject<HTMLTextAreaElement | null>;
@@ -38,7 +38,7 @@ export default function MessageInput({ ref, submit }: MessageInputProps) {
 		return () => {
 			textarea?.removeEventListener("keydown", handleKeyDown);
 		};
-	}, [submit, isDisabled]);
+	}, [submit, isDisabled, ref.current]);
 
 	const description = isDisabled
 		? "You cannot send messages right now."

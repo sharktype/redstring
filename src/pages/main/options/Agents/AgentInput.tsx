@@ -1,4 +1,3 @@
-import { useEffect, useState } from "react";
 import {
 	ActionIcon,
 	Alert,
@@ -8,9 +7,9 @@ import {
 	Stack,
 } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
+import { useEffect, useState } from "react";
 import { AiFillWarning } from "react-icons/ai";
 import { BiEdit, BiPlay, BiSave } from "react-icons/bi";
-import AgentEditModal from "./AgentEditModal.tsx";
 import useGameContext from "../../../../context/hooks/useGameContext.tsx";
 import { useAgentConfigs } from "../../../../db/hooks/useAgentConfigs.ts";
 import {
@@ -18,6 +17,7 @@ import {
 	DEFAULT_SUMMARIZER_PROMPT,
 	type StoredAgentConfig,
 } from "../../../../models/AgentConfig.ts";
+import AgentEditModal from "./AgentEditModal.tsx";
 
 const DEFAULT_PROMPTS: Record<string, string> = {
 	storyteller: DEFAULT_STORYTELLER_PROMPT,

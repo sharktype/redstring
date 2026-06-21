@@ -12,12 +12,12 @@ import {
 } from "@mantine/core";
 import { useState } from "react";
 import { FaDice, FaEraser, FaLock, FaLockOpen, FaMagic } from "react-icons/fa";
-import type { ChargenStepProps } from ".";
-import { DEFAULT_GENDER_IDENTITIES } from "../../../../models/PlayerState";
 import { type Culture, generateRandomName } from "../../../../handlers/names";
+import { generatePartialFantasyName } from "../../../../handlers/names/fantasify";
 import { IRL_CULTURES } from "../../../../handlers/names/irl";
 import { PHONEME_CULTURES } from "../../../../handlers/names/phonemes";
-import { generatePartialFantasyName } from "../../../../handlers/names/fantasify";
+import { DEFAULT_GENDER_IDENTITIES } from "../../../../models/PlayerState";
+import type { ChargenStepProps } from ".";
 
 export default function NameStep({ playerState, onChange }: ChargenStepProps) {
 	const [isGivenNameLocked, setIsGivenNameLocked] = useState(false);

@@ -1,5 +1,5 @@
-import type { PropsWithChildren } from "react";
 import { AppShell, Flex } from "@mantine/core";
+import type { PropsWithChildren } from "react";
 import Header from "../Header.tsx";
 
 export default function Sidebar(props: PropsWithChildren) {

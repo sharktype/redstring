@@ -1,5 +1,5 @@
-import { useState } from "react";
 import { Button, Modal, Stack, Textarea } from "@mantine/core";
+import { useState } from "react";
 
 interface AgentEditModalProps {
 	opened: boolean;

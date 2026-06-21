@@ -1,17 +1,17 @@
 import {
 	Card,
-	Text,
-	List,
 	Code,
-	Title,
-	Stack,
 	Divider,
+	List,
 	ListItem,
+	Stack,
+	Text,
+	Title,
 } from "@mantine/core";
-import type Message from "../../../../../models/Message";
 import ReactMarkdown from "react-markdown";
-import remarkGfm from "remark-gfm";
 import rehypeRaw from "rehype-raw";
+import remarkGfm from "remark-gfm";
+import type Message from "../../../../../models/Message";
 import Spoiler from "./Spoiler";
 import ToolCall, { type ToolCallProps } from "./ToolCall";
 

@@ -1,4 +1,3 @@
-import { useState } from "react";
 import {
 	Box,
 	Button,
@@ -7,10 +6,11 @@ import {
 	Flex,
 	Stack,
 	Text,
-	TextInput,
 	Textarea,
+	TextInput,
 	Title,
 } from "@mantine/core";
+import { useState } from "react";
 import useGameContext from "../../context/hooks/useGameContext.tsx";
 
 export default function Journal() {

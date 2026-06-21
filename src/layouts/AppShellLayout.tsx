@@ -1,8 +1,8 @@
 import { AppShell, Burger, Group, useMantineColorScheme } from "@mantine/core";
-import Sidebar from "../pages/sidebar/index.tsx";
 import { useDisclosure } from "@mantine/hooks";
-import Header from "../pages/Header.tsx";
 import { Outlet, useLocation } from "react-router";
+import Header from "../pages/Header.tsx";
+import Sidebar from "../pages/sidebar/index.tsx";
 import Options from "../pages/sidebar/Options.tsx";
 import Status from "../pages/sidebar/Status.tsx";
 

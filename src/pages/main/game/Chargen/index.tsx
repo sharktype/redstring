@@ -1,12 +1,11 @@
 import { Container, Flex, Stack } from "@mantine/core";
 import type { ComponentType } from "react";
-import { type Step, STEPS } from "../../../../models/Chargen";
-import type { StoredPlayerState } from "../../../../models/PlayerState";
 import useGameContext from "../../../../context/hooks/useGameContext";
-import NameStep from "./NameStep";
-import ExtraStatsStep from "./ExtraStatsStep";
+import { STEPS, type Step } from "../../../../models/Chargen";
+import type { StoredPlayerState } from "../../../../models/PlayerState";
 import DateTimeStep from "./DateTimeStep";
-import LocationStep from "./LocationStep";
+import ExtraStatsStep from "./ExtraStatsStep";
+import NameStep from "./NameStep";
 import WealthStep from "./WealthStep";
 
 export interface ChargenStepProps {
@@ -18,7 +17,6 @@ const STEP_TO_COMPONENT: Record<Step, ComponentType<ChargenStepProps>> = {
 	name: NameStep,
 	extraStats: ExtraStatsStep,
 	datetime: DateTimeStep,
-	location: LocationStep,
 	wealth: WealthStep,
 };
 

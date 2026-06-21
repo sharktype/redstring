@@ -1,6 +1,6 @@
 import { useLiveQuery } from "dexie-react-hooks";
-import { db } from "../database.ts";
 import type Message from "../../models/Message.ts";
+import { db } from "../database.ts";
 
 export function useMessages() {
 	const rawMessages = useLiveQuery(

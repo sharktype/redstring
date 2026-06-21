@@ -1,8 +1,8 @@
-import { TimePicker } from "@mantine/dates";
-import type { ChargenStepProps } from ".";
-import { FaClock, FaDice, FaEraser, FaLock, FaLockOpen } from "react-icons/fa";
-import { useState } from "react";
 import { ActionIcon, Box, Group, Stack, Title } from "@mantine/core";
+import { TimePicker } from "@mantine/dates";
+import { useState } from "react";
+import { FaClock, FaDice, FaEraser, FaLock, FaLockOpen } from "react-icons/fa";
+import type { ChargenStepProps } from ".";
 
 export default function DateTimeStep({
 	playerState,

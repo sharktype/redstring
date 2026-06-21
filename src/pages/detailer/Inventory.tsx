@@ -1,4 +1,3 @@
-import { useState } from "react";
 import {
 	Box,
 	Button,
@@ -10,13 +9,14 @@ import {
 	Select,
 	Stack,
 	Text,
-	TextInput,
 	Textarea,
+	TextInput,
 	Title,
 } from "@mantine/core";
+import { useState } from "react";
 import useGameContext from "../../context/hooks/useGameContext.tsx";
-import Tier from "../../models/Tier.ts";
 import type Item from "../../models/Item.ts";
+import Tier from "../../models/Tier.ts";
 
 export default function Inventory() {
 	const { playerState, updatePlayerState, addMessage } = useGameContext();

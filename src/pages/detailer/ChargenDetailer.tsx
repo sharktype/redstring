@@ -1,10 +1,9 @@
 import { Box, Button, Checkbox, Flex, Stack, Title } from "@mantine/core";
 import type { IconType } from "react-icons";
-import { GiPerson, GiQuillInk, GiTwoCoins } from "react-icons/gi";
-import { type Step, STEPS } from "../../models/Chargen";
 import { BsClock } from "react-icons/bs";
-import { BiMap } from "react-icons/bi";
+import { GiPerson, GiQuillInk, GiTwoCoins } from "react-icons/gi";
 import useGameContext from "../../context/hooks/useGameContext";
+import { STEPS, type Step } from "../../models/Chargen";
 import type PlayerState from "../../models/PlayerState";
 
 interface DetailerStep {
@@ -34,13 +33,6 @@ const STEP_TO_DETAILER_STEP: Record<Step, DetailerStep> = {
 		icon: BsClock,
 		isComplete: (playerState) => playerState?.time != null,
 	},
-	location: {
-		label: "Set starting location",
-		color: "green",
-		icon: BiMap,
-		isComplete: (playerState) =>
-			playerState?.location != null && playerState.location.region.name !== "",
-	},
 	wealth: {
 		label: "Set starting wealth",
 		color: "orange",
@@ -50,8 +42,7 @@ const STEP_TO_DETAILER_STEP: Record<Step, DetailerStep> = {
 };
 
 export default function ChargenDetailer() {
-	const { gameState, updateGameState, playerState, updatePlayerState } =
-		useGameContext();
+	const { playerState, updatePlayerState } = useGameContext();
 	return (
 		<Stack p="md" h="100%" justify="space-between">
 			<Stack>
@@ -93,13 +84,6 @@ export default function ChargenDetailer() {
 				color="green"
 				disabled={!playerState || !playerState.name?.given}
 				onClick={() => {
-					const noLocation =
-						!playerState?.location || playerState.location.region.name === "";
-
-					if (noLocation && gameState?.detailer === "map") {
-						updateGameState({ detailer: "profile" });
-					}
-
 					updatePlayerState({ isInitialized: true });
 				}}
 			>

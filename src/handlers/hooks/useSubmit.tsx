@@ -115,6 +115,8 @@ export default function useSubmit() {
 			setStreamingPosition,
 			startStreaming,
 			stopStreaming,
+			gameState?.secrets,
+			updateGameState,
 		],
 	);
 

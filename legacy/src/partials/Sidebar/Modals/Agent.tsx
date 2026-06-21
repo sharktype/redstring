@@ -1,8 +1,8 @@
 import { Button, Flex, Modal, Text, TextInput, Title } from "@mantine/core";
 import { useLocalStorage } from "@mantine/hooks";
+import { FcBrokenLink, FcLink } from "react-icons/fc";
 import { useLlmContext } from "../../../context/LlmContext.tsx";
 import useCreateOpenAiClient from "../../../hooks/useCreateOpenAiClient.tsx";
-import { FcBrokenLink, FcLink } from "react-icons/fc";
 
 interface AgentProps {
 	isOpened: boolean;

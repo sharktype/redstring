@@ -1,4 +1,3 @@
-import { useRef, useState } from "react";
 import {
 	ActionIcon,
 	Button,
@@ -8,11 +7,12 @@ import {
 	Text,
 	TextInput,
 } from "@mantine/core";
+import { useRef, useState } from "react";
 import { BiHide, BiShow, BiTrash } from "react-icons/bi";
 import { BsLightbulb } from "react-icons/bs";
 import { useProviderConfigs } from "../../../../db/hooks/useProviderConfigs";
-import { AVAILABLE_PROVIDER_TYPES } from "../../../../models/ProviderConfig";
 import type ProviderConfig from "../../../../models/ProviderConfig";
+import { AVAILABLE_PROVIDER_TYPES } from "../../../../models/ProviderConfig";
 
 export default function KeyInput(props: { providerConfig?: ProviderConfig }) {
 	const { providerConfig } = props;

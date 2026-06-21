@@ -1,11 +1,11 @@
-import { useCallback, useEffect, useRef } from "react";
 import { Box, Button, Container, Flex, Textarea } from "@mantine/core";
-import { BiSend } from "react-icons/bi";
 import { useLocalStorage } from "@mantine/hooks";
+import { useCallback, useEffect, useRef } from "react";
+import { BiSend } from "react-icons/bi";
+import useLlmContext from "../../../context/useLlmContext.tsx";
+import useSendMessage from "../../../hooks/useSendMessage.tsx";
 import type MessageData from "../../../models/Message.ts";
 import Message, { Stream } from "./Message.tsx";
-import { useLlmContext } from "../../../context/LlmContext.tsx";
-import useSendMessage from "../../../hooks/useSendMessage.tsx";
 
 const MAX_MESSAGES_IN_HISTORY = 50;
 
@@ -20,7 +20,7 @@ export default function Chat() {
 	const scrollContainerRef = useRef<HTMLDivElement>(null);
 	const isUserScrolledUpRef = useRef(false);
 
-	const { isStreaming, streamingMessage } = useLlmContext();
+	const { isStreaming } = useLlmContext();
 
 	const [messages, setMessages] = useLocalStorage<MessageData[]>({
 		key: "messages",
@@ -70,7 +70,7 @@ export default function Chat() {
 		if (!isUserScrolledUpRef.current) {
 			scrollToBottom();
 		}
-	}, [messages, isStreaming, scrollToBottom, streamingMessage]);
+	}, [scrollToBottom]);
 
 	const submit = useCallback(() => {
 		const value = textareaRef.current?.value;
@@ -142,7 +142,9 @@ export default function Chat() {
 							</Box>
 						)}
 						{messages.map((message, idx) => {
-							return <Message key={`message-${idx}`} message={message} />;
+							return (
+								<Message key={`message-${idx.toString()}`} message={message} />
+							);
 						})}
 						{isStreaming ? <Stream /> : null}
 

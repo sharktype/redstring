@@ -5,8 +5,7 @@ export default interface GameState {
 
 	// Options:
 
-	detailer: "inventory" | "profile" | "map" | "journal";
-	scale: number;
+	detailer: "inventory" | "profile" | "journal";
 }
 
 export type StoredGameState = GameState & {

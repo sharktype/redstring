@@ -1,4 +1,3 @@
-import { useLocation, useNavigate } from "react-router";
 import {
 	ActionIcon,
 	Box,
@@ -10,6 +9,7 @@ import {
 import { CgDarkMode, CgOptions } from "react-icons/cg";
 import { IoMdArrowBack } from "react-icons/io";
 import { MdOutlineLightMode } from "react-icons/md";
+import { useLocation, useNavigate } from "react-router";
 
 export default function Header(props: { isShownOnMobile?: boolean }) {
 	const navigate = useNavigate();

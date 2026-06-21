@@ -6,13 +6,13 @@ import {
 	Text,
 	Title,
 } from "@mantine/core";
-import { type ReactNode } from "react";
-import { GiExplosionRays, GiScrollUnfurled } from "react-icons/gi";
-import { FaRobot } from "react-icons/fa";
 import { useDisclosure } from "@mantine/hooks";
-import Instructions from "./Modals/Instructions.tsx";
+import { type ReactNode } from "react";
+import { FaRobot } from "react-icons/fa";
+import { GiExplosionRays, GiScrollUnfurled } from "react-icons/gi";
 import Agent from "./Modals/Agent.tsx";
 import Clear from "./Modals/Clear.tsx";
+import Instructions from "./Modals/Instructions.tsx";
 
 export default function Sidebar() {
 	const [

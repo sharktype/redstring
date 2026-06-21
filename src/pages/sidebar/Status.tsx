@@ -1,23 +1,16 @@
 import {
+	Badge,
 	Box,
 	Button,
 	Center,
 	Divider,
+	Flex,
 	Stack,
 	Text,
-	Flex,
-	Badge,
 } from "@mantine/core";
 import type { ReactNode } from "react";
+import { FaClock, FaLock, FaScroll, FaUser } from "react-icons/fa";
 import { GiBackpack, GiSkills } from "react-icons/gi";
-import {
-	FaClock,
-	FaLock,
-	FaMap,
-	FaMapMarkerAlt,
-	FaScroll,
-	FaUser,
-} from "react-icons/fa";
 import useGameContext from "../../context/hooks/useGameContext.tsx";
 import { formatTime } from "../../utils/time.ts";
 
@@ -107,37 +100,6 @@ function PlayerOverview() {
 					</Box>
 				</>
 			)}
-
-			{playerState.location && playerState.location?.region?.name && (
-				<>
-					<Divider />
-					<Box>
-						<Flex align="center" gap={6} mb={4}>
-							<FaMapMarkerAlt size={10} opacity={0.5} />
-							<Text size="xs" tt="uppercase" c="dimmed">
-								<b>Location</b>
-							</Text>
-						</Flex>
-						{playerState.location.transitRegion ? (
-							<Text size="sm">
-								On the road from the {playerState.location.region.type} of{" "}
-								<b>{playerState.location.region.name}</b> to the{" "}
-								{playerState.location.transitRegion.type} of{" "}
-								<b>{playerState.location.transitRegion.name}</b>...
-							</Text>
-						) : (
-							<>
-								<Text size="sm">{playerState.location.region.name}</Text>
-								{playerState.location.building && (
-									<Text size="xs" c="dimmed">
-										{playerState.location.building.name}
-									</Text>
-								)}
-							</>
-						)}
-					</Box>
-				</>
-			)}
 		</Stack>
 	);
 }
@@ -169,18 +131,6 @@ function DetailerSelector() {
 					});
 				}}
 			/>
-			{playerState.location && playerState.location?.region?.name && (
-				<StatusItem
-					label="Map"
-					icon={<FaMap />}
-					isHighlighted={gameState?.detailer === "map"}
-					onClick={() =>
-						updateGameState({
-							detailer: "map",
-						})
-					}
-				/>
-			)}
 			<StatusItem
 				label="Inventory"
 				icon={<GiBackpack />}

@@ -1,10 +1,9 @@
 import Dexie, { type Table } from "dexie";
-import type { StoredProviderConfig } from "../models/ProviderConfig.ts";
 import type { StoredAgentConfig } from "../models/AgentConfig.ts";
+import type { StoredGameState } from "../models/GameState.ts";
 import type Message from "../models/Message.ts";
 import type { StoredPlayerState } from "../models/PlayerState.ts";
-import type { StoredGameState } from "../models/GameState.ts";
-import type { Region } from "../models/Location.ts";
+import type { StoredProviderConfig } from "../models/ProviderConfig.ts";
 
 class Database extends Dexie {
 	providerConfigs!: Table<StoredProviderConfig>;
@@ -12,7 +11,6 @@ class Database extends Dexie {
 	messages!: Table<Message>;
 	playerState!: Table<StoredPlayerState>;
 	gameState!: Table<StoredGameState>;
-	regions!: Table<Region>;
 
 	constructor() {
 		super("staircase-db");
@@ -22,7 +20,6 @@ class Database extends Dexie {
 			messages: "++id, sentAt",
 			playerState: "++id",
 			gameState: "++id",
-			regions: "++id",
 		});
 	}
 }

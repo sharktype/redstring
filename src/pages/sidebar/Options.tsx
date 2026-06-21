@@ -1,9 +1,9 @@
 import { Box, Button, Group, Modal, Stack, Text, Title } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
-import { FiKey } from "react-icons/fi";
-import { FaMap } from "react-icons/fa";
-import { GiWorld } from "react-icons/gi";
 import type { ReactNode } from "react";
+import { FaMap } from "react-icons/fa";
+import { FiKey } from "react-icons/fi";
+import { GiWorld } from "react-icons/gi";
 import { useNavigate } from "react-router";
 import { useMessages } from "../../db/hooks/useMessages.ts";
 import { usePlayerState } from "../../db/hooks/usePlayerState.ts";
@@ -56,7 +56,6 @@ export default function Options() {
 						World
 					</Title>
 					<Stack gap="xs">
-						<OptionsItem label="Map" href="/options/map" icon={<GiWorld />} />
 						<OptionsItem label="Items" icon={<GiWorld />} />
 						<OptionsItem label="Characters" icon={<GiWorld />} />
 					</Stack>

@@ -1,4 +1,4 @@
-import { useCallback, useMemo, useState, type PropsWithChildren } from "react";
+import { type PropsWithChildren, useCallback, useMemo, useState } from "react";
 import LlmContext from "./index";
 
 export default function LlmProvider({ children }: PropsWithChildren) {
@@ -31,8 +31,6 @@ export default function LlmProvider({ children }: PropsWithChildren) {
 			isStreaming,
 			streamingMessage,
 			streamingPosition,
-			setStreamingMessage,
-			setStreamingPosition,
 			startStreaming,
 			stopStreaming,
 		],

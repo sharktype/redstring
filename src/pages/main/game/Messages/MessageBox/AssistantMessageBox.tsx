@@ -1,10 +1,10 @@
 import { Badge, Flex, useMantineColorScheme } from "@mantine/core";
 import { useState } from "react";
+import useLlmContext from "../../../../../context/hooks/useLlmContext";
 import { useMessages } from "../../../../../db/hooks/useMessages";
 import type Message from "../../../../../models/Message";
 import EditModeForm from "./EditModeForm";
 import HoverableMeta from "./HoverableMeta";
-import useLlmContext from "../../../../../context/hooks/useLlmContext";
 import MessageCard from "./MessageCard";
 
 export default function AssistantMessageBox({ message }: { message: Message }) {

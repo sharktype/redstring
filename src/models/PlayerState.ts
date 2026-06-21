@@ -1,5 +1,4 @@
 import type Item from "./Item";
-import type { Building, ConnectionSafety, Region } from "./Location";
 
 export default interface PlayerState {
 	isInitialized?: boolean;
@@ -29,50 +28,11 @@ export default interface PlayerState {
 		minute: number;
 	};
 
-	// The location is accessed very frequently but player state is only updated when the player moves. As a result,
-	// we should denormalise here even though we store both the location and the total locations in the database.
-
-	location?: {
-		region: Region;
-
-		/**
-		 * If the player is in transit, this will be the region to which they are going.
-		 */
-		transitRegion?: Region;
-
-		/**
-		 * The distance the player has traveled towards the transit region.
-		 */
-		transitDistance?: number;
-
-		/**
-		 * In metres, but will be multiplied by the game state's scale.
-		 */
-		transitTotalDistance?: number;
-
-		/**
-		 * The base connection safety level of the transit route.
-		 */
-		transitBaseSafety?: ConnectionSafety;
-
-		/**
-		 * Hours slept this night cycle (caps at 9).
-		 */
-		hoursSlept?: number;
-
-		/** The building the player is in. If this is null, they are in an exterior cell. */
-		building: Building | null;
-	};
-
 	money?: number;
 	inventory?: { item: Item; quantity: number }[];
-
-	move(locationId: number): boolean;
-	enter(buildingSlug: string): boolean;
-	exit(): boolean;
 }
 
-export type StoredPlayerState = Omit<PlayerState, "move" | "enter" | "exit"> & {
+export type StoredPlayerState = PlayerState & {
 	id?: number;
 };
 

@@ -1,4 +1,4 @@
-import { FEMALE, MALE, type GenderIdentity } from "../../models/PlayerState";
+import { FEMALE, type GenderIdentity, MALE } from "../../models/PlayerState";
 import { generateRandomName } from "../names";
 
 export default function generateName(gender?: "male" | "female") {

@@ -1,5 +1,5 @@
-import type MessageData from "../models/Message";
 import { useCallback } from "react";
+import type MessageData from "../models/Message";
 
 export default function useCreateMessage() {
 	return useCallback((messages: MessageData[]) => {

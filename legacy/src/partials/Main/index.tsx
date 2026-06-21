@@ -1,7 +1,7 @@
 import { Flex } from "@mantine/core";
-import Stats from "./Stats.tsx";
-import Memory from "./Memory.tsx";
 import Chat from "./Chat";
+import Memory from "./Memory.tsx";
+import Stats from "./Stats.tsx";
 
 export default function Main() {
 	return (

@@ -1,11 +1,10 @@
-import { useEffect } from "react";
 import { useLiveQuery } from "dexie-react-hooks";
-import { db } from "../database.ts";
+import { useEffect } from "react";
 import type { StoredGameState } from "../../models/GameState.ts";
+import { db } from "../database.ts";
 
 const DEFAULT_GAME_STATE: Omit<StoredGameState, "id"> = {
 	detailer: "profile",
-	scale: 10,
 	secrets: {},
 };
 
@@ -39,7 +38,6 @@ export function useGameState() {
 
 	return {
 		gameState: gameState ?? null,
-		isGameStateLoaded: gameStateResult !== undefined,
 		updateGameState,
 	};
 }

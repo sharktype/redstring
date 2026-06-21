@@ -1,6 +1,6 @@
 import { useLiveQuery } from "dexie-react-hooks";
-import { db } from "../database.ts";
 import type { StoredProviderConfig } from "../../models/ProviderConfig.ts";
+import { db } from "../database.ts";
 
 export function useProviderConfigs() {
 	const providerConfigs =

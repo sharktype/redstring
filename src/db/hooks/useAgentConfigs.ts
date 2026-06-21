@@ -1,12 +1,12 @@
-import { useEffect } from "react";
 import { useLiveQuery } from "dexie-react-hooks";
-import { db } from "../database.ts";
+import { useEffect } from "react";
 import type { StoredAgentConfig } from "../../models/AgentConfig.ts";
 import {
 	AVAILABLE_AGENT_TYPES,
 	DEFAULT_STORYTELLER_PROMPT,
 	DEFAULT_SUMMARIZER_PROMPT,
 } from "../../models/AgentConfig.ts";
+import { db } from "../database.ts";
 
 const DEFAULT_PROMPTS: Record<string, string> = {
 	storyteller: DEFAULT_STORYTELLER_PROMPT,

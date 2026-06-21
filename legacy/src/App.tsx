@@ -1,12 +1,12 @@
 import { AppShell, MantineProvider } from "@mantine/core";
 import "@mantine/core/styles.css";
-import Sidebar from "./partials/Sidebar";
-import Main from "./partials/Main";
-import { LlmProvider } from "./context/LlmContext.tsx";
-import { useEffect, useState } from "react";
-import type { OpenAI } from "openai";
-import useCreateOpenAiClient from "./hooks/useCreateOpenAiClient.tsx";
 import { useLocalStorage } from "@mantine/hooks";
+import type { OpenAI } from "openai";
+import { useEffect, useState } from "react";
+import LlmContext from "./context/LlmContext.tsx";
+import useCreateOpenAiClient from "./hooks/useCreateOpenAiClient.tsx";
+import Main from "./partials/Main";
+import Sidebar from "./partials/Sidebar";
 
 function App() {
 	const [isLlmStreaming, setIsLlmStreaming] = useState(false);
@@ -38,11 +38,11 @@ function App() {
 				console.warn("WARN - failed to create OpenAI client on app init");
 			}
 		}
-	}, []);
+	}, [createOpenAiClient, openAiBaseUrl, openAiClient, openAiApiKey]);
 
 	return (
 		<MantineProvider>
-			<LlmProvider
+			<LlmContext.Provider
 				value={{
 					isStreaming: isLlmStreaming,
 					setIsStreaming: setIsLlmStreaming,
@@ -65,7 +65,7 @@ function App() {
 						<Main />
 					</AppShell.Main>
 				</AppShell>
-			</LlmProvider>
+			</LlmContext.Provider>
 		</MantineProvider>
 	);
 }

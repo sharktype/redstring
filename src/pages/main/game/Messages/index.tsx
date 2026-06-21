@@ -1,10 +1,10 @@
 import { Box, Center, Container, Flex, Loader } from "@mantine/core";
 import { useCallback, useEffect, useLayoutEffect, useRef } from "react";
-import { useMessages } from "../../../../db/hooks/useMessages";
-import MessageBox from "./MessageBox";
-import type Message from "../../../../models/Message";
-import useSubmit from "../../../../handlers/hooks/useSubmit";
 import useLlmContext from "../../../../context/hooks/useLlmContext";
+import { useMessages } from "../../../../db/hooks/useMessages";
+import useSubmit from "../../../../handlers/hooks/useSubmit";
+import type Message from "../../../../models/Message";
+import MessageBox from "./MessageBox";
 import MessageInput from "./MessageInput";
 
 // A balance needs to be struck with this number. If this number is too low and the agent streaming is too fast, the

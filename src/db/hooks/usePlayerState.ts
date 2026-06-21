@@ -1,7 +1,7 @@
-import { useEffect } from "react";
 import { useLiveQuery } from "dexie-react-hooks";
-import { db } from "../database.ts";
+import { useEffect } from "react";
 import type { StoredPlayerState } from "../../models/PlayerState.ts";
+import { db } from "../database.ts";
 
 // Player state is special in that it can only be mutated through its augmented
 // methods. It does not need to be mutated directly.
@@ -9,17 +9,6 @@ import type { StoredPlayerState } from "../../models/PlayerState.ts";
 const DEFAULT_PLAYER_STATE: Omit<StoredPlayerState, "id"> = {
 	isInitialized: false,
 	inventory: [],
-	location: {
-		region: {
-			name: "",
-			type: "other",
-			description: "",
-			buildings: {},
-			position: { x: 0, y: 0 },
-			connectedRegionIds: [],
-		},
-		building: null,
-	},
 };
 
 export function usePlayerState() {

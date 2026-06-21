@@ -2,15 +2,14 @@ import "@mantine/core/styles.css";
 import "@mantine/dates/styles.css";
 import "./App.css";
 
-import { Route, Routes } from "react-router";
-import Game from "./pages/main/game/index.tsx";
-import AppShellLayout from "./layouts/AppShellLayout.tsx";
-import Providers from "./pages/main/options/Providers/index.tsx";
-import Agents from "./pages/main/options/Agents/index.tsx";
 import { MantineProvider } from "@mantine/core";
+import { Route, Routes } from "react-router";
 import GameProvider from "./context/GameContext/GameProvider.tsx";
-import Locations from "./pages/main/options/Map/index.tsx";
 import LlmProvider from "./context/LlmContext/LlmProvider.tsx";
+import AppShellLayout from "./layouts/AppShellLayout.tsx";
+import Game from "./pages/main/game/index.tsx";
+import Agents from "./pages/main/options/Agents/index.tsx";
+import Providers from "./pages/main/options/Providers/index.tsx";
 
 function App() {
 	return (
@@ -24,7 +23,6 @@ function App() {
 								<Route index element={<Providers />} />
 								<Route path="/options/providers" element={<Providers />} />
 								<Route path="/options/agents" element={<Agents />} />
-								<Route path="/options/map" element={<Locations />} />
 							</Route>
 						</Route>
 					</Routes>

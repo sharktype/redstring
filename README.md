@@ -8,7 +8,8 @@ FOSS LLM-powered opinionated story/scenario player based on a specific RPG philo
 
 From the current direction, we have found things that work and do not work. So in the future:
 
-- Location tracking is to be completely removed in the engine.
+- Locations are tracked as "facts" that are improvised and added to the facts tree as we go rather than determined at
+  the start.
 - Time tracking is good. Weather tracking is to be added.
 - The name generator is good, and tool calls should use it more effectively.
 - Inventory is likely to be very brittle and not work very well. It is better to handwave such things in most roleplays
@@ -32,12 +33,11 @@ This version removes the placeholders off the interface so everything that is cl
 - Easy Bug: Differentiate between when to use use- hooks directly versus the `GameContext` provided functions.
 - Easy: Add deploy script to Cloudflare Pages.
 - Moderate: Implement time, date, and weather via non-LLM "game setting" forms.
-- Moderate: A non-map node based location editor that allows selecting the current location.
 - Moderate: Implement summarisation.
 - Moderate: Add skills and flags.
   - Including a new tool call that does skill checks instead of a straight up d20 roll.
 - Moderate: Implement spells and abilities.
-- Moderate: Implement Buildings in Locations.
+- Moderate: Implement "create shop with items" tool call.
 
 After this version, we have a public alpha.
 
@@ -52,7 +52,7 @@ After this version, we have a public alpha.
 
 ### Stretch Goals
 
-- Implement allowing Storyteller or some other agent to modify characters, locations, etc. as needed.
+- Implement allowing Storyteller or some other agent to modify characters etc. as needed.
 - The map feature could be improved: rather than needing a separate map generator and manually creating, the whole
   world-gen feature could be built into the engine entirely.
 - Character generator: a separate LLM that can be called as a tool call to generate a random character, which itself

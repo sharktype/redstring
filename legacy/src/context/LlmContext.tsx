@@ -1,10 +1,5 @@
-import {
-	createContext,
-	type Dispatch,
-	type SetStateAction,
-	useContext,
-} from "react";
 import type { OpenAI } from "openai";
+import { createContext, type Dispatch, type SetStateAction } from "react";
 
 interface LlmData {
 	isStreaming: boolean;
@@ -18,21 +13,11 @@ interface LlmData {
 
 const LlmContext = createContext<LlmData>({
 	isStreaming: false,
-	setIsStreaming: () => {},
+	setIsStreaming: () => null,
 	streamingMessage: "",
-	setStreamingMessage: () => {},
+	setStreamingMessage: () => null,
 	openAiClient: undefined,
-	setOpenAiClient: () => {},
+	setOpenAiClient: () => null,
 });
 
-export function useLlmContext() {
-	const context = useContext(LlmContext);
-
-	if (!LlmContext) {
-		throw new Error("useLlmContext must be used within a LlmProvider");
-	}
-
-	return context;
-}
-
-export const LlmProvider = LlmContext.Provider;
+export default LlmContext;
