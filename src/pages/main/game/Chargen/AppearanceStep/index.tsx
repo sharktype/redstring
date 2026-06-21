@@ -134,7 +134,18 @@ export default function AppearanceStep(_props: ChargenStepProps) {
 						<Switch
 							label="NSFW Mode"
 							checked={isNsfw}
-							onChange={(e) => setIsNsfw(e.currentTarget.checked)}
+							onChange={(event) => {
+								const next = event.currentTarget.checked;
+
+								setIsNsfw(next);
+
+								if (!next) {
+									setAppearance({
+										genitals: undefined,
+										cockSize: undefined,
+									});
+								}
+							}}
 							size="sm"
 							mt="xs"
 						/>
