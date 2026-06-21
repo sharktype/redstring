@@ -2,88 +2,79 @@
 
 ## Date and Time
 
+**TL;DR**: A day has 24 hours. There are no dates.
+
 A single day has 24 hours, displayable as 12-hour, 24-hour, general ("early morning"), or naval formats, with possible
 other formats added in the future. However, the internal time always operates with a 24-hour clock; this cannot be
 changed.
 
-A day is split into weeks and months. By default, a week is 7 days. A month is defined by the categorical name of the
-month, by default our real-world months, to the number of days in that month.
-
-A year is determined by the defined months.
-
-While this sounds flexible, it does mean complex roleplaying scenarios (two suns, two moons, etc.) become harder to
-implement.
+I've played a number of roleplays with "date" as a concept and it has never really come up. Deadlines for quests and
+such are deliberately absent from games such as Skyrim; even though that game _has_ date, do you ever remember what it
+was when you played it?
 
 ## Currencies
+
+**TL;DR**: A single integer currency called "knocks" is used, priced similarly to yen in real life.
 
 I've done a lot of roleplay with gold, silver, bronze coinage in fantasy settings. I find it adds unnecessary
 complexity and doesn't make a lot of sense (10 silver magically turning into 1 gold?).
 
-Instead, we will have a single currency, either decimal or integer. Optionally, currency can have weight, meaning that
-the player can only carry so much of it. This can be fun: needing to go to a bank location or spreading out money for
-rich players, where one such bank might be geographically far from where you need to buy something.
+Instead, we will have a single integer currency. Optionally, currency can have weight, meaning that the player can only
+carry so much of it. This can be fun: needing to go to a bank location or spreading out money for rich players, where
+one such bank might be geographically far from where you need to buy something.
+
+The name of this currency is "knocks." It is priced similarly to yen in real life, with 100 knocks roughly equating to
+a dollar in real life, keeping in mind lower cost of goods.
 
 ## Inventory
 
-This is probably the most controversial decision. Inventory and items are fixed and the LLM is not allowed to invent
-items except through a tool call to be added in the future.
+**TL;DR**: Items are invented over time and are categorized into equipment, consumables, and key items.
 
-This means a lot of manual labour just to set these up if I didn't add a "default" set of item templates. However,
-fixed item economies means that potions always cost the same and are predictable, bartering and economy actually means
-something, and shops aren't just throwaway roleplay locations.
+Items are invented over time. There are three types of inventory: equipment, consumables, and key items.
 
-The tool calls to fetch items are things like "get_reward(value: number)" or even something like
-"get_item(description: string") which uses an LLM to fetch an item based on the description or create one if it does
-not exist. This is a stretch goal but something I want to implement with the items system as a whole, before v1.0.0.
+All items are in the Profile detailer. Equipment is equipped or unequipped, consumables are in a list and follow a
+Souls-like approach (few consumables, replenished on rest). Key items are purely quest items and you are not expected
+to have many of them. "Tent" and travel items (mounts, for instance) are also equipment.
 
-## Skills and Flags
+### Consumables? So, there are needs?
 
-Some skills are fixed. Stealth, barter, etc. are not removable as they are used in core gameplay elements. This may go
-against your vision of a game, but Staircase is _not_ meant to be a game engine. Think of it more like a tabletop RPG
-to which you may sometimes bring homebrew rules.
+No. Keeping track of the need to eat and drink is not that fun. The only need that is tracked is the need to sleep.
+Food and water are an attention tax that can kill pace and are "just another thing" to remember. Sleep is thematically
+more interesting as it interacts with money, exhaustion/player stats, and the time of day.
 
-It is strongly recommended to not confuse skills with Flags. Flags are facts about the player in a normalised flat
-array format viewable from the options page. Flags are only used by the LLM, both to write and read from.
+## Skills
 
-Custom skills can be added by the user but they do not get used by the engine. LLMs, when not reigned in, will not
-understand when and how to modify the values of these skills. It is recommended to not use more than two at a time.
+**TL;DR**: Skills are totally player-determined, except the combat-related ones.
 
-## Combat
+Skills are totally player-determined, except the combat-related ones in the section below.
 
-Combat is a non-AI game system that a tool call creates from simple template variables. Combat will be discussed in a
-future version of this README.
+I played around with flags as single facts about the player or other characters. This is important, but we want to
+replace this system with a vector store so we can store facts about anything, any place, and anyone. For now, we just
+rely on the context window.
 
-## Spells and Abilities
+### Combat
 
-These can be used out of combat. Spells and abilities must be fixed as otherwise the player will either have a random
-bullshit spell, forget about the ability to use them, or be overwhelmed by needing to remember what spells they have.
+Combat is a non-AI tool call that does not have narrative elements. It is automatically resolved based on the player's
+stats and equipment, and those of the enemy.
 
-## Locations and Lorebook
+It performs all turns of a turn-based RNG combat system that simulates the fight. All combatants take turns in
+initiative order based on their Speed stat. Heavy, Light, and/or Special attack stats are rolled against the target's
+corresponding Defence stats with a chance to miss completely based on Speed.
 
-Locations can be turned off so the map and regions are not used at all, like with traditional text adventures; the
-theatre of the mind, in that case. However, I've found that rigidity in game systems leads to richer roleplaying based
-on the idea of "constraints breed creativity".
+- Speed determines turn order and the chance of attacks completely missing.
+- Skill determines the damage dealt by physical attacks if they hit.
+- Health determines the health of the combatant, who is downed at HP 0.
+- Stamina determines stamina, going down by 1 each turn. Stamina comparisons can determine rolls with advantage or
+  disadvantage. Stamina recovers to what it was before the fight started, win or lose, and is only recovered with rest.
 
-This, however, does mean you need to do a degree of pre-planning when you do use the feature. Once importing is
-implemented, you can use another person's world and just jump in, but for now, you need to do some pre-planning.
+There are no skills and spells. These are flavour. Keep track of them yourself.
 
-The Lorebook works similarly: selectively sending information to the LLM generally improves the context window.
+## Lorebook
 
-## Summarisation
+The lorebook is in-progress but is intended to be powered by a browser-based vector store over time.
 
-The LLM's context window is limited and gets worse over time. To combat this, by default, we aggressively summarise the
-story and use those summaries instead of the full messages. This may result in detail loss depending on the
-summarisation agent used, but the pros outweigh the cons in my view.
-
-Exporting still exports the full messages since the messages are saved and never deleted over time. However, the
-interface will show the summarised messages instead of the full ones and are lazy-loaded.
-
-## Improvisation vs Planning
-
-Planning trumps improvisation nearly every time. We apply this philosophy to locations, characters, and sometimes plot.
-The agents will be given tools to generate characters at runtime, but the expectation is that the user will pre-plan
-and create characters sometimes before the story starts. The character generator is mostly non-AI and presents a real
-kind of stochastic element to character creation. This is experimental.
+This stores information about things that have happened, lore information, as well as historical context that is better
+than summarisation.
 
 ## The SillyTavern Community
 
