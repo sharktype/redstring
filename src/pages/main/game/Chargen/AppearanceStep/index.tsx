@@ -18,6 +18,7 @@ import type { GenderExpression } from "../../../../../models/PlayerState";
 import type { ChargenStepProps } from "..";
 import AppearanceForm from "./AppearanceForm";
 import PortraitUploader from "./PortraitUploader";
+import { randomiseAppearance } from "./randomize";
 
 export default function AppearanceStep(_props: ChargenStepProps) {
 	const { playerState, updatePlayerState } = useGameContext();
@@ -62,10 +63,29 @@ export default function AppearanceStep(_props: ChargenStepProps) {
 				<Group justify="space-between">
 					<Title order={4}>Appearance</Title>
 					<Group gap="xs">
-						<ActionIcon variant="subtle" color="gray" title="Clear">
+						<ActionIcon
+							variant="subtle"
+							color="gray"
+							title="Clear"
+							onClick={() => {
+								updatePlayerState({
+									appearance: undefined,
+									genderExpression: undefined,
+								});
+							}}
+						>
 							<FaEraser size={16} />
 						</ActionIcon>
-						<ActionIcon variant="subtle" color="gray" title="Randomise">
+						<ActionIcon
+							variant="subtle"
+							color="gray"
+							title="Randomise"
+							onClick={() => {
+								updatePlayerState(
+									randomiseAppearance(genderExpr, appearance.species, isNsfw),
+								);
+							}}
+						>
 							<FaDice size={16} />
 						</ActionIcon>
 					</Group>
