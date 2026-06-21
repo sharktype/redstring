@@ -35,11 +35,6 @@ export default function KeyInput(props: {
 		novelai: "nai-diffusion",
 	};
 
-	const KEY_LABELS: Record<string, string> = {
-		openrouter: "API Key",
-		novelai: "URL",
-	};
-
 	const [isDirtyNaive, setIsDirtyNaive] = useState(false);
 	const [isTesting, setIsTesting] = useState(false);
 	const [showApiKey, setShowApiKey] = useState(false);
@@ -48,7 +43,6 @@ export default function KeyInput(props: {
 	);
 
 	const modelPlaceholder = MODEL_PLACEHOLDERS[selectedType] ?? "";
-	const keyLabel = KEY_LABELS[selectedType] ?? "API Key";
 
 	const nicknameRef = useRef<HTMLInputElement>(null);
 	const modelRef = useRef<HTMLInputElement>(null);
@@ -157,7 +151,7 @@ export default function KeyInput(props: {
 			<TextInput
 				ref={apiKeyRef}
 				type={showApiKey ? "text" : "password"}
-				label={keyLabel}
+				label="API Key"
 				placeholder="e.g., sk-xxx..."
 				defaultValue={providerConfig?.apiKey}
 				disabled={isTesting}

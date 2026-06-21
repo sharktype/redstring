@@ -15,7 +15,8 @@ export type LockKey =
 	| "hairColour"
 	| "genitals"
 	| "cockSize"
-	| "clothingStyle";
+	| "clothingStyle"
+	| "generateExtra";
 
 export type Locks = Record<LockKey, boolean>;
 
@@ -42,6 +43,7 @@ export const ALL_LOCK_KEYS: LockKey[] = [
 	"genitals",
 	"cockSize",
 	"clothingStyle",
+	"generateExtra",
 ];
 
 export function defaultLocks(): Locks {

@@ -193,8 +193,9 @@ export default function AppearanceStep(_props: ChargenStepProps) {
 								placeholder="e.g. white fine blouse and thin leather cloak"
 								minRows={2}
 								autosize
-								value={appearance.clothingStyle ?? ""}
-								onChange={(e) =>
+								key={appearance.clothingStyle}
+								defaultValue={appearance.clothingStyle ?? ""}
+								onBlur={(e) =>
 									setAppearance({
 										clothingStyle: e.currentTarget.value,
 									})
@@ -214,10 +215,26 @@ export default function AppearanceStep(_props: ChargenStepProps) {
 							placeholder="e.g., anything you like"
 							minRows={2}
 							autosize
-							value={appearance.custom ?? ""}
-							onChange={(event) =>
+							key={appearance.custom}
+							defaultValue={appearance.custom ?? ""}
+							onBlur={(event) =>
 								setAppearance({
 									custom: event.currentTarget.value,
+								})
+							}
+						/>
+
+						<Textarea
+							label="Generate Instructions"
+							description="Extra instructions appended to the image prompt. Use comma-separated values."
+							placeholder="e.g., anime screenshot, 1990s (style), smiling (expression)"
+							minRows={2}
+							autosize
+							key={appearance.generateExtra}
+							defaultValue={appearance.generateExtra ?? ""}
+							onBlur={(event) =>
+								setAppearance({
+									generateExtra: event.currentTarget.value,
 								})
 							}
 						/>
@@ -235,32 +252,33 @@ function mergeIntoLocked(
 ): Partial<NonNullable<PlayerState["appearance"]>> {
 	const merged: Partial<NonNullable<PlayerState["appearance"]>> = {};
 
-	const copyIfUnlocked = <
-		K extends keyof NonNullable<PlayerState["appearance"]>,
-	>(
+	const copyField = <K extends keyof NonNullable<PlayerState["appearance"]>>(
 		key: K,
 	) => {
-		if (!locks[key as LockKey]) {
+		if (locks[key as LockKey]) {
+			merged[key] = current[key] as never;
+		} else {
 			merged[key] = (generated[key] ?? current[key]) as never;
 		}
 	};
 
-	copyIfUnlocked("age");
-	copyIfUnlocked("species");
-	copyIfUnlocked("size");
-	copyIfUnlocked("build");
-	copyIfUnlocked("height");
-	copyIfUnlocked("shoulders");
-	copyIfUnlocked("facialHair");
-	copyIfUnlocked("bust");
-	copyIfUnlocked("hips");
-	copyIfUnlocked("skinColour");
-	copyIfUnlocked("complexion");
-	copyIfUnlocked("hairStyle");
-	copyIfUnlocked("hairColour");
-	copyIfUnlocked("genitals");
-	copyIfUnlocked("cockSize");
-	copyIfUnlocked("clothingStyle");
+	copyField("age");
+	copyField("species");
+	copyField("size");
+	copyField("build");
+	copyField("height");
+	copyField("shoulders");
+	copyField("facialHair");
+	copyField("bust");
+	copyField("hips");
+	copyField("skinColour");
+	copyField("complexion");
+	copyField("hairStyle");
+	copyField("hairColour");
+	copyField("genitals");
+	copyField("cockSize");
+	copyField("clothingStyle");
+	copyField("generateExtra");
 
 	return merged;
 }

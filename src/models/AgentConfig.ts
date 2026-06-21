@@ -23,13 +23,21 @@ export default interface AgentConfig {
 	): Promise<ReadableStream<string>>;
 	call(options: Record<string, unknown>): Promise<Response>;
 	test(): Promise<string | null>;
+
+	generate(
+		prompt: string,
+		parameters?: Record<string, unknown>,
+	): Promise<ReadableStream<string>>;
 }
 
 export type AgentType =
 	| (typeof AVAILABLE_TEXT_AGENT_TYPES)[number]
 	| (typeof AVAILABLE_IMAGE_AGENT_TYPES)[number];
 
-export type StoredAgentConfig = Omit<AgentConfig, "call" | "test" | "submit">;
+export type StoredAgentConfig = Omit<
+	AgentConfig,
+	"call" | "test" | "submit" | "generate"
+>;
 
 export const AVAILABLE_TEXT_AGENT_TYPES = [
 	"storyteller",
@@ -47,8 +55,8 @@ export const DEFAULT_PLANNER_PROMPT = "You are a planning agent.";
 
 export const DEFAULT_DIALOGUE_PROMPT = "You are a dialogue writing agent.";
 
-export const DEFAULT_PROFILER_PROMPT =
-	"Generate a quick character portrait based on the provided description.";
+// It is usually best to keep these empty for image prompts.
 
-export const DEFAULT_ILLUSTRATOR_PROMPT =
-	"Generate a full scene illustration based on the provided description.";
+export const DEFAULT_PROFILER_PROMPT = "";
+
+export const DEFAULT_ILLUSTRATOR_PROMPT = "";

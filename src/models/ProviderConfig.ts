@@ -24,11 +24,16 @@ export default interface ProviderConfig {
 	call(options: Record<string, unknown>): Promise<Response>;
 	execute(toolCall: ToolCall, toolContext?: ToolContext): string;
 	test(): Promise<string | null>;
+
+	generate(
+		input: string,
+		parameters?: Record<string, unknown>,
+	): Promise<ReadableStream<string>>;
 }
 
 export type StoredProviderConfig = Omit<
 	ProviderConfig,
-	"call" | "test" | "execute" | "submit"
+	"call" | "test" | "execute" | "submit" | "generate"
 >;
 
 export const AVAILABLE_TEXT_PROVIDER_TYPES = ["openrouter"] as const;

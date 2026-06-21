@@ -60,6 +60,13 @@ export class OpenRouterConfig implements ProviderConfig {
 		});
 	}
 
+	async generate(
+		_input: string,
+		_parameters?: Record<string, unknown>,
+	): Promise<ReadableStream<string>> {
+		throw new Error("OpenRouter does not support generation yet.");
+	}
+
 	async submit(
 		messages: Message[],
 		toolContext?: ToolContext,

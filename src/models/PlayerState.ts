@@ -43,6 +43,7 @@ export default interface PlayerState {
 		facialHair?: string;
 		clothingStyle?: string;
 		custom?: string;
+		generateExtra?: string;
 
 		// NSFW:
 

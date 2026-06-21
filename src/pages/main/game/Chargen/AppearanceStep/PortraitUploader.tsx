@@ -3,7 +3,9 @@ import {
 	Button,
 	FileInput,
 	Image,
+	Loader,
 	Modal,
+	Notification,
 	Stack,
 	Tabs,
 	TabsList,
@@ -14,6 +16,7 @@ import {
 } from "@mantine/core";
 import { useEffect, useMemo, useState } from "react";
 import useGameContext from "../../../../../context/hooks/useGameContext";
+import type Agent from "../../../../../handlers/agents";
 import type PlayerState from "../../../../../models/PlayerState";
 import type {
 	GenderExpression,
@@ -33,7 +36,11 @@ const PORTRAIT_META: Record<PortraitType, { emoji: string; label: string }> = {
 export default function PortraitUploader({
 	isNsfwMode: nsfw,
 }: PortraitUploaderProps) {
-	const { playerState, updatePlayerState } = useGameContext();
+	const { playerState, updatePlayerState, agentConfigs } = useGameContext();
+
+	const profilerAgent = agentConfigs.find(
+		(a): a is Agent => a.type === "profiler",
+	);
 
 	const [portraitTab, setPortraitTab] = useState<PortraitType>("base");
 	const [portraitFiles, setPortraitFiles] = useState<
@@ -43,6 +50,8 @@ export default function PortraitUploader({
 		base: null,
 	});
 	const [promptModalOpen, setPromptModalOpen] = useState(false);
+	const [generating, setGenerating] = useState(false);
+	const [generateError, setGenerateError] = useState<string | null>(null);
 
 	useEffect(() => {
 		if (!nsfw) {
@@ -74,6 +83,66 @@ export default function PortraitUploader({
 		};
 
 		reader.readAsDataURL(file);
+	};
+
+	const handleGenerate = async () => {
+		if (!profilerAgent?.providerConfigId) {
+			setGenerateError("No profiler agent configured. Add one in settings.");
+
+			return;
+		}
+
+		if (!playerState?.appearance) {
+			setGenerateError("Please fill in appearance details first.");
+
+			return;
+		}
+
+		setGenerating(true);
+		setGenerateError(null);
+
+		try {
+			const merged: NonNullable<PlayerState["appearance"]> = {
+				...playerState.appearance,
+			};
+			const tab = nsfw ? portraitTab : "base";
+			const prompt = buildImageGenPrompt(
+				merged,
+				playerState.genderExpression,
+				tab,
+			);
+
+			const stream = await profilerAgent.generate(prompt, {
+				width: 832,
+				height: 1216,
+			});
+
+			const reader = stream.getReader();
+
+			let imageDataUrl = "";
+
+			while (true) {
+				const { done, value } = await reader.read();
+				if (done) break;
+				imageDataUrl += value;
+			}
+
+			if (!imageDataUrl) {
+				throw new Error("Image agent returned no image.");
+			}
+
+			updatePlayerState({
+				portraits: { ...playerState.portraits, [tab]: imageDataUrl },
+			});
+		} catch (error) {
+			setGenerateError(
+				error instanceof Error
+					? error.message
+					: "Generation failed for an unknown reason.",
+			);
+		} finally {
+			setGenerating(false);
+		}
 	};
 
 	return (
@@ -177,13 +246,25 @@ export default function PortraitUploader({
 			<Button
 				variant="outline"
 				fullWidth
-				leftSection={"✨"}
+				leftSection={generating ? <Loader size="xs" /> : "✨"}
 				justify="start"
 				size="sm"
 				color="yellow"
+				onClick={handleGenerate}
+				disabled={generating || !profilerAgent?.providerConfigId}
 			>
-				Generate
+				{generating ? "Generating…" : "Generate"}
 			</Button>
+
+			{generateError && (
+				<Notification
+					color="red"
+					title="Generation failed"
+					onClose={() => setGenerateError(null)}
+				>
+					{generateError}
+				</Notification>
+			)}
 			<Button
 				variant="outline"
 				fullWidth

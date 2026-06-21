@@ -1,5 +1,8 @@
 import type PlayerState from "../../../../../models/PlayerState";
-import type { GenderExpression } from "../../../../../models/PlayerState";
+import type {
+	GenderExpression,
+	PortraitType,
+} from "../../../../../models/PlayerState";
 
 const HEIGHT_LABELS: Record<string, string> = {
 	veryShort: "very short",
@@ -16,22 +19,16 @@ const SHOULDER_LABELS: Record<string, string> = {
 };
 
 const BUST_LABELS: Record<string, string> = {
-	flat: "flat chest",
-	small: "small bust",
-	large: "large bust",
-	veryLarge: "very large bust",
+	flat: "tiny flat chest",
+	small: "small A-cup breasts",
+	medium: "modest B-cup breasts",
+	large: "big D-cup breasts",
+	veryLarge: "huge F-cup breasts",
 };
 
 const HIPS_LABELS: Record<string, string> = {
 	narrow: "narrow hips",
 	wide: "wide hips",
-};
-
-const GENITALS_LABELS: Record<string, string> = {
-	vulva: "vulva",
-	penisCircumcised: "circumcised penis",
-	penisUncircumcised: "uncircumcised penis",
-	none: "no genitals",
 };
 
 const COCK_SIZE_LABELS: Record<string, string> = {
@@ -44,8 +41,14 @@ const COCK_SIZE_LABELS: Record<string, string> = {
 export function buildImageGenPrompt(
 	appearance: NonNullable<PlayerState["appearance"]>,
 	genderExpression: GenderExpression | undefined,
+	portraitType: PortraitType = "base",
 ): string {
-	const parts: string[] = [];
+	const parts: string[] = [
+		"no text",
+		"portrait",
+		"very aesthetic",
+		"masterpiece",
+	];
 
 	const species = appearance.species?.toLowerCase() || "human";
 	if (species != "human") {
@@ -53,11 +56,15 @@ export function buildImageGenPrompt(
 	}
 
 	if (genderExpression) {
-		parts.push(genderExpression);
-	}
+		const isYoung = appearance.age != null && appearance.age < 25;
 
-	if (appearance.age != null) {
-		parts.push(`${appearance.age} years old`);
+		if (genderExpression === "feminine") {
+			parts.push(isYoung ? "1girl" : "1woman");
+		} else if (genderExpression === "masculine") {
+			parts.push(isYoung ? "1boy" : "1man");
+		} else {
+			parts.push("1person");
+		}
 	}
 
 	if (appearance.size && appearance.size !== "average") {
@@ -72,19 +79,28 @@ export function buildImageGenPrompt(
 		parts.push(HEIGHT_LABELS[appearance.height] ?? appearance.height);
 	}
 
-	if (appearance.shoulders && appearance.shoulders !== "average") {
+	const isMasculine =
+		genderExpression === "masculine" || genderExpression === "androgynous";
+	const isFeminine =
+		genderExpression === "feminine" || genderExpression === "androgynous";
+
+	if (
+		appearance.shoulders &&
+		appearance.shoulders !== "average" &&
+		isMasculine
+	) {
 		parts.push(SHOULDER_LABELS[appearance.shoulders] ?? appearance.shoulders);
 	}
 
-	if (appearance.facialHair) {
+	if (appearance.facialHair && isMasculine) {
 		parts.push(`${appearance.facialHair} facial hair`);
 	}
 
-	if (appearance.bust && appearance.bust !== "medium") {
+	if (appearance.bust && isFeminine) {
 		parts.push(BUST_LABELS[appearance.bust] ?? appearance.bust);
 	}
 
-	if (appearance.hips && appearance.hips !== "average") {
+	if (appearance.hips && appearance.hips !== "average" && isFeminine) {
 		parts.push(HIPS_LABELS[appearance.hips] ?? appearance.hips);
 	}
 
@@ -104,22 +120,28 @@ export function buildImageGenPrompt(
 		parts.push(`${appearance.hairColour} hair colour`);
 	}
 
-	if (appearance.genitals) {
-		parts.push(GENITALS_LABELS[appearance.genitals] ?? appearance.genitals);
-	}
+	const hasPenis =
+		appearance.genitals === "penisCircumcised" ||
+		appearance.genitals === "penisUncircumcised";
 
-	if (appearance.cockSize && appearance.cockSize !== "average") {
+	if (hasPenis && appearance.cockSize) {
 		parts.push(
 			`${COCK_SIZE_LABELS[appearance.cockSize] ?? appearance.cockSize} penis`,
 		);
 	}
 
-	if (appearance.clothingStyle) {
+	if (portraitType === "nude") {
+		parts.push("nude, completely naked, nsfw");
+	} else if (appearance.clothingStyle) {
 		parts.push(`wearing ${appearance.clothingStyle}`);
 	}
 
 	if (appearance.custom) {
 		parts.push(appearance.custom);
+	}
+
+	if (appearance.generateExtra) {
+		parts.push(appearance.generateExtra);
 	}
 
 	return parts.join(", ");

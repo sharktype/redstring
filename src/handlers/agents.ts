@@ -60,6 +60,17 @@ export default class Agent implements AgentConfig {
 		);
 	}
 
+	async generate(
+		prompt: string,
+		parameters?: Record<string, unknown>,
+	): Promise<ReadableStream<string>> {
+		if (!this.provider) {
+			throw new Error("no provider configured for agent type " + this.type);
+		}
+
+		return this.provider.generate(this.prompt + ", " + prompt, parameters);
+	}
+
 	async test() {
 		const response = await this.call({
 			messages: [

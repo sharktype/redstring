@@ -104,6 +104,10 @@ export default function ImageAgents() {
 					<Text>
 						Configure image provider keys in the {providersLink} page first.
 					</Text>
+					<Text>
+						If you want to add a system prompt info into image agents, make them
+						"booru-style", comma separated.
+					</Text>
 				</Stack>
 			</Alert>
 			{isAnyDirty && (
