@@ -10,7 +10,7 @@ import {
 import { useLocalStorage } from "@mantine/hooks";
 import { useState } from "react";
 import Markdown from "react-markdown";
-import { useLlmContext } from "../../../context/LlmContext.tsx";
+import useLlmContext from "../../../context/useLlmContext.tsx";
 import type MessageData from "../../../models/Message.ts";
 
 interface MessageProps {

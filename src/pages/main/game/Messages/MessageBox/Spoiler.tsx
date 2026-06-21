@@ -1,6 +1,6 @@
 import { useState } from "react";
 
-export default function Spoiler({ children }: { children: React.ReactNode }) {
+export default function Spoiler({ children }: { children?: React.ReactNode }) {
 	const [revealed, setRevealed] = useState(false);
 
 	return (

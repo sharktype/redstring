@@ -44,7 +44,7 @@ export default function Providers() {
 					</Text>
 				</Stack>
 			</Alert>
-			<Grid gutter="xl">
+			<Grid gap="xl">
 				{providerConfigs.map((config) => (
 					<GridCol
 						key={`provider-config-input-${config.id || "error"}`}

@@ -1,6 +1,6 @@
 import { useLocalStorage } from "@mantine/hooks";
 import { useCallback } from "react";
-import { useLlmContext } from "../context/LlmContext.tsx";
+import useLlmContext from "../context/useLlmContext.tsx";
 import type MessageData from "../models/Message.ts";
 import useCreateMessage from "./useCreateMessage.tsx";
 import useCreateOpenAiClient from "./useCreateOpenAiClient.tsx";
