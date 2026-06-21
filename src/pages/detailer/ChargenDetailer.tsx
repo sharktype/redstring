@@ -8,12 +8,9 @@ import {
 	UnstyledButton,
 } from "@mantine/core";
 import type { IconType } from "react-icons";
-import {
-	GiBodySwapping,
-	GiEarthAmerica,
-	GiPerson,
-	GiTwoCoins,
-} from "react-icons/gi";
+import { BiBook } from "react-icons/bi";
+import { CgProfile } from "react-icons/cg";
+import { GiArmorVest, GiBodySwapping } from "react-icons/gi";
 import useGameContext from "../../context/hooks/useGameContext";
 import {
 	CHARGEN_PAGES,
@@ -42,7 +39,7 @@ const PAGE_META: Record<ChargenPage, ChargenPageMeta> = {
 	identity: {
 		label: "Identity",
 		description: "Name, personality & background",
-		icon: GiPerson,
+		icon: CgProfile,
 		color: "blue",
 	},
 	appearance: {
@@ -54,13 +51,13 @@ const PAGE_META: Record<ChargenPage, ChargenPageMeta> = {
 	inventory: {
 		label: "Inventory",
 		description: "Starting equipment & wealth",
-		icon: GiTwoCoins,
+		icon: GiArmorVest,
 		color: "orange",
 	},
 	scenario: {
 		label: "Scenario",
 		description: "Time, place & world",
-		icon: GiEarthAmerica,
+		icon: BiBook,
 		color: "teal",
 	},
 };

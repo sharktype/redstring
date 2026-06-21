@@ -1,4 +1,4 @@
-import { Container, Flex, Stack } from "@mantine/core";
+import { Flex, Stack } from "@mantine/core";
 import type { ComponentType } from "react";
 import useGameContext from "../../../../context/hooks/useGameContext";
 import { PAGE_STEPS, type Step } from "../../../../models/Chargen";
@@ -34,22 +34,19 @@ export default function Chargen() {
 	const steps = PAGE_STEPS[chargenPage];
 
 	return (
-		<Container h="100%">
-			<Flex h="100%" align="center" justify="center">
-				<Stack p="md" gap="lg">
-					{steps.map((step) => {
-						const Component = STEP_TO_COMPONENT[step];
-
-						return (
-							<Component
-								key={step}
-								playerState={playerState}
-								onChange={handleChange}
-							/>
-						);
-					})}
-				</Stack>
-			</Flex>
-		</Container>
+		<Flex flex={1} h="100%" align="center" justify="center" p="md">
+			<Stack gap="lg" w="100%" maw={800}>
+				{steps.map((step) => {
+					const Component = STEP_TO_COMPONENT[step];
+					return (
+						<Component
+							key={step}
+							playerState={playerState}
+							onChange={handleChange}
+						/>
+					);
+				})}
+			</Stack>
+		</Flex>
 	);
 }

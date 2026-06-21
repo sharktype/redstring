@@ -35,7 +35,7 @@ export default function NameStep({ playerState, onChange }: ChargenStepProps) {
 
 	const genderOptions = DEFAULT_GENDER_IDENTITIES.map((gender) => ({
 		value: gender.identity,
-		label: gender.identity.charAt(0).toUpperCase() + gender.identity.slice(1),
+		label: `${gender.identity.charAt(0).toUpperCase() + gender.identity.slice(1)}`,
 	}));
 
 	const formatLabel = (culture: string) =>
@@ -198,7 +198,7 @@ export default function NameStep({ playerState, onChange }: ChargenStepProps) {
 					</Group>
 				</Group>
 				<Flex gap="sm" wrap="wrap" align="flex-end">
-					<Group gap={4} wrap="nowrap">
+					<Group gap={4} wrap="nowrap" style={{ flex: 1 }}>
 						<TextInput
 							label="Given name"
 							placeholder="Given name"
@@ -211,7 +211,7 @@ export default function NameStep({ playerState, onChange }: ChargenStepProps) {
 									},
 								})
 							}
-							style={{ flex: 1 }}
+							style={{ flex: 1, minWidth: 0 }}
 							disabled={isGivenNameLocked}
 						/>
 						{lockIcon(isGivenNameLocked, () => {
