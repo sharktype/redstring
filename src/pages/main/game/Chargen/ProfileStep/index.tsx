@@ -158,7 +158,7 @@ export default function ProfileStep(_props: ChargenStepProps) {
 				batch.map((state) => generateVariant(state, variantMode)),
 			);
 		}
-	}, [allStates, variantMode, generateVariant]);
+	}, [variantMode, generateVariant, allStates.slice, allStates.length]);
 
 	const clearAll = useCallback(async () => {
 		const next: ProfileStates = {};

@@ -108,7 +108,6 @@ export default function Options() {
 						</Group>
 					</Modal>
 					<Modal
-						opened={unmakeOpened}
 						opened={resetOpened}
 						onClose={closeResetMessages}
 						title="Reset Messages"

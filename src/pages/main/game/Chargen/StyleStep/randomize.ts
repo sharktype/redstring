@@ -27,6 +27,34 @@ const DEFAULT_PORTRAIT_STYLES = [
 	"anime concept art (style)",
 	"chibi anime (style)",
 	"anime manga cover (style)",
+
+	// Hentai
+
+	"pink pineapple (studio)",
+	"queen bee (studio)",
+	"PoRO (studio)",
+	"mary jane (studio)",
+	"bunnywalker (studio)",
+	"collaboration works (studio)",
+	"majin (studio)",
+	"t-rex (studio)",
+	"lune pictures (studio)",
+	"suzuki mirano (studio)",
+	"takeda hiromitsu (artist)",
+	"asanagi (artist)",
+	"ishikei (artist)",
+	"mizuryu kei (artist)",
+	"fue (artist)",
+	"shiwasu no okina (artist)",
+	"homunculus (artist)",
+	"seto yuuki (artist)",
+	"kisaragi gunma (artist)",
+	"oda non (artist)",
+	"shindol (artist)",
+	"henreader (artist)",
+	"alp (artist)",
+	"kakao (artist)",
+	"hisasi (artist)",
 ];
 
 const DEFAULT_SCENE_STYLES = [
@@ -50,6 +78,28 @@ const DEFAULT_SCENE_STYLES = [
 	"anime visual novel CG (style)",
 	"anime light novel illustration (style)",
 	"anime screencap (style)",
+
+	// Hentai
+
+	// Hentai studios
+	"pink pineapple (studio)",
+	"queen bee (studio)",
+	"PoRO (studio)",
+	"mary jane (studio)",
+	"bunnywalker (studio)",
+	"collaboration works (studio)",
+	"t-rex (studio)",
+	"majin (studio)",
+	// Hentai artists
+	"takeda hiromitsu (artist)",
+	"asanagi (artist)",
+	"ishikei (artist)",
+	"mizuryu kei (artist)",
+	"fue (artist)",
+	"shiwasu no okina (artist)",
+	"homunculus (artist)",
+	"oda non (artist)",
+	"shindol (artist)",
 ];
 
 const DEFAULT_SCENE_PROMPTS = [
