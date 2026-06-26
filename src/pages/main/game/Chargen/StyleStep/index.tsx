@@ -9,7 +9,6 @@ import {
 	Stack,
 	Text,
 	Textarea,
-	TextInput,
 	Title,
 } from "@mantine/core";
 import { useState } from "react";
@@ -301,8 +300,8 @@ export default function StyleStep(_props: ChargenStepProps) {
 
 					{/* Right: style fields */}
 					<Stack gap="xs" style={{ flex: 1, minWidth: 260 }}>
-						<Group gap={4} wrap="nowrap">
-							<TextInput
+						<Group gap={4} wrap="nowrap" align="flex-end">
+							<Textarea
 								label="Portrait Style"
 								placeholder="e.g. 2020s anime (style)"
 								value={style.portraitStyle ?? ""}
@@ -310,6 +309,8 @@ export default function StyleStep(_props: ChargenStepProps) {
 									setField("portraitStyle", event.currentTarget.value)
 								}
 								disabled={locks.portraitStyle}
+								minRows={2}
+								autosize
 								style={{ flex: 1 }}
 							/>
 							<LockIcon
@@ -318,8 +319,8 @@ export default function StyleStep(_props: ChargenStepProps) {
 							/>
 						</Group>
 
-						<Group gap={4} wrap="nowrap">
-							<TextInput
+						<Group gap={4} wrap="nowrap" align="flex-end">
+							<Textarea
 								label="Scene Style"
 								placeholder="e.g. 2020s anime (style)"
 								value={style.sceneStyle ?? ""}
@@ -327,6 +328,8 @@ export default function StyleStep(_props: ChargenStepProps) {
 									setField("sceneStyle", event.currentTarget.value)
 								}
 								disabled={locks.sceneStyle}
+								minRows={2}
+								autosize
 								style={{ flex: 1 }}
 							/>
 							<LockIcon
