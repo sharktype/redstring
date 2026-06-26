@@ -257,7 +257,10 @@ export default function PortraitUploader() {
 				centered
 			>
 				<Text size="sm" mb="md">
-					This will delete the current {PORTRAIT_META[portraitTab].label}{" "}
+					This will delete the current{" "}
+					{isNsfwMode
+						? `${PORTRAIT_META[portraitTab].label.toLowerCase()} `
+						: ""}
 					portrait. You can regenerate it later.
 				</Text>
 				<Group justify="flex-end">

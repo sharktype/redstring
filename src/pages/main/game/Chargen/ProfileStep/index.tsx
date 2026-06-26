@@ -45,8 +45,8 @@ export default function ProfileStep(_props: ChargenStepProps) {
 		(agent): agent is Agent => agent.type === "profiler",
 	);
 
-	const isNsfw = gameState?.isNsfw ?? false;
-	const allStates: ProfileState[] = isNsfw
+	const isNsfwMode = gameState?.isNsfw ?? false;
+	const allStates: ProfileState[] = isNsfwMode
 		? [...PROFILE_STATES, ...NSFW_PROFILE_STATES]
 		: [...PROFILE_STATES];
 
@@ -54,10 +54,14 @@ export default function ProfileStep(_props: ChargenStepProps) {
 
 	const [variantMode, setVariantMode] = useState<VariantMode>("base");
 	const [generating, setGenerating] = useState<Set<string>>(new Set());
+
 	const [error, setError] = useState<string | null>(null);
-	const [removing, setRemoving] = useState<ProfileState | null>(null);
+
+	const [isRemoving, setIsRemoving] = useState<ProfileState | null>(null);
+	const [isClearing, setIsClearing] = useState(false);
 
 	// Ref to safely merge profile results across concurrent generations.
+
 	const latestProfiles = useRef<Record<string, ProfileVariant>>({
 		...profiles,
 	}) as RefObject<Record<string, ProfileVariant>>;
@@ -85,7 +89,7 @@ export default function ProfileStep(_props: ChargenStepProps) {
 				const prompt = buildImageGenPrompt(
 					playerState.appearance,
 					variant === "nude" ? "nude" : "base",
-					isNsfw,
+					isNsfwMode,
 					state,
 				);
 
@@ -137,7 +141,7 @@ export default function ProfileStep(_props: ChargenStepProps) {
 				});
 			}
 		},
-		[profilerAgent, playerState, updatePlayerState, isNsfw],
+		[profilerAgent, playerState, updatePlayerState, isNsfwMode],
 	);
 
 	const generateAll = useCallback(async () => {
@@ -153,6 +157,30 @@ export default function ProfileStep(_props: ChargenStepProps) {
 		}
 	}, [allStates, variantMode, generateVariant]);
 
+	const clearAll = useCallback(async () => {
+		const next: Record<string, ProfileVariant> = {};
+
+		for (const [state, variants] of Object.entries(latestProfiles.current)) {
+			const updated: ProfileVariant = { ...variants };
+			delete updated[variantMode];
+
+			if (Object.keys(updated).length > 0) {
+				next[state] = updated;
+			}
+		}
+
+		latestProfiles.current = next;
+
+		await updatePlayerState({
+			portraits: {
+				...playerState?.portraits,
+				profiles: next,
+			},
+		});
+
+		setIsClearing(false);
+	}, [variantMode, playerState, updatePlayerState]);
+
 	const removeVariant = useCallback(
 		async (state: ProfileState) => {
 			const current = latestProfiles.current[state];
@@ -164,7 +192,7 @@ export default function ProfileStep(_props: ChargenStepProps) {
 
 			delete updated[variantMode];
 
-			setRemoving(null);
+			setIsRemoving(null);
 
 			latestProfiles.current = {
 				...latestProfiles.current,
@@ -192,7 +220,7 @@ export default function ProfileStep(_props: ChargenStepProps) {
 			<Stack gap="sm">
 				<Group justify="space-between" align="center">
 					<Title order={4}>Profiles</Title>
-					{isNsfw && (
+					{isNsfwMode && (
 						<SegmentedControl
 							size="xs"
 							value={variantMode}
@@ -221,21 +249,30 @@ export default function ProfileStep(_props: ChargenStepProps) {
 									(hasVariant ? false : generating.has(`${state}:base`))
 								}
 								onRegenerate={(state) => generateVariant(state, variantMode)}
-								onRemove={setRemoving}
+								onRemove={setIsRemoving}
 							/>
 						);
 					})}
 				</SimpleGrid>
 
-				<Button
-					variant="outline"
-					color="yellow"
-					fullWidth
-					onClick={generateAll}
-					disabled={generating.size > 0 || !profilerAgent?.providerConfigId}
-				>
-					Generate All
-				</Button>
+				<Group grow>
+					<Button
+						variant="outline"
+						color="yellow"
+						onClick={generateAll}
+						disabled={generating.size > 0 || !profilerAgent?.providerConfigId}
+					>
+						Generate All
+					</Button>
+					<Button
+						variant="outline"
+						color="red"
+						onClick={() => setIsClearing(true)}
+						disabled={generating.size > 0 || Object.keys(profiles).length === 0}
+					>
+						Clear All
+					</Button>
+				</Group>
 
 				{error && (
 					<Notification
@@ -248,25 +285,48 @@ export default function ProfileStep(_props: ChargenStepProps) {
 				)}
 
 				<Modal
-					opened={removing !== null}
-					onClose={() => setRemoving(null)}
-					title={`Remove ${removing ? PROFILE_STATE_LABELS[removing] : ""} variant?`}
+					opened={isRemoving !== null}
+					onClose={() => setIsRemoving(null)}
+					title={`Remove ${isRemoving ? PROFILE_STATE_LABELS[isRemoving] : ""} variant?`}
 					size="sm"
 					centered
 				>
 					<Text size="sm" mb="md">
-						This will delete the {variantMode === "base" ? "clothed" : "nude"}{" "}
-						profile image. You can regenerate it later.
+						This will delete the{" "}
+						{isNsfwMode ? (variantMode === "base" ? "clothed " : "nude ") : ""}
+						profile image.
 					</Text>
 					<Group justify="flex-end">
-						<Button variant="default" onClick={() => setRemoving(null)}>
+						<Button variant="default" onClick={() => setIsRemoving(null)}>
 							Cancel
 						</Button>
 						<Button
 							color="red"
-							onClick={() => removing && removeVariant(removing)}
+							onClick={() => isRemoving && removeVariant(isRemoving)}
 						>
 							Remove
+						</Button>
+					</Group>
+				</Modal>
+
+				<Modal
+					opened={isClearing}
+					onClose={() => setIsClearing(false)}
+					title="Clear all profiles?"
+					size="sm"
+					centered
+				>
+					<Text size="sm" mb="md">
+						This will delete all generated{" "}
+						{isNsfwMode ? (variantMode === "base" ? "clothed " : "nude ") : ""}
+						profile images.
+					</Text>
+					<Group justify="flex-end">
+						<Button variant="default" onClick={() => setIsClearing(false)}>
+							Cancel
+						</Button>
+						<Button color="red" onClick={clearAll}>
+							Clear All
 						</Button>
 					</Group>
 				</Modal>
