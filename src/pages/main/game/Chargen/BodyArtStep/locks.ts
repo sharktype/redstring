@@ -9,7 +9,10 @@ export type BodyArtLockKey =
 	| "piercings.navel"
 	| "piercings.nipples"
 	| "piercings.hood"
-	| "piercings.cock";
+	| "piercings.cock"
+	| "makeup.eyes"
+	| "makeup.lips"
+	| "makeup.cheeks";
 
 export type Locks = Record<BodyArtLockKey, boolean>;
 
@@ -23,6 +26,9 @@ export const ALL_LOCK_KEYS: BodyArtLockKey[] = [
 	"piercings.nipples",
 	"piercings.hood",
 	"piercings.cock",
+	"makeup.eyes",
+	"makeup.lips",
+	"makeup.cheeks",
 ];
 
 export interface LockProps {
@@ -48,10 +54,14 @@ export function setBodyArtField(
 	key: BodyArtLockKey,
 	value: string,
 ): BodyArt {
-	const [group, field] = key.split(".") as ["tattoos" | "piercings", string];
+	const [group, field] = key.split(".") as [
+		"tattoos" | "piercings" | "makeup",
+		string,
+	];
 	const next: BodyArt = {
 		tattoos: { ...bodyArt?.tattoos },
 		piercings: { ...bodyArt?.piercings },
+		makeup: { ...bodyArt?.makeup },
 	};
 
 	(next[group] as Record<string, string | undefined>)[field] = value;

@@ -155,7 +155,7 @@ export function buildBodyArtParts(
 		parts.push(`face tattoo: ${tattoos.face}`);
 	}
 
-	if (tattoos?.body && !isBody) {
+	if (tattoos?.body && isBody) {
 		parts.push(`body tattoo: ${tattoos.body}`);
 	}
 
@@ -172,15 +172,15 @@ export function buildBodyArtParts(
 			parts.push(`face piercing: ${piercings.face}`);
 		}
 
-		if (piercings.navel && nudity === "nude" && !isBody) {
+		if (piercings.navel && nudity === "nude" && isBody) {
 			parts.push(`navel piercing: ${piercings.navel}`);
 		}
 
-		if (isNsfw && piercings.nipples && !isBody) {
+		if (isNsfw && piercings.nipples && isBody) {
 			parts.push(`nipple piercings: ${piercings.nipples}`);
 		}
 
-		if (isNsfw && piercings.hood && nudity === "nude" && !isBody) {
+		if (isNsfw && piercings.hood && nudity === "nude" && isBody) {
 			parts.push(`clitoral hood piercing: ${piercings.hood}`);
 		}
 
@@ -188,8 +188,24 @@ export function buildBodyArtParts(
 			appearance.genitals === "penisCircumcised" ||
 			appearance.genitals === "penisUncircumcised";
 
-		if (isNsfw && piercings.cock && nudity === "nude" && hasPenis && !isBody) {
+		if (isNsfw && piercings.cock && nudity === "nude" && hasPenis && isBody) {
 			parts.push(`cock piercing: ${piercings.cock}`);
+		}
+	}
+
+	const { makeup } = bodyArt;
+
+	if (makeup) {
+		if (makeup.eyes) {
+			parts.push(`eye makeup: ${makeup.eyes}`);
+		}
+
+		if (makeup.lips) {
+			parts.push(`lip makeup: ${makeup.lips}`);
+		}
+
+		if (makeup.cheeks) {
+			parts.push(`cheek makeup: ${makeup.cheeks}`);
 		}
 	}
 

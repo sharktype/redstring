@@ -50,11 +50,12 @@ export default function BodyArtStep(_props: ChargenStepProps) {
 		const merged: BodyArt = {
 			tattoos: {},
 			piercings: {},
+			makeup: {},
 		};
 
 		ALL_LOCK_KEYS.forEach((key) => {
 			const [group, field] = key.split(".") as [
-				"tattoos" | "piercings",
+				"tattoos" | "piercings" | "makeup",
 				string,
 			];
 			const isLocked = locks[key];
@@ -79,6 +80,7 @@ export default function BodyArtStep(_props: ChargenStepProps) {
 
 	const tattoos = bodyArt.tattoos ?? {};
 	const piercings = bodyArt.piercings ?? {};
+	const makeup = bodyArt.makeup ?? {};
 
 	const nsfwLabel = (label: string): ReactNode => (
 		<>
@@ -122,11 +124,12 @@ export default function BodyArtStep(_props: ChargenStepProps) {
 					</Group>
 				</Group>
 
-				<Stack gap="xs">
-					<Text size="sm" fw={600} c="dimmed">
-						Tattoos
-					</Text>
-					<Group grow align="start" gap="xs">
+				<Group grow align="start" gap="lg">
+					{/* Column 1: Tattoos */}
+					<Stack gap="xs">
+						<Text size="sm" fw={600} c="dimmed">
+							Tattoos
+						</Text>
 						<BodyArtField
 							label="Face"
 							placeholder="e.g. small tribal mark on cheek"
@@ -145,12 +148,13 @@ export default function BodyArtStep(_props: ChargenStepProps) {
 							toggleLock={toggleLock}
 							lockKey="tattoos.body"
 						/>
-					</Group>
+					</Stack>
 
-					<Text size="sm" fw={600} c="dimmed" mt="xs">
-						Piercings
-					</Text>
-					<Group grow align="start" gap="xs">
+					{/* Column 2: Piercings */}
+					<Stack gap="xs">
+						<Text size="sm" fw={600} c="dimmed">
+							Piercings
+						</Text>
 						<BodyArtField
 							label="Ears"
 							placeholder="e.g. studs, hoops"
@@ -187,11 +191,8 @@ export default function BodyArtStep(_props: ChargenStepProps) {
 							toggleLock={toggleLock}
 							lockKey="piercings.navel"
 						/>
-					</Group>
-
-					{isNsfwMode && (
-						<>
-							<Group grow align="start" gap="xs" mt="xs">
+						{isNsfwMode && (
+							<>
 								<BodyArtField
 									label={nsfwLabel("Nipples")}
 									placeholder="e.g. barbells, rings"
@@ -223,10 +224,44 @@ export default function BodyArtStep(_props: ChargenStepProps) {
 										lockKey="piercings.cock"
 									/>
 								)}
-							</Group>
-						</>
-					)}
-				</Stack>
+							</>
+						)}
+					</Stack>
+
+					{/* Column 3: Facial Makeup */}
+					<Stack gap="xs">
+						<Text size="sm" fw={600} c="dimmed">
+							Facial Makeup
+						</Text>
+						<BodyArtField
+							label="Eyes"
+							placeholder="e.g. smoky eyeshadow, winged eyeliner"
+							value={makeup.eyes ?? ""}
+							onChange={(value) => setField("makeup.eyes", value)}
+							locks={locks}
+							toggleLock={toggleLock}
+							lockKey="makeup.eyes"
+						/>
+						<BodyArtField
+							label="Lips"
+							placeholder="e.g. red lipstick, matte nude"
+							value={makeup.lips ?? ""}
+							onChange={(value) => setField("makeup.lips", value)}
+							locks={locks}
+							toggleLock={toggleLock}
+							lockKey="makeup.lips"
+						/>
+						<BodyArtField
+							label="Cheeks"
+							placeholder="e.g. subtle blush, contoured cheekbones"
+							value={makeup.cheeks ?? ""}
+							onChange={(value) => setField("makeup.cheeks", value)}
+							locks={locks}
+							toggleLock={toggleLock}
+							lockKey="makeup.cheeks"
+						/>
+					</Stack>
+				</Group>
 			</Stack>
 		</Box>
 	);

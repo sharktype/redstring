@@ -153,6 +153,11 @@ export interface BodyArt {
 		hood?: string;
 		cock?: string;
 	};
+	makeup?: {
+		eyes?: string;
+		lips?: string;
+		cheeks?: string;
+	};
 }
 
 export interface GenderIdentity {

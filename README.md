@@ -44,15 +44,11 @@ This version removes the placeholders off the interface so everything that is cl
 
 - Easy Bug: Differentiate between when to use use- hooks directly versus the `GameContext` provided functions.
 - Easy: Add deploy script to Cloudflare Pages.
+- Easy: Move time from player state to game state.
 - Moderate: Add skills and flags.
   - Including a new tool call that does skill checks instead of a straight up d20 roll.
 - Moderate: Implement "create shop with items" tool call.
-- Easy: Appearances should have beauty scales and types (e.g., "cute", "handsome" etc.)
-- Easy: Add a more detailed section for image generation: styles (with examples that work well, e.g., "2020s (style)",
-  as well as ways to quickly generate example scenes that do not get saved.
 - Moderate: Move all blobs to their own dedicated IndexedDB store rather than storing them directly on the player state.
-- Easy: Move time from player state to game state.
-- Easy: Add body hair and other physical characteristics to the appearance formlet.
 
 ### Before Beta
 

@@ -38,6 +38,42 @@ const DEFAULT_NIPPLE_PIERCINGS = ["barbells", "rings", ""];
 const DEFAULT_HOOD_PIERCINGS = ["small curved barbell", "ring", ""];
 const DEFAULT_COCK_PIERCINGS = ["prince albert ring", "frenum barbell", ""];
 
+const DEFAULT_EYE_MAKEUP = [
+	"smoky eyeshadow",
+	"winged eyeliner",
+	"natural eyeshadow",
+	"bold eyeliner with red eyeshadow",
+	"shimmering gold eyeshadow",
+	"dark eyeshadow with thick eyeliner",
+	"subtle mascara",
+	"cat-eye liner",
+	"cut-crease eyeshadow",
+	"glitter eyeshadow",
+	"",
+];
+
+const DEFAULT_LIP_MAKEUP = [
+	"red lipstick",
+	"dark lipstick",
+	"glossy pink lips",
+	"matte nude lipstick",
+	"berry lipstick",
+	"black lipstick",
+	"natural lip gloss",
+	"wine-coloured lipstick",
+	"",
+];
+
+const DEFAULT_CHEEK_MAKEUP = [
+	"subtle blush",
+	"rosy blush",
+	"contoured cheekbones",
+	"soft pink blush",
+	"highlighter on cheekbones",
+	"dramatic contour",
+	"",
+];
+
 export function randomiseBodyArt(
 	genderExpression: GenderExpression | undefined,
 	existingAppearance?: Appearance,
@@ -59,6 +95,11 @@ export function randomiseBodyArt(
 			septum: pick(DEFAULT_SEPTUM_PIERCINGS),
 			face: pick(DEFAULT_FACE_PIERCINGS),
 			navel: pick(DEFAULT_NAVEL_PIERCINGS),
+		},
+		makeup: {
+			eyes: pick(DEFAULT_EYE_MAKEUP),
+			lips: pick(DEFAULT_LIP_MAKEUP),
+			cheeks: pick(DEFAULT_CHEEK_MAKEUP),
 		},
 	};
 
