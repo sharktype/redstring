@@ -1,4 +1,4 @@
-import { Group, Select } from "@mantine/core";
+import { Group, Select, Text } from "@mantine/core";
 import LockIcon from "../../../../../components/LockIcon";
 import useGameContext from "../../../../../context/GameContext/useGameContext";
 import type { Appearance } from "../../../../../models/PlayerState";
@@ -25,7 +25,14 @@ export default function NsfwFields({
 		<>
 			<Group gap={4} wrap="nowrap">
 				<Select
-					label="Genitals"
+					label={
+						<>
+							Genitals{" "}
+							<Text component="span" c="red" size="xs" fw={600}>
+								18+
+							</Text>
+						</>
+					}
 					placeholder="Select"
 					clearable
 					data={[
@@ -69,7 +76,14 @@ export default function NsfwFields({
 			{hasPenis && (
 				<Group gap={4} wrap="nowrap">
 					<Select
-						label="Cock Size"
+						label={
+							<>
+								Cock Size{" "}
+								<Text component="span" c="red" size="xs" fw={600}>
+									18+
+								</Text>
+							</>
+						}
 						placeholder="Select"
 						clearable
 						data={[

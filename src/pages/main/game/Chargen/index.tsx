@@ -16,7 +16,7 @@ import type { StoredPlayerState } from "../../../../models/PlayerState";
 import AppearanceStep from "./AppearanceStep";
 import ExtraStatsStep from "./ExtraStatsStep";
 import NameStep from "./NameStep";
-import ProfileStep from "./ProfileStep";
+import ProfileStep from "./ProfileStep/index.tsx";
 import TimeStep from "./TimeStep";
 import WealthStep from "./WealthStep";
 
