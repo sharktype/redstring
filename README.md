@@ -27,6 +27,15 @@ The secondary improvement would be the "dialogue mode" that allows much quicker 
 at the moment is one agent call to provide a dialogue context that can be exited at any time, and subsequent calls have
 a much smaller window of knowledge about the world and what has gone on.
 
+### Agent Order
+
+- Agent may ask "can the user do this?" and ask for rolls.
+- Agent might plan the scene.
+- Agent might then generate a draft iteratively until the result is good enough.
+- Post-agent might determine if the scene is worth generating an image for, what it needs to change via tool calls, etc.
+
+This needs a lot of serious consideration and is by no means set in stone.
+
 ## Future Versions
 
 ### Up Next
@@ -35,14 +44,15 @@ This version removes the placeholders off the interface so everything that is cl
 
 - Easy Bug: Differentiate between when to use use- hooks directly versus the `GameContext` provided functions.
 - Easy: Add deploy script to Cloudflare Pages.
-- Moderate: Implement time, date, and weather via non-LLM "game setting" forms.
-- Moderate: Implement summarisation.
 - Moderate: Add skills and flags.
   - Including a new tool call that does skill checks instead of a straight up d20 roll.
-- Moderate: Implement spells and abilities.
 - Moderate: Implement "create shop with items" tool call.
-
-After this version, we have a public alpha.
+- Easy: Appearances should have beauty scales and types (e.g., "cute", "handsome" etc.)
+- Easy: Add a more detailed section for image generation: styles (with examples that work well, e.g., "2020s (style)",
+  as well as ways to quickly generate example scenes that do not get saved.
+- Moderate: Move all blobs to their own dedicated IndexedDB store rather than storing them directly on the player state.
+- Easy: Move time from player state to game state.
+- Easy: Add body hair and other physical characteristics to the appearance formlet.
 
 ### Before Beta
 

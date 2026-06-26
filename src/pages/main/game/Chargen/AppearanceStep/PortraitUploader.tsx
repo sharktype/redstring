@@ -2,15 +2,13 @@ import {
 	Box,
 	Button,
 	FileInput,
+	Group,
 	Image,
 	Loader,
 	Modal,
 	Notification,
+	SegmentedControl,
 	Stack,
-	Tabs,
-	TabsList,
-	TabsPanel,
-	TabsTab,
 	Text,
 	Textarea,
 } from "@mantine/core";
@@ -18,14 +16,14 @@ import { useEffect, useMemo, useState } from "react";
 import useGameContext from "../../../../../context/GameContext/useGameContext";
 import { usePlayerState } from "../../../../../db/hooks/usePlayerState";
 import type Agent from "../../../../../handlers/agents";
-import type { Appearance, Portraits } from "../../../../../models/PlayerState";
-import { buildImageGenPrompt } from "./buildImageGenPrompt";
+import { buildImageGenPrompt } from "../../../../../handlers/imagegen/buildImageGenPrompt";
 
-const PORTRAIT_META: Record<keyof Portraits, { emoji: string; label: string }> =
-	{
-		nude: { emoji: "🔞", label: "Nude" },
-		base: { emoji: "🧍", label: "Base" },
-	};
+type PortraitTab = "base" | "nude";
+
+const PORTRAIT_META: Record<PortraitTab, { emoji: string; label: string }> = {
+	base: { emoji: "🧍", label: "Clothed" },
+	nude: { emoji: "🔞", label: "Nude" },
+};
 
 export default function PortraitUploader() {
 	const { gameState, playerState, updatePlayerState, agentConfigs } =
@@ -37,16 +35,17 @@ export default function PortraitUploader() {
 		(agent): agent is Agent => agent.type === "profiler",
 	);
 
-	const [portraitTab, setPortraitTab] = useState<keyof Portraits>("base");
+	const [portraitTab, setPortraitTab] = useState<PortraitTab>("base");
 	const [portraitFiles, setPortraitFiles] = useState<
-		Record<keyof Portraits, File | null>
+		Record<PortraitTab, File | null>
 	>({
-		nude: null,
 		base: null,
+		nude: null,
 	});
 	const [promptModalOpen, setPromptModalOpen] = useState(false);
 	const [generating, setGenerating] = useState(false);
 	const [generateError, setGenerateError] = useState<string | null>(null);
+	const [clearConfirm, setClearConfirm] = useState(false);
 
 	useEffect(() => {
 		if (!isNsfwMode) {
@@ -56,9 +55,7 @@ export default function PortraitUploader() {
 
 	const portraits = playerState?.portraits;
 
-	const tabOptions = isNsfwMode ? ["nude", "base"] : ["base"];
-
-	const handleChange = (tab: keyof Portraits, file: File | null) => {
+	const handleChange = (tab: PortraitTab, file: File | null) => {
 		setPortraitFiles((prev) => ({ ...prev, [tab]: file }));
 
 		if (!file) {
@@ -80,6 +77,14 @@ export default function PortraitUploader() {
 		reader.readAsDataURL(file);
 	};
 
+	const handleClear = () => {
+		updatePlayerState({
+			portraits: { ...portraits, [portraitTab]: undefined },
+		});
+
+		setClearConfirm(false);
+	};
+
 	const handleGenerate = async () => {
 		if (!profilerAgent?.providerConfigId) {
 			setGenerateError("No profiler agent configured. Add one in settings.");
@@ -97,28 +102,27 @@ export default function PortraitUploader() {
 		setGenerateError(null);
 
 		try {
-			const merged: Appearance = {
-				...playerState.appearance,
-			};
 			const tab = isNsfwMode ? portraitTab : "base";
-			const prompt = buildImageGenPrompt(merged, tab, isNsfwMode);
+			const prompt = buildImageGenPrompt(
+				playerState.appearance,
+				tab,
+				isNsfwMode,
+			);
 
 			const stream = await profilerAgent.generate(
 				prompt,
-				{
-					width: 832,
-					height: 1216,
-				},
+				{ width: 832, height: 1216 },
 				isNsfwMode || false,
 			);
 
 			const reader = stream.getReader();
-
 			let imageDataUrl = "";
-
 			while (true) {
 				const { done, value } = await reader.read();
-				if (done) break;
+				if (done) {
+					break;
+				}
+
 				imageDataUrl += value;
 			}
 
@@ -140,106 +144,57 @@ export default function PortraitUploader() {
 		}
 	};
 
+	const showPortrait = portraits?.[portraitTab];
+
 	return (
 		<Stack gap="xs">
-			{isNsfwMode ? (
-				<Tabs
+			{isNsfwMode && (
+				<SegmentedControl
+					size="xs"
+					fullWidth
 					value={portraitTab}
-					onChange={(value) => setPortraitTab(value as keyof Portraits)}
-				>
-					<TabsList grow>
-						{tabOptions.map((tab) => (
-							<TabsTab key={tab} value={tab}>
-								{PORTRAIT_META[tab as keyof Portraits].emoji}{" "}
-								{PORTRAIT_META[tab as keyof Portraits].label}
-							</TabsTab>
-						))}
-					</TabsList>
-
-					{tabOptions.map((tab) => {
-						const tabPortrait = portraits?.[tab as keyof Portraits];
-						return (
-							<TabsPanel key={tab} value={tab} pt="xs">
-								<Stack gap="xs">
-									<Box
-										style={{
-											aspectRatio: "9 / 16",
-											border: "1px solid var(--mantine-color-default-border)",
-											borderRadius: "var(--mantine-radius-md)",
-											overflow: "hidden",
-											display: "flex",
-											alignItems: "center",
-											justifyContent: "center",
-											backgroundColor: "var(--mantine-color-default-hover)",
-										}}
-									>
-										{tabPortrait ? (
-											<Image
-												src={tabPortrait}
-												alt={`${PORTRAIT_META[tab as keyof Portraits].label} portrait`}
-												w="100%"
-												h="100%"
-												fit="cover"
-											/>
-										) : (
-											<Text size="xs" c="dimmed" ta="center">
-												No portrait
-											</Text>
-										)}
-									</Box>
-
-									<FileInput
-										placeholder="Upload"
-										clearable
-										accept="image/png,image/jpeg,image/webp,image/gif"
-										value={portraitFiles[tab as keyof Portraits]}
-										onChange={(file) =>
-											handleChange(tab as keyof Portraits, file)
-										}
-									/>
-								</Stack>
-							</TabsPanel>
-						);
-					})}
-				</Tabs>
-			) : (
-				<Stack gap="xs">
-					<Box
-						style={{
-							aspectRatio: "9 / 16",
-							border: "1px solid var(--mantine-color-default-border)",
-							borderRadius: "var(--mantine-radius-md)",
-							overflow: "hidden",
-							display: "flex",
-							alignItems: "center",
-							justifyContent: "center",
-							backgroundColor: "var(--mantine-color-default-hover)",
-						}}
-					>
-						{portraits?.base ? (
-							<Image
-								src={portraits.base}
-								alt="Base portrait"
-								w="100%"
-								h="100%"
-								fit="cover"
-							/>
-						) : (
-							<Text size="xs" c="dimmed" ta="center">
-								No portrait
-							</Text>
-						)}
-					</Box>
-
-					<FileInput
-						placeholder="Upload"
-						clearable
-						accept="image/png,image/jpeg,image/webp,image/gif"
-						value={portraitFiles.base}
-						onChange={(file) => handleChange("base", file)}
-					/>
-				</Stack>
+					onChange={(v) => setPortraitTab(v as PortraitTab)}
+					data={[
+						{ label: "Clothed", value: "base" },
+						{ label: "Nude", value: "nude" },
+					]}
+				/>
 			)}
+
+			<Box
+				style={{
+					aspectRatio: "9 / 16",
+					border: "1px solid var(--mantine-color-default-border)",
+					borderRadius: "var(--mantine-radius-md)",
+					overflow: "hidden",
+					display: "flex",
+					alignItems: "center",
+					justifyContent: "center",
+					backgroundColor: "var(--mantine-color-default-hover)",
+				}}
+			>
+				{showPortrait ? (
+					<Image
+						src={showPortrait}
+						alt={`${PORTRAIT_META[portraitTab].label} portrait`}
+						w="100%"
+						h="100%"
+						fit="cover"
+					/>
+				) : (
+					<Text size="xs" c="dimmed" ta="center">
+						No portrait
+					</Text>
+				)}
+			</Box>
+
+			<FileInput
+				placeholder="Upload"
+				clearable
+				accept="image/png,image/jpeg,image/webp,image/gif"
+				value={portraitFiles[portraitTab]}
+				onChange={(file) => handleChange(portraitTab, file)}
+			/>
 
 			<Button
 				variant="outline"
@@ -254,6 +209,19 @@ export default function PortraitUploader() {
 				{generating ? "Generating…" : "Generate"}
 			</Button>
 
+			<Button
+				variant="outline"
+				fullWidth
+				leftSection={"🧹"}
+				justify="start"
+				size="sm"
+				color="red"
+				onClick={() => setClearConfirm(true)}
+				disabled={!showPortrait}
+			>
+				Clear
+			</Button>
+
 			{generateError && (
 				<Notification
 					color="red"
@@ -263,6 +231,7 @@ export default function PortraitUploader() {
 					{generateError}
 				</Notification>
 			)}
+
 			<Button
 				variant="outline"
 				fullWidth
@@ -279,6 +248,27 @@ export default function PortraitUploader() {
 				opened={promptModalOpen}
 				onClose={() => setPromptModalOpen(false)}
 			/>
+
+			<Modal
+				opened={clearConfirm}
+				onClose={() => setClearConfirm(false)}
+				title="Clear portrait?"
+				size="sm"
+				centered
+			>
+				<Text size="sm" mb="md">
+					This will delete the current {PORTRAIT_META[portraitTab].label}{" "}
+					portrait. You can regenerate it later.
+				</Text>
+				<Group justify="flex-end">
+					<Button variant="default" onClick={() => setClearConfirm(false)}>
+						Cancel
+					</Button>
+					<Button color="red" onClick={handleClear}>
+						Clear
+					</Button>
+				</Group>
+			</Modal>
 		</Stack>
 	);
 }
@@ -296,11 +286,7 @@ function PromptModal({ opened, onClose }: PromptModalProps) {
 	const appearance = playerState?.appearance;
 
 	const prompt = useMemo(() => {
-		const merged: Appearance = {
-			...appearance,
-		};
-
-		return buildImageGenPrompt(merged, "base", isNsfwMode);
+		return buildImageGenPrompt({ ...appearance }, "base", isNsfwMode);
 	}, [appearance, isNsfwMode]);
 
 	return (

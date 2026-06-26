@@ -19,6 +19,8 @@ export default interface PlayerState {
 		textual: string;
 	};
 
+	// TODO: Time is very much a world/game state, not player state.
+
 	time?: {
 		// Hour and minute are always maximum 24 and 60 regardless of the setting.
 
@@ -33,11 +35,45 @@ export type StoredPlayerState = PlayerState & {
 	id?: number;
 };
 
-/** Base64 data URLs for each portrait variant. */
+// Portrait information uses base64 data URLs.
+
 export interface Portraits {
 	nude?: string;
 	base?: string;
+
+	profiles?: ProfileStates;
 }
+
+export interface ProfileVariant {
+	base?: string;
+	nude?: string;
+}
+
+export interface ProfileStates {
+	neutral?: ProfileVariant;
+	winded?: ProfileVariant;
+	injured?: ProfileVariant;
+
+	// NSFW only:
+
+	horny?: ProfileVariant;
+	ahegao?: ProfileVariant;
+	cumFacial?: ProfileVariant;
+	cumInMouth?: ProfileVariant;
+	cumEverywhere?: ProfileVariant;
+}
+
+export const PROFILE_STATES = ["neutral", "winded", "injured"] as const;
+export const NSFW_PROFILE_STATES = [
+	"horny",
+	"ahegao",
+	"cumFacial",
+	"cumInMouth",
+	"cumEverywhere",
+] as const;
+export type ProfileState =
+	| (typeof PROFILE_STATES)[number]
+	| (typeof NSFW_PROFILE_STATES)[number];
 
 export interface Appearance {
 	age?: number;
@@ -79,6 +115,8 @@ export interface Appearance {
  * The appearance of gender based on physical characteristics rather than identity.
  */
 export type GenderExpression = "feminine" | "masculine" | "androgynous";
+
+// TODO: Note that we don't actually really use these other than subject and object.
 
 export interface GenderIdentity {
 	/**

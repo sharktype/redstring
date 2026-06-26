@@ -24,7 +24,7 @@ interface StepMeta {
 	label: string;
 	color: string;
 
-	isComplete: (ps: PlayerState | null) => boolean;
+	isComplete: (playerState: PlayerState | null) => boolean;
 	isMandatory?: boolean;
 }
 
@@ -38,7 +38,7 @@ interface ChargenPageMeta {
 const PAGE_META: Record<ChargenPage, ChargenPageMeta> = {
 	identity: {
 		label: "Identity",
-		description: "Name, appearance & body",
+		description: "Name, appearance & profile",
 		icon: GiBodySwapping,
 		color: "yellow",
 	},
@@ -72,14 +72,15 @@ const STEP_META: Record<Step, StepMeta> = {
 	name: {
 		label: "Name",
 		color: "yellow",
-		isComplete: (ps) => !!ps?.name?.given && !!ps?.name?.surname,
+		isComplete: (playerState) =>
+			!!playerState?.name?.given && !!playerState?.name?.surname,
 	},
 	appearance: {
 		label: "Appearance",
 		color: "yellow",
 		isMandatory: true,
-		isComplete: (ps) => {
-			const appearance = ps?.appearance;
+		isComplete: (playerState) => {
+			const appearance = playerState?.appearance;
 			const genderExpression = appearance?.genderExpression;
 
 			if (
@@ -123,21 +124,34 @@ const STEP_META: Record<Step, StepMeta> = {
 			return true;
 		},
 	},
+	profile: {
+		label: "Profile",
+		color: "yellow",
+		isComplete: (playerState) => {
+			const profiles = playerState?.portraits?.profiles;
+
+			return (
+				!!profiles?.neutral?.base &&
+				!!profiles?.winded?.base &&
+				!!profiles?.injured?.base
+			);
+		},
+	},
 	extraStats: {
 		label: "Extra stats",
 		color: "yellow",
-		isComplete: (ps) => !!ps?.stats?.textual,
+		isComplete: (playerState) => !!playerState?.stats?.textual,
 	},
 	time: {
 		label: "Starting time",
 		color: "grape",
-		isComplete: (ps) => ps?.time != null,
+		isComplete: (playerState) => playerState?.time != null,
 		isMandatory: true,
 	},
 	wealth: {
 		label: "Starting wealth",
 		color: "orange",
-		isComplete: (ps) => ps?.money != null,
+		isComplete: (playerState) => playerState?.money != null,
 	},
 };
 

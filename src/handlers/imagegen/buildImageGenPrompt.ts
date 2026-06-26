@@ -1,4 +1,4 @@
-import type { Appearance, Portraits } from "../../../../../models/PlayerState";
+import type { Appearance, ProfileState } from "../../models/PlayerState";
 
 const HEIGHT_LABELS: Record<string, string> = {
 	veryShort: "very short",
@@ -34,10 +34,52 @@ const COCK_SIZE_LABELS: Record<string, string> = {
 	veryLarge: "very large",
 };
 
+export const PROFILE_EXPRESSIONS: Record<ProfileState, string> = {
+	neutral: "normal (expression), neutral (emotion)",
+	winded: "exhausted (expression), out of breath (emotion)",
+	injured: "injured (expression), in pain, bruised, bloodied",
+	horny: "horny (expression), aroused, blushing, lewd",
+	ahegao: "ahegao (expression), horny, lewd, tongue out, rolled eyes, blushing",
+	cumFacial: "cum on face, bukkake, facial",
+	cumInMouth: "cum in mouth",
+	cumEverywhere: "cum on face, cum in mouth, cum in hair, excessive cum",
+};
+
+export const PROFILE_STATE_LABELS: Record<ProfileState, string> = {
+	neutral: "Neutral",
+	winded: "Winded",
+	injured: "Injured",
+	horny: "Horny",
+	ahegao: "Ahegao",
+	cumFacial: "Cum Facial",
+	cumInMouth: "Cum in Mouth",
+	cumEverywhere: "Cum Everywhere",
+};
+
+export const PROFILE_STATE_EMOJIS: Record<ProfileState, string> = {
+	neutral: "😐",
+	winded: "😮‍💨",
+	injured: "🤕",
+	horny: "😳",
+	ahegao: "😈",
+	cumFacial: "💦",
+	cumInMouth: "💦",
+	cumEverywhere: "💦",
+};
+
+export const NSFW_STATES: ReadonlySet<ProfileState> = new Set([
+	"horny",
+	"ahegao",
+	"cumFacial",
+	"cumInMouth",
+	"cumEverywhere",
+]);
+
 export function buildImageGenPrompt(
 	appearance: Appearance,
-	portraitType: keyof Portraits = "base",
+	portraitType: "base" | "nude" = "base",
 	isNsfw = true,
+	state?: ProfileState,
 ): string {
 	const parts: string[] = [
 		"no text",
@@ -46,27 +88,31 @@ export function buildImageGenPrompt(
 		"masterpiece",
 	];
 
+	if (state) {
+		parts.push("1headshot", "head-only", "closeup", "no background");
+	}
+
 	const genderExpression = appearance.genderExpression;
 	const hasPenis =
 		appearance.genitals === "penisCircumcised" ||
 		appearance.genitals === "penisUncircumcised";
 
 	const species = appearance.species?.toLowerCase() || "human";
-	if (species != "human") {
+	if (species !== "human") {
 		parts.push(species);
 	}
 
 	if (genderExpression) {
-		const isYoung = appearance.age != null && appearance.age < 25;
+		const isYoung = appearance.age != null && appearance.age < 50;
 
 		if (genderExpression === "feminine") {
-			if (hasPenis) {
+			if (!state && hasPenis) {
 				parts.push("1futanari");
 			} else {
 				parts.push(isYoung ? "1girl" : "1woman");
 			}
 		} else if (genderExpression === "masculine") {
-			if (!hasPenis) {
+			if (!state && !hasPenis) {
 				parts.push("1cuntboy");
 			} else {
 				parts.push(isYoung ? "1boy" : "1man");
@@ -80,11 +126,11 @@ export function buildImageGenPrompt(
 		parts.push(`${appearance.weight} body weight`);
 	}
 
-	if (appearance.build) {
+	if (!state && appearance.build) {
 		parts.push(`${appearance.build} body build`);
 	}
 
-	if (appearance.height && appearance.height !== "average") {
+	if (!state && appearance.height && appearance.height !== "average") {
 		parts.push(HEIGHT_LABELS[appearance.height] ?? appearance.height);
 	}
 
@@ -105,11 +151,16 @@ export function buildImageGenPrompt(
 		parts.push(`${appearance.facialHair} facial hair`);
 	}
 
-	if (appearance.bust && isFeminine) {
+	if (!state && appearance.bust && isFeminine) {
 		parts.push(BUST_LABELS[appearance.bust] ?? appearance.bust);
 	}
 
-	if (appearance.hips && appearance.hips !== "average" && isFeminine) {
+	if (
+		!state &&
+		appearance.hips &&
+		appearance.hips !== "average" &&
+		isFeminine
+	) {
 		parts.push(HIPS_LABELS[appearance.hips] ?? appearance.hips);
 	}
 
@@ -129,7 +180,7 @@ export function buildImageGenPrompt(
 		parts.push(`${appearance.hairColour} hair colour`);
 	}
 
-	if (isNsfw && hasPenis && appearance.cockSize) {
+	if (isNsfw && !state && hasPenis && appearance.cockSize) {
 		const penisType =
 			appearance.genitals === "penisCircumcised" ? "circumcized" : "foreskin";
 
@@ -150,6 +201,10 @@ export function buildImageGenPrompt(
 
 	if (appearance.generateExtra) {
 		parts.push(appearance.generateExtra);
+	}
+
+	if (state) {
+		parts.push(PROFILE_EXPRESSIONS[state]);
 	}
 
 	return parts.join(", ");
