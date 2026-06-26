@@ -1,11 +1,10 @@
 import {
 	Box,
 	Button,
+	Flex,
 	Group,
 	Modal,
 	Notification,
-	SegmentedControl,
-	SimpleGrid,
 	Stack,
 	Text,
 	Title,
@@ -15,27 +14,25 @@ import { type RefObject, useCallback, useRef, useState } from "react";
 import useGameContext from "../../../../../context/GameContext/useGameContext";
 import type Agent from "../../../../../handlers/agents";
 
-import {
-	buildImageGenPrompt,
-	PROFILE_STATE_LABELS,
-} from "../../../../../handlers/imagegen/buildImageGenPrompt";
+import buildProfilePrompt from "../../../../../handlers/imagegen/buildProfilePrompt";
 import type {
 	ProfileState,
+	ProfileStates,
 	ProfileVariant,
 } from "../../../../../models/PlayerState";
 import {
 	NSFW_PROFILE_STATES,
 	PROFILE_STATES,
 } from "../../../../../models/PlayerState";
-
 import type { ChargenStepProps } from "..";
-import ProfileSquare from "./ProfileSquare";
+import ExpressionsPanel from "./ExpressionsPanel";
+import { defaultLocks } from "./locks";
+import ProfileGrid from "./ProfileGrid";
+import { PROFILE_STATE_LABELS, type VariantMode } from "./types";
 
 const PROFILE_SIDE_LENGTH = 256;
 
 const GENERATE_ALL_PROFILES_BATCH_SIZE = 4;
-
-type VariantMode = "base" | "nude";
 
 export default function ProfileStep(_props: ChargenStepProps) {
 	const { playerState, updatePlayerState, agentConfigs, gameState } =
@@ -52,23 +49,30 @@ export default function ProfileStep(_props: ChargenStepProps) {
 
 	const profiles = playerState?.portraits?.profiles ?? {};
 
-	const [variantMode, setVariantMode] = useState<VariantMode>("base");
+	// Needed here in parent to know when to disable the "generate all" button.
+
 	const [generating, setGenerating] = useState<Set<string>>(new Set());
 
-	const [error, setError] = useState<string | null>(null);
+	const [variantMode, setVariantMode] = useState<VariantMode>("base");
 
 	const [isRemoving, setIsRemoving] = useState<ProfileState | null>(null);
 	const [isClearing, setIsClearing] = useState(false);
 
+	const [error, setError] = useState<string | null>(null);
+
+	const [expressionLocks, setExpressionLocks] = useState(defaultLocks());
+
 	// Ref to safely merge profile results across concurrent generations.
 
-	const latestProfiles = useRef<Record<string, ProfileVariant>>({
+	const latestProfiles = useRef<ProfileStates>({
 		...profiles,
-	}) as RefObject<Record<string, ProfileVariant>>;
+	}) as RefObject<ProfileStates>;
+
+	// Callback to generate variant should live here so we can bulk-update.
 
 	const generateVariant = useCallback(
-		async (state: ProfileState, variant: keyof ProfileVariant) => {
-			const key = `${state}:${variant}`;
+		async (profileState: ProfileState, variant: keyof ProfileVariant) => {
+			const key = `${profileState}:${variant}`;
 
 			if (!profilerAgent?.providerConfigId) {
 				setError("No profiler agent configured. Add one in settings.");
@@ -86,11 +90,14 @@ export default function ProfileStep(_props: ChargenStepProps) {
 			setError(null);
 
 			try {
-				const prompt = buildImageGenPrompt(
+				const prompt = buildProfilePrompt(
 					playerState.appearance,
-					variant === "nude" ? "nude" : "base",
+					profileState,
+					variant,
+					playerState.bodyArt,
+					playerState.expressions,
+					playerState.style,
 					isNsfwMode,
-					state,
 				);
 
 				const stream = await profilerAgent.generate(prompt, {
@@ -99,11 +106,15 @@ export default function ProfileStep(_props: ChargenStepProps) {
 				});
 
 				const reader = stream.getReader();
+
 				let imageDataUrl = "";
 
 				while (true) {
 					const { done, value } = await reader.read();
-					if (done) break;
+					if (done) {
+						break;
+					}
+
 					imageDataUrl += value;
 				}
 
@@ -113,8 +124,8 @@ export default function ProfileStep(_props: ChargenStepProps) {
 
 				latestProfiles.current = {
 					...latestProfiles.current,
-					[state]: {
-						...latestProfiles.current[state],
+					[profileState]: {
+						...latestProfiles.current[profileState],
 						[variant]: imageDataUrl,
 					},
 				};
@@ -158,16 +169,16 @@ export default function ProfileStep(_props: ChargenStepProps) {
 	}, [allStates, variantMode, generateVariant]);
 
 	const clearAll = useCallback(async () => {
-		const next: Record<string, ProfileVariant> = {};
+		const next: ProfileStates = {};
 
-		for (const [state, variants] of Object.entries(latestProfiles.current)) {
+		Object.entries(latestProfiles.current).forEach(([state, variants]) => {
 			const updated: ProfileVariant = { ...variants };
 			delete updated[variantMode];
 
 			if (Object.keys(updated).length > 0) {
-				next[state] = updated;
+				next[state as ProfileState] = updated;
 			}
-		}
+		});
 
 		latestProfiles.current = next;
 
@@ -209,6 +220,10 @@ export default function ProfileStep(_props: ChargenStepProps) {
 		[variantMode, playerState, updatePlayerState],
 	);
 
+	const toggleExpressionLock = (key: "neutral" | "injured" | "cum") => {
+		setExpressionLocks((previous) => ({ ...previous, [key]: !previous[key] }));
+	};
+
 	return (
 		<Box
 			p="lg"
@@ -220,59 +235,43 @@ export default function ProfileStep(_props: ChargenStepProps) {
 			<Stack gap="sm">
 				<Group justify="space-between" align="center">
 					<Title order={4}>Profiles</Title>
-					{isNsfwMode && (
-						<SegmentedControl
-							size="xs"
-							value={variantMode}
-							onChange={(variant) => setVariantMode(variant as VariantMode)}
-							data={[
-								{ label: "Clothed", value: "base" },
-								{ label: "Nude", value: "nude" },
-							]}
+				</Group>
+
+				<Flex>
+					<Stack>
+						<ProfileGrid
+							variantMode={variantMode}
+							setVariantMode={setVariantMode}
+							generating={generating}
+							onGenerate={(state) => generateVariant(state, variantMode)}
+							onRemove={setIsRemoving}
 						/>
-					)}
-				</Group>
 
-				<SimpleGrid cols={{ base: 2, sm: 3, md: 4 }} spacing="xs">
-					{allStates.map((state) => {
-						const prof = profiles[state];
-						const imageUrl = prof?.[variantMode];
-						const hasVariant = !!imageUrl;
+						<Group grow>
+							<Button
+								variant="outline"
+								color="yellow"
+								onClick={generateAll}
+								disabled={generating.size > 0}
+							>
+								Generate All
+							</Button>
+							<Button
+								variant="outline"
+								color="red"
+								onClick={clearAll}
+								disabled={generating.size > 0}
+							>
+								Clear All
+							</Button>
+						</Group>
+					</Stack>
 
-						return (
-							<ProfileSquare
-								key={state}
-								state={state}
-								imageUrl={imageUrl}
-								isGenerating={
-									generating.has(`${state}:${variantMode}`) ||
-									(hasVariant ? false : generating.has(`${state}:base`))
-								}
-								onRegenerate={(state) => generateVariant(state, variantMode)}
-								onRemove={setIsRemoving}
-							/>
-						);
-					})}
-				</SimpleGrid>
-
-				<Group grow>
-					<Button
-						variant="outline"
-						color="yellow"
-						onClick={generateAll}
-						disabled={generating.size > 0 || !profilerAgent?.providerConfigId}
-					>
-						Generate All
-					</Button>
-					<Button
-						variant="outline"
-						color="red"
-						onClick={() => setIsClearing(true)}
-						disabled={generating.size > 0 || Object.keys(profiles).length === 0}
-					>
-						Clear All
-					</Button>
-				</Group>
+					<ExpressionsPanel
+						locks={expressionLocks}
+						toggleLock={toggleExpressionLock}
+					/>
+				</Flex>
 
 				{error && (
 					<Notification

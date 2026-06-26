@@ -38,7 +38,7 @@ interface ChargenPageMeta {
 const PAGE_META: Record<ChargenPage, ChargenPageMeta> = {
 	identity: {
 		label: "Identity",
-		description: "Name, appearance & profile",
+		description: "Name, appearance, body art, style & profile",
 		icon: GiBodySwapping,
 		color: "yellow",
 	},
@@ -123,6 +123,16 @@ const STEP_META: Record<Step, StepMeta> = {
 
 			return true;
 		},
+	},
+	bodyArt: {
+		label: "Tattoos & Piercings",
+		color: "yellow",
+		isComplete: () => true,
+	},
+	style: {
+		label: "Style",
+		color: "yellow",
+		isComplete: () => true,
 	},
 	profile: {
 		label: "Profile",

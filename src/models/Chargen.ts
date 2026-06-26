@@ -10,6 +10,8 @@ export type ChargenPage = (typeof CHARGEN_PAGES)[number];
 export const STEPS = [
 	"name",
 	"appearance",
+	"bodyArt",
+	"style",
 	"profile",
 	"extraStats",
 	"time",
@@ -18,7 +20,7 @@ export const STEPS = [
 export type Step = (typeof STEPS)[number];
 
 export const PAGE_STEPS: Record<ChargenPage, readonly Step[]> = {
-	identity: ["name", "appearance", "profile"],
+	identity: ["name", "appearance", "bodyArt", "style", "profile"],
 	background: [],
 	stats: ["extraStats"],
 	inventory: ["wealth"],

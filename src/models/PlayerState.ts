@@ -8,7 +8,13 @@ export default interface PlayerState {
 
 	gender?: GenderIdentity;
 	appearance?: Appearance;
+	expressions?: ProfileExpressions;
 	portraits?: Portraits;
+	bodyArt?: BodyArt;
+
+	// TODO: Style should be in game state.
+
+	style?: Style;
 
 	stats?: {
 		/**
@@ -90,6 +96,8 @@ export interface Appearance {
 		| "aboveAverage"
 		| "tall"
 		| "veryTall";
+	eyeShape?: string;
+	eyeColour?: string;
 	skinColour?: string;
 	complexion?: string;
 	hairStyle?: string;
@@ -109,6 +117,19 @@ export interface Appearance {
 
 	genitals?: "vulva" | "penisCircumcised" | "penisUncircumcised" | "none";
 	cockSize?: "verySmall" | "small" | "average" | "large" | "veryLarge";
+	bodyHair?: "none" | "light" | "moderate" | "heavy";
+	genitalHair?: "none" | "light" | "moderate" | "heavy";
+}
+
+export interface Style {
+	portraitStyle?: string;
+	sceneStyle?: string;
+}
+
+export interface ProfileExpressions {
+	neutral?: string;
+	injured?: string;
+	cum?: string;
 }
 
 /**
@@ -116,7 +137,23 @@ export interface Appearance {
  */
 export type GenderExpression = "feminine" | "masculine" | "androgynous";
 
-// TODO: Note that we don't actually really use these other than subject and object.
+export interface BodyArt {
+	tattoos?: {
+		face?: string;
+		body?: string;
+	};
+	piercings?: {
+		// SFW
+		ears?: string;
+		septum?: string;
+		face?: string;
+		navel?: string;
+		// NSFW
+		nipples?: string;
+		hood?: string;
+		cock?: string;
+	};
+}
 
 export interface GenderIdentity {
 	/**

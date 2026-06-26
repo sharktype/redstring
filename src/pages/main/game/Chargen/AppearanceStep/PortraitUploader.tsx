@@ -16,7 +16,7 @@ import { useEffect, useMemo, useState } from "react";
 import useGameContext from "../../../../../context/GameContext/useGameContext";
 import { usePlayerState } from "../../../../../db/hooks/usePlayerState";
 import type Agent from "../../../../../handlers/agents";
-import { buildImageGenPrompt } from "../../../../../handlers/imagegen/buildImageGenPrompt";
+import buildPortraitPrompt from "../../../../../handlers/imagegen/buildPortraitPrompt";
 
 type PortraitTab = "base" | "nude";
 
@@ -103,10 +103,12 @@ export default function PortraitUploader() {
 
 		try {
 			const tab = isNsfwMode ? portraitTab : "base";
-			const prompt = buildImageGenPrompt(
+			const prompt = buildPortraitPrompt(
 				playerState.appearance,
 				tab,
 				isNsfwMode,
+				playerState.bodyArt,
+				playerState.style,
 			);
 
 			const stream = await profilerAgent.generate(
@@ -289,8 +291,14 @@ function PromptModal({ opened, onClose }: PromptModalProps) {
 	const appearance = playerState?.appearance;
 
 	const prompt = useMemo(() => {
-		return buildImageGenPrompt({ ...appearance }, "base", isNsfwMode);
-	}, [appearance, isNsfwMode]);
+		return buildPortraitPrompt(
+			{ ...appearance },
+			"base",
+			isNsfwMode,
+			playerState?.bodyArt,
+			playerState?.style,
+		);
+	}, [appearance, isNsfwMode, playerState?.bodyArt, playerState?.style]);
 
 	return (
 		<Modal

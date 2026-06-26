@@ -9,6 +9,8 @@ export const ALL_LOCK_KEYS: (keyof Appearance)[] = [
 	"weight",
 	"build",
 	"height",
+	"eyeShape",
+	"eyeColour",
 	"shoulders",
 	"facialHair",
 	"bust",
@@ -19,6 +21,8 @@ export const ALL_LOCK_KEYS: (keyof Appearance)[] = [
 	"hairColour",
 	"genitals",
 	"cockSize",
+	"bodyHair",
+	"genitalHair",
 	"clothingStyle",
 	"generateExtra",
 ];

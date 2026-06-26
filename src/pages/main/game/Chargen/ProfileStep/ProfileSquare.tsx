@@ -8,18 +8,18 @@ import {
 	Text,
 } from "@mantine/core";
 import { FaRedo, FaTrash } from "react-icons/fa";
+import type { ProfileState } from "../../../../../models/PlayerState";
 import {
-	NSFW_STATES,
+	PROFILE_NSFW_STATES,
 	PROFILE_STATE_EMOJIS,
 	PROFILE_STATE_LABELS,
-} from "../../../../../handlers/imagegen/buildImageGenPrompt";
-import type { ProfileState } from "../../../../../models/PlayerState";
+} from "./types";
 
 interface ProfileSquareProps {
 	state: ProfileState;
 	imageUrl?: string;
 	isGenerating?: boolean;
-	onRegenerate: (state: ProfileState) => void;
+	onGenerate: (state: ProfileState) => void;
 	onRemove: (state: ProfileState) => void;
 }
 
@@ -27,13 +27,13 @@ export default function ProfileSquare({
 	state,
 	imageUrl,
 	isGenerating,
-	onRegenerate,
+	onGenerate,
 	onRemove,
 }: ProfileSquareProps) {
 	const emoji = PROFILE_STATE_EMOJIS[state];
 	const label = PROFILE_STATE_LABELS[state];
 
-	const isNsfwState = NSFW_STATES.has(state);
+	const isNsfwState = PROFILE_NSFW_STATES.has(state);
 	const isShowingActions = imageUrl && !isGenerating;
 
 	return (
@@ -92,7 +92,7 @@ export default function ProfileSquare({
 							top={4}
 							right={4}
 							className="profile-gallery-regenerate"
-							onClick={() => onRegenerate(state)}
+							onClick={() => onGenerate(state)}
 						>
 							<FaRedo size={12} />
 						</ActionIcon>

@@ -14,9 +14,11 @@ import {
 } from "../../../../models/Chargen";
 import type { StoredPlayerState } from "../../../../models/PlayerState";
 import AppearanceStep from "./AppearanceStep";
+import BodyArtStep from "./BodyArtStep/index.tsx";
 import ExtraStatsStep from "./ExtraStatsStep";
 import NameStep from "./NameStep";
 import ProfileStep from "./ProfileStep/index.tsx";
+import StyleStep from "./StyleStep/index.tsx";
 import TimeStep from "./TimeStep";
 import WealthStep from "./WealthStep";
 
@@ -38,6 +40,8 @@ export interface ChargenStepProps {
 const STEP_TO_COMPONENT: Record<Step, ComponentType<ChargenStepProps>> = {
 	name: NameStep,
 	appearance: AppearanceStep,
+	bodyArt: BodyArtStep,
+	style: StyleStep,
 	profile: ProfileStep,
 	extraStats: ExtraStatsStep,
 	time: TimeStep,

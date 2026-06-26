@@ -144,6 +144,41 @@ const DEFAULT_COCK_SIZES: Appearance["cockSize"][] = [
 	"veryLarge",
 ];
 
+const DEFAULT_BODY_HAIR: Appearance["bodyHair"][] = [
+	"none",
+	"light",
+	"moderate",
+	"heavy",
+];
+
+const DEFAULT_GENITAL_HAIR: Appearance["genitalHair"][] = [
+	"none",
+	"light",
+	"moderate",
+	"heavy",
+];
+
+const DEFAULT_EYE_SHAPES = [
+	"almond",
+	"round",
+	"hooded",
+	"monolid",
+	"upturned",
+	"downturned",
+	"deep-set",
+];
+
+const DEFAULT_EYE_COLOURS = [
+	"brown",
+	"dark brown",
+	"hazel",
+	"amber",
+	"green",
+	"blue",
+	"grey",
+	"violet",
+];
+
 const DEFAULT_SIZES: Appearance["weight"][] = ["skinny", "average", "heavy"];
 
 const DEFAULT_BUILDS: Appearance["build"][] = [
@@ -205,6 +240,8 @@ export function randomiseAppearance(
 		weight: pick(DEFAULT_SIZES),
 		build: pick(DEFAULT_BUILDS),
 		height: pick(DEFAULT_HEIGHTS),
+		eyeShape: pick(DEFAULT_EYE_SHAPES),
+		eyeColour: pick(DEFAULT_EYE_COLOURS),
 		skinColour: pick(DEFAULT_SKIN_TONES),
 		complexion: pick(DEFAULT_COMPLEXIONS),
 		hairStyle: pickHairStyle(expression),
@@ -238,6 +275,9 @@ export function randomiseAppearance(
 		} else {
 			appearance.cockSize = undefined;
 		}
+
+		appearance.bodyHair = pick(DEFAULT_BODY_HAIR);
+		appearance.genitalHair = pick(DEFAULT_GENITAL_HAIR);
 	}
 
 	return appearance;
