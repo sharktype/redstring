@@ -108,7 +108,7 @@ export function buildCommonAppearanceParts(
 		parts.push(`${appearance.hairColour} hair colour`);
 	}
 
-	if (appearance.facialHair) {
+	if (appearance.facialHair && isMasculine) {
 		parts.push(`${appearance.facialHair} facial hair`);
 	}
 
