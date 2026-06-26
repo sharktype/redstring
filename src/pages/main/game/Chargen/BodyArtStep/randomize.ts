@@ -77,7 +77,6 @@ const DEFAULT_CHEEK_MAKEUP = [
 export function randomiseBodyArt(
 	genderExpression: GenderExpression | undefined,
 	existingAppearance?: Appearance,
-	isNsfw?: boolean,
 ): BodyArt {
 	const hasPenis =
 		existingAppearance?.genitals === "penisCircumcised" ||
@@ -103,16 +102,14 @@ export function randomiseBodyArt(
 		},
 	};
 
-	if (isNsfw) {
-		bodyArt.piercings!.nipples = pick(DEFAULT_NIPPLE_PIERCINGS);
+	bodyArt.piercings!.nipples = pick(DEFAULT_NIPPLE_PIERCINGS);
 
-		if (isFeminine) {
-			bodyArt.piercings!.hood = pick(DEFAULT_HOOD_PIERCINGS);
-		}
+	if (isFeminine) {
+		bodyArt.piercings!.hood = pick(DEFAULT_HOOD_PIERCINGS);
+	}
 
-		if (hasPenis) {
-			bodyArt.piercings!.cock = pick(DEFAULT_COCK_PIERCINGS);
-		}
+	if (hasPenis) {
+		bodyArt.piercings!.cock = pick(DEFAULT_COCK_PIERCINGS);
 	}
 
 	return bodyArt;

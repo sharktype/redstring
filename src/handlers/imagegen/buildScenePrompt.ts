@@ -20,7 +20,6 @@ export default function buildScenePrompt(
 	nudity: keyof ProfileVariant,
 	scenePrompt: string,
 	actors?: SceneActor[],
-	isNsfw = true,
 	bodyArt?: BodyArt,
 	style?: Style,
 ): string {
@@ -85,16 +84,16 @@ export default function buildScenePrompt(
 		}
 	});
 
-	if (isNsfw && nudity === "nude") {
+	if (nudity === "nude") {
 		parts.push("nude, completely naked, nsfw");
 	} else if (appearance.clothingStyle) {
 		parts.push(`wearing ${appearance.clothingStyle}`);
 	}
 
-	parts.push(...buildCommonAppearanceParts(appearance, true, nudity, isNsfw));
+	parts.push(...buildCommonAppearanceParts(appearance, true, nudity));
 
 	if (bodyArt) {
-		parts.push(...buildBodyArtParts(appearance, bodyArt, nudity, true, isNsfw));
+		parts.push(...buildBodyArtParts(appearance, bodyArt, nudity, true));
 	}
 
 	return parts.join(", ");

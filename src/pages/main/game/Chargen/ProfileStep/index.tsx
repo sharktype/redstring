@@ -20,10 +20,7 @@ import type {
 	ProfileStates,
 	ProfileVariant,
 } from "../../../../../models/PlayerState";
-import {
-	NSFW_PROFILE_STATES,
-	PROFILE_STATES,
-} from "../../../../../models/PlayerState";
+import { PROFILE_STATES } from "../../../../../models/PlayerState";
 import type { ChargenStepProps } from "..";
 import ExpressionsPanel from "./ExpressionsPanel";
 import { defaultLocks } from "./locks";
@@ -35,17 +32,13 @@ const PROFILE_SIDE_LENGTH = 256;
 const GENERATE_ALL_PROFILES_BATCH_SIZE = 4;
 
 export default function ProfileStep(_props: ChargenStepProps) {
-	const { playerState, updatePlayerState, agentConfigs, gameState } =
-		useGameContext();
+	const { playerState, updatePlayerState, agentConfigs } = useGameContext();
 
 	const profilerAgent = agentConfigs.find(
 		(agent): agent is Agent => agent.type === "profiler",
 	);
 
-	const isNsfwMode = gameState?.isNsfw ?? false;
-	const allStates: ProfileState[] = isNsfwMode
-		? [...PROFILE_STATES, ...NSFW_PROFILE_STATES]
-		: [...PROFILE_STATES];
+	const allStates: ProfileState[] = [...PROFILE_STATES];
 
 	const profiles = playerState?.portraits?.profiles ?? {};
 
@@ -97,7 +90,6 @@ export default function ProfileStep(_props: ChargenStepProps) {
 					playerState.bodyArt,
 					playerState.expressions,
 					playerState.style,
-					isNsfwMode,
 				);
 
 				const stream = await profilerAgent.generate(prompt, {
@@ -152,7 +144,7 @@ export default function ProfileStep(_props: ChargenStepProps) {
 				});
 			}
 		},
-		[profilerAgent, playerState, updatePlayerState, isNsfwMode],
+		[profilerAgent, playerState, updatePlayerState],
 	);
 
 	const generateAll = useCallback(async () => {
@@ -291,8 +283,7 @@ export default function ProfileStep(_props: ChargenStepProps) {
 					centered
 				>
 					<Text size="sm" mb="md">
-						This will delete the{" "}
-						{isNsfwMode ? (variantMode === "base" ? "clothed " : "nude ") : ""}
+						This will delete the {variantMode === "base" ? "clothed " : "nude "}
 						profile image.
 					</Text>
 					<Group justify="flex-end">
@@ -317,7 +308,7 @@ export default function ProfileStep(_props: ChargenStepProps) {
 				>
 					<Text size="sm" mb="md">
 						This will delete all generated{" "}
-						{isNsfwMode ? (variantMode === "base" ? "clothed " : "nude ") : ""}
+						{variantMode === "base" ? "clothed " : "nude "}
 						profile images.
 					</Text>
 					<Group justify="flex-end">

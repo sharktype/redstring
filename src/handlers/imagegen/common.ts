@@ -15,7 +15,6 @@ export function buildCommonAppearanceParts(
 	appearance: Appearance,
 	hasBody: boolean,
 	nudity: "base" | "nude" = "base",
-	isNsfw: boolean,
 ) {
 	const parts: string[] = [];
 
@@ -68,7 +67,7 @@ export function buildCommonAppearanceParts(
 		appearance.genitals === "penisCircumcised" ||
 		appearance.genitals === "penisUncircumcised";
 
-	if (isNsfw && hasPenis && appearance.cockSize && hasBody) {
+	if (hasPenis && appearance.cockSize && hasBody) {
 		const penisType =
 			appearance.genitals === "penisCircumcised" ? "circumcized" : "foreskin";
 
@@ -77,21 +76,11 @@ export function buildCommonAppearanceParts(
 		);
 	}
 
-	if (
-		isNsfw &&
-		appearance.bodyHair &&
-		appearance.bodyHair !== "none" &&
-		hasBody
-	) {
+	if (appearance.bodyHair && appearance.bodyHair !== "none" && hasBody) {
 		parts.push(`${appearance.bodyHair} body hair`);
 	}
 
-	if (
-		isNsfw &&
-		appearance.genitalHair &&
-		appearance.genitalHair !== "none" &&
-		hasBody
-	) {
+	if (appearance.genitalHair && appearance.genitalHair !== "none" && hasBody) {
 		parts.push(`${appearance.genitalHair} pubic hair`);
 	}
 
@@ -123,7 +112,7 @@ export function buildCommonAppearanceParts(
 		parts.push(`${appearance.facialHair} facial hair`);
 	}
 
-	if (isNsfw && nudity === "nude") {
+	if (nudity === "nude") {
 		parts.push("nude, completely naked, nsfw");
 	} else if (appearance.clothingStyle) {
 		parts.push(`wearing ${appearance.clothingStyle}`);
@@ -145,7 +134,6 @@ export function buildBodyArtParts(
 	bodyArt: BodyArt,
 	nudity?: string,
 	isBody?: boolean,
-	isNsfw?: boolean,
 ): string[] {
 	const parts: string[] = [];
 
@@ -176,11 +164,11 @@ export function buildBodyArtParts(
 			parts.push(`navel piercing: ${piercings.navel}`);
 		}
 
-		if (isNsfw && piercings.nipples && isBody) {
+		if (piercings.nipples && isBody) {
 			parts.push(`nipple piercings: ${piercings.nipples}`);
 		}
 
-		if (isNsfw && piercings.hood && nudity === "nude" && isBody) {
+		if (piercings.hood && nudity === "nude" && isBody) {
 			parts.push(`clitoral hood piercing: ${piercings.hood}`);
 		}
 
@@ -188,7 +176,7 @@ export function buildBodyArtParts(
 			appearance.genitals === "penisCircumcised" ||
 			appearance.genitals === "penisUncircumcised";
 
-		if (isNsfw && piercings.cock && nudity === "nude" && hasPenis && isBody) {
+		if (piercings.cock && nudity === "nude" && hasPenis && isBody) {
 			parts.push(`cock piercing: ${piercings.cock}`);
 		}
 	}

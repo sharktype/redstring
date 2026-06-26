@@ -5,7 +5,6 @@ export default interface GameState {
 
 	// Options:
 
-	isNsfw: boolean;
 	detailer: "profile" | "journal";
 }
 

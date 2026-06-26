@@ -24,14 +24,6 @@ export const PROFILE_STATE_LABELS: Record<ProfileState, string> = {
 	cumEverywhere: "Cum Everywhere",
 };
 
-export const PROFILE_NSFW_STATES: ReadonlySet<ProfileState> = new Set([
-	"horny",
-	"ahegao",
-	"cumFacial",
-	"cumInMouth",
-	"cumEverywhere",
-]);
-
 export type SexRole =
 	| "girl"
 	| "boy"

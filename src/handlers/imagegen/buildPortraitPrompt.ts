@@ -13,7 +13,6 @@ import {
 export default function buildPortraitPrompt(
 	appearance: Appearance,
 	nudity: keyof ProfileVariant,
-	isNsfw = true,
 	bodyArt?: BodyArt,
 	style?: Style,
 ): string {
@@ -50,16 +49,16 @@ export default function buildPortraitPrompt(
 		}
 	}
 
-	if (isNsfw && nudity === "nude") {
+	if (nudity === "nude") {
 		parts.push("nude, completely naked, nsfw");
 	} else if (appearance.clothingStyle) {
 		parts.push(`wearing ${appearance.clothingStyle}`);
 	}
 
-	parts.push(...buildCommonAppearanceParts(appearance, true, nudity, isNsfw));
+	parts.push(...buildCommonAppearanceParts(appearance, true, nudity));
 
 	if (bodyArt) {
-		parts.push(...buildBodyArtParts(appearance, bodyArt, nudity, true, isNsfw));
+		parts.push(...buildBodyArtParts(appearance, bodyArt, nudity, true));
 	}
 
 	return parts.join(", ");

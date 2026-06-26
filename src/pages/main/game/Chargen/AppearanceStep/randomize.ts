@@ -224,7 +224,6 @@ const HIP_VALUES = ["narrow", "average", "wide"];
 export function randomiseAppearance(
 	genderExpression: GenderExpression | undefined,
 	existingSpecies?: string,
-	isNsfw?: boolean,
 ): Partial<Appearance> {
 	const expression = genderExpression ?? pick(DEFAULT_EXPRESSIONS);
 	const isMasculine =
@@ -266,19 +265,17 @@ export function randomiseAppearance(
 		appearance.hips = undefined;
 	}
 
-	if (isNsfw) {
-		const genitals = pick(DEFAULT_GENITALS);
-		appearance.genitals = genitals;
+	const genitals = pick(DEFAULT_GENITALS);
+	appearance.genitals = genitals;
 
-		if (genitals === "penisCircumcised" || genitals === "penisUncircumcised") {
-			appearance.cockSize = pick(DEFAULT_COCK_SIZES);
-		} else {
-			appearance.cockSize = undefined;
-		}
-
-		appearance.bodyHair = pick(DEFAULT_BODY_HAIR);
-		appearance.genitalHair = pick(DEFAULT_GENITAL_HAIR);
+	if (genitals === "penisCircumcised" || genitals === "penisUncircumcised") {
+		appearance.cockSize = pick(DEFAULT_COCK_SIZES);
+	} else {
+		appearance.cockSize = undefined;
 	}
+
+	appearance.bodyHair = pick(DEFAULT_BODY_HAIR);
+	appearance.genitalHair = pick(DEFAULT_GENITAL_HAIR);
 
 	return appearance;
 }

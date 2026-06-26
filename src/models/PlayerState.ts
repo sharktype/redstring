@@ -59,9 +59,6 @@ export interface ProfileStates {
 	neutral?: ProfileVariant;
 	winded?: ProfileVariant;
 	injured?: ProfileVariant;
-
-	// NSFW only:
-
 	horny?: ProfileVariant;
 	ahegao?: ProfileVariant;
 	cumFacial?: ProfileVariant;
@@ -69,17 +66,17 @@ export interface ProfileStates {
 	cumEverywhere?: ProfileVariant;
 }
 
-export const PROFILE_STATES = ["neutral", "winded", "injured"] as const;
-export const NSFW_PROFILE_STATES = [
+export const PROFILE_STATES = [
+	"neutral",
+	"winded",
+	"injured",
 	"horny",
 	"ahegao",
 	"cumFacial",
 	"cumInMouth",
 	"cumEverywhere",
 ] as const;
-export type ProfileState =
-	| (typeof PROFILE_STATES)[number]
-	| (typeof NSFW_PROFILE_STATES)[number];
+export type ProfileState = (typeof PROFILE_STATES)[number];
 
 export interface Appearance {
 	age?: number;
@@ -113,8 +110,6 @@ export interface Appearance {
 	custom?: string;
 	generateExtra?: string;
 
-	// NSFW:
-
 	genitals?: "vulva" | "penisCircumcised" | "penisUncircumcised" | "none";
 	cockSize?: "verySmall" | "small" | "average" | "large" | "veryLarge";
 	bodyHair?: "none" | "light" | "moderate" | "heavy";
@@ -143,12 +138,10 @@ export interface BodyArt {
 		body?: string;
 	};
 	piercings?: {
-		// SFW
 		ears?: string;
 		septum?: string;
 		face?: string;
 		navel?: string;
-		// NSFW
 		nipples?: string;
 		hood?: string;
 		cock?: string;

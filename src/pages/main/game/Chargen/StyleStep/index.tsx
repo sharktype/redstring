@@ -41,11 +41,8 @@ const SCENE_HEIGHT = 832;
 type SceneMode = "example" | "custom" | "sex";
 
 export default function StyleStep(_props: ChargenStepProps) {
-	const { playerState, updatePlayerState, agentConfigs, gameState } =
-		useGameContext();
+	const { playerState, updatePlayerState, agentConfigs } = useGameContext();
 	const [locks, setLocks] = useState(defaultLocks());
-
-	const isNsfwMode = gameState?.isNsfw ?? false;
 
 	const style = playerState?.style ?? {};
 	const appearance = playerState?.appearance;
@@ -111,7 +108,6 @@ export default function StyleStep(_props: ChargenStepProps) {
 			"nude",
 			scenePrompt,
 			actors,
-			isNsfwMode,
 			playerState?.bodyArt,
 			playerState?.style,
 		);
@@ -136,11 +132,10 @@ export default function StyleStep(_props: ChargenStepProps) {
 		try {
 			const scenePrompt = buildScenePromptGivenMode(mode);
 
-			const stream = await illustratorAgent.generate(
-				scenePrompt,
-				{ width: SCENE_WIDTH, height: SCENE_HEIGHT },
-				isNsfwMode || false,
-			);
+			const stream = await illustratorAgent.generate(scenePrompt, {
+				width: SCENE_WIDTH,
+				height: SCENE_HEIGHT,
+			});
 
 			const reader = stream.getReader();
 			let imageDataUrl = "";
@@ -232,22 +227,18 @@ export default function StyleStep(_props: ChargenStepProps) {
 									: "Example Random Scene"}
 							</Button>
 
-							{isNsfwMode && (
-								<Button
-									variant="outline"
-									color="red"
-									onClick={() => generateScene("sex")}
-									disabled={generatingScene !== null}
-									leftSection={
-										generatingScene === "sex" ? <Loader size="xs" /> : "✨"
-									}
-									justify="start"
-								>
-									{generatingScene === "sex"
-										? "Generating…"
-										: "Random Sex Scene"}
-								</Button>
-							)}
+							<Button
+								variant="outline"
+								color="red"
+								onClick={() => generateScene("sex")}
+								disabled={generatingScene !== null}
+								leftSection={
+									generatingScene === "sex" ? <Loader size="xs" /> : "✨"
+								}
+								justify="start"
+							>
+								{generatingScene === "sex" ? "Generating…" : "Random Sex Scene"}
+							</Button>
 
 							<Button
 								variant="outline"

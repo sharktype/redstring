@@ -1,20 +1,10 @@
-import {
-	Box,
-	Button,
-	Group,
-	Modal,
-	Stack,
-	Switch,
-	Text,
-	Title,
-} from "@mantine/core";
+import { Box, Button, Group, Modal, Stack, Text, Title } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
 import type { ReactNode } from "react";
 import { FaImage, FaMap } from "react-icons/fa";
 import { FiKey } from "react-icons/fi";
 import { GiWorld } from "react-icons/gi";
 import { useNavigate } from "react-router";
-import useGameContext from "../../context/GameContext/useGameContext.tsx";
 import { useMessages } from "../../db/hooks/useMessages.ts";
 import { usePlayerState } from "../../db/hooks/usePlayerState.ts";
 
@@ -25,14 +15,8 @@ export default function Options() {
 		unmakeOpened,
 		{ open: openUnmakeCharacter, close: closeUnmakeCharacter },
 	] = useDisclosure(false);
-	const [nsfwOffOpened, { open: openNsfwOff, close: closeNsfwOff }] =
-		useDisclosure(false);
 	const { clearMessages } = useMessages();
 	const { clearPlayerState } = usePlayerState();
-	const { gameState, updateGameState, playerState, updatePlayerState } =
-		useGameContext();
-
-	const isNsfw = gameState?.isNsfw ?? false;
 
 	const handleResetMessages = async () => {
 		await clearMessages();
@@ -44,47 +28,12 @@ export default function Options() {
 		closeUnmakeCharacter();
 	};
 
-	const handleNsfwOff = async () => {
-		await updateGameState({ isNsfw: false });
-		await updatePlayerState({
-			appearance: {
-				...playerState?.appearance,
-				genitals: undefined,
-				cockSize: undefined,
-			},
-			portraits: {
-				...playerState?.portraits,
-				nude: undefined,
-			},
-		});
-		closeNsfwOff();
-	};
-
 	return (
 		<Box my="lg" h="90vh" style={{ overflowY: "auto" }}>
 			<Title order={2} mb="lg">
 				Options
 			</Title>
 			<Stack gap="xl">
-				<Box>
-					<Group align="center" gap="xs" mb="md">
-						<Switch
-							label="NSFW Mode"
-							checked={isNsfw}
-							onChange={(e) => {
-								if (!e.currentTarget.checked) {
-									openNsfwOff();
-								} else {
-									updateGameState({
-										isNsfw: true,
-									});
-								}
-							}}
-							color="red"
-							ml="xs"
-						/>
-					</Group>
-				</Box>
 				<Box>
 					<Title order={4} mb="md">
 						Artificial Intelligence
@@ -159,24 +108,7 @@ export default function Options() {
 						</Group>
 					</Modal>
 					<Modal
-						opened={nsfwOffOpened}
-						onClose={closeNsfwOff}
-						title="Disable NSFW Mode"
-						centered
-					>
-						<Text mb="lg">
-							Are you sure? Some character details may be lost.
-						</Text>
-						<Group justify="flex-end">
-							<Button variant="default" onClick={closeNsfwOff}>
-								No
-							</Button>
-							<Button color="red" onClick={handleNsfwOff}>
-								Yes
-							</Button>
-						</Group>
-					</Modal>
-					<Modal
+						opened={unmakeOpened}
 						opened={resetOpened}
 						onClose={closeResetMessages}
 						title="Reset Messages"

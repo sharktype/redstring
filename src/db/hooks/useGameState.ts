@@ -6,7 +6,6 @@ import { db } from "../database.ts";
 const DEFAULT_GAME_STATE: Omit<StoredGameState, "id"> = {
 	detailer: "profile",
 	secrets: {},
-	isNsfw: false,
 };
 
 export function useGameState() {

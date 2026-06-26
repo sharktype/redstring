@@ -67,13 +67,8 @@ export class NovelAIConfig implements ProviderConfig {
 	async generate(
 		input: string,
 		parameters: Record<string, unknown> = {},
-		allowNsfw?: boolean,
 	): Promise<ReadableStream<string>> {
 		const { width = 512, height = 512, scale = 5, steps = 23 } = parameters;
-
-		const negativePrompt = allowNsfw
-			? NEGATIVE_PROMPT
-			: `${NEGATIVE_PROMPT}, nsfw`;
 
 		const response = await this.call({
 			input,
@@ -126,12 +121,12 @@ export class NovelAIConfig implements ProviderConfig {
 				},
 				v4_negative_prompt: {
 					caption: {
-						base_caption: negativePrompt,
+						base_caption: NEGATIVE_PROMPT,
 						char_captions: [],
 					},
 					legacy_uc: false,
 				},
-				negative_prompt: negativePrompt,
+				negative_prompt: NEGATIVE_PROMPT,
 			},
 			url: NOVELAI_GENERATE_URL,
 		});

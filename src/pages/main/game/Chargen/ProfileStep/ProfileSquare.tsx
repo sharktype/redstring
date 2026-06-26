@@ -9,11 +9,7 @@ import {
 } from "@mantine/core";
 import { FaRedo, FaTrash } from "react-icons/fa";
 import type { ProfileState } from "../../../../../models/PlayerState";
-import {
-	PROFILE_NSFW_STATES,
-	PROFILE_STATE_EMOJIS,
-	PROFILE_STATE_LABELS,
-} from "./types";
+import { PROFILE_STATE_EMOJIS, PROFILE_STATE_LABELS } from "./types";
 
 interface ProfileSquareProps {
 	state: ProfileState;
@@ -32,8 +28,6 @@ export default function ProfileSquare({
 }: ProfileSquareProps) {
 	const emoji = PROFILE_STATE_EMOJIS[state];
 	const label = PROFILE_STATE_LABELS[state];
-
-	const isNsfwState = PROFILE_NSFW_STATES.has(state);
 	const isShowingActions = imageUrl && !isGenerating;
 
 	return (
@@ -101,12 +95,6 @@ export default function ProfileSquare({
 			</Flex>
 			<Text size="xs" fw={500} ta="center" lh={1.1}>
 				{label}
-				{isNsfwState && (
-					<Text component="span" c="red" size="xs" fw={600}>
-						{" "}
-						18+
-					</Text>
-				)}
 			</Text>
 		</Stack>
 	);

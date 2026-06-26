@@ -22,10 +22,8 @@ import { randomiseAppearance } from "./randomize";
 import TopRowFields from "./TopRowFields";
 
 export default function AppearanceStep(_props: ChargenStepProps) {
-	const { playerState, updatePlayerState, gameState } = useGameContext();
+	const { playerState, updatePlayerState } = useGameContext();
 	const [locks, setLocks] = useState<Locks>(defaultLocks);
-
-	const isNsfwMode = gameState?.isNsfw ?? false;
 
 	const appearance = playerState?.appearance ?? {};
 	const genderExpression = appearance.genderExpression;
@@ -50,7 +48,6 @@ export default function AppearanceStep(_props: ChargenStepProps) {
 		const generated = randomiseAppearance(
 			expressionForRandomization,
 			appearance.species,
-			isNsfwMode,
 		);
 
 		const merged = mergeIntoLocked(appearance, generated, locks);
@@ -119,13 +116,11 @@ export default function AppearanceStep(_props: ChargenStepProps) {
 
 						<AppearanceForm locks={locks} toggleLock={toggleLock} />
 
-						{isNsfwMode && (
-							<NsfwFields
-								setAppearance={setAppearance}
-								locks={locks}
-								toggleLock={toggleLock}
-							/>
-						)}
+						<NsfwFields
+							setAppearance={setAppearance}
+							locks={locks}
+							toggleLock={toggleLock}
+						/>
 
 						<Group gap={4} wrap="nowrap">
 							<Textarea

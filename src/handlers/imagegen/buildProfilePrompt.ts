@@ -19,7 +19,6 @@ export default function buildProfilePrompt(
 	bodyArt?: BodyArt,
 	expressions?: ProfileExpressions,
 	style?: Style,
-	isNsfw = true,
 ): string {
 	const parts: string[] = buildCommonParts();
 
@@ -48,12 +47,10 @@ export default function buildProfilePrompt(
 		}
 	}
 
-	parts.push(...buildCommonAppearanceParts(appearance, false, nudity, isNsfw));
+	parts.push(...buildCommonAppearanceParts(appearance, false, nudity));
 
 	if (bodyArt) {
-		parts.push(
-			...buildBodyArtParts(appearance, bodyArt, nudity, false, isNsfw),
-		);
+		parts.push(...buildBodyArtParts(appearance, bodyArt, nudity, false));
 	}
 
 	return parts.join(", ");

@@ -26,10 +26,7 @@ const PORTRAIT_META: Record<PortraitTab, { emoji: string; label: string }> = {
 };
 
 export default function PortraitUploader() {
-	const { gameState, playerState, updatePlayerState, agentConfigs } =
-		useGameContext();
-
-	const isNsfwMode = gameState?.isNsfw;
+	const { playerState, updatePlayerState, agentConfigs } = useGameContext();
 
 	const profilerAgent = agentConfigs.find(
 		(agent): agent is Agent => agent.type === "profiler",
@@ -48,10 +45,8 @@ export default function PortraitUploader() {
 	const [clearConfirm, setClearConfirm] = useState(false);
 
 	useEffect(() => {
-		if (!isNsfwMode) {
-			setPortraitTab("base");
-		}
-	}, [isNsfwMode]);
+		setPortraitTab("base");
+	}, []);
 
 	const portraits = playerState?.portraits;
 
@@ -102,20 +97,18 @@ export default function PortraitUploader() {
 		setGenerateError(null);
 
 		try {
-			const tab = isNsfwMode ? portraitTab : "base";
+			const tab = portraitTab;
 			const prompt = buildPortraitPrompt(
 				playerState.appearance,
 				tab,
-				isNsfwMode,
 				playerState.bodyArt,
 				playerState.style,
 			);
 
-			const stream = await profilerAgent.generate(
-				prompt,
-				{ width: 832, height: 1216 },
-				isNsfwMode || false,
-			);
+			const stream = await profilerAgent.generate(prompt, {
+				width: 832,
+				height: 1216,
+			});
 
 			const reader = stream.getReader();
 			let imageDataUrl = "";
@@ -150,18 +143,16 @@ export default function PortraitUploader() {
 
 	return (
 		<Stack gap="xs">
-			{isNsfwMode && (
-				<SegmentedControl
-					size="xs"
-					fullWidth
-					value={portraitTab}
-					onChange={(v) => setPortraitTab(v as PortraitTab)}
-					data={[
-						{ label: "Clothed", value: "base" },
-						{ label: "Nude", value: "nude" },
-					]}
-				/>
-			)}
+			<SegmentedControl
+				size="xs"
+				fullWidth
+				value={portraitTab}
+				onChange={(v) => setPortraitTab(v as PortraitTab)}
+				data={[
+					{ label: "Clothed", value: "base" },
+					{ label: "Nude", value: "nude" },
+				]}
+			/>
 
 			<Box
 				style={{
@@ -260,10 +251,8 @@ export default function PortraitUploader() {
 			>
 				<Text size="sm" mb="md">
 					This will delete the current{" "}
-					{isNsfwMode
-						? `${PORTRAIT_META[portraitTab].label.toLowerCase()} `
-						: ""}
-					portrait. You can regenerate it later.
+					{PORTRAIT_META[portraitTab].label.toLowerCase()} portrait. You can
+					regenerate it later.
 				</Text>
 				<Group justify="flex-end">
 					<Button variant="default" onClick={() => setClearConfirm(false)}>
@@ -284,21 +273,18 @@ interface PromptModalProps {
 }
 
 function PromptModal({ opened, onClose }: PromptModalProps) {
-	const { gameState } = useGameContext();
 	const { playerState } = usePlayerState();
 
-	const isNsfwMode = gameState?.isNsfw;
 	const appearance = playerState?.appearance;
 
 	const prompt = useMemo(() => {
 		return buildPortraitPrompt(
 			{ ...appearance },
 			"base",
-			isNsfwMode,
 			playerState?.bodyArt,
 			playerState?.style,
 		);
-	}, [appearance, isNsfwMode, playerState?.bodyArt, playerState?.style]);
+	}, [appearance, playerState?.bodyArt, playerState?.style]);
 
 	return (
 		<Modal

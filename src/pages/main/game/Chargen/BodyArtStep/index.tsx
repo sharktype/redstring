@@ -14,10 +14,8 @@ import {
 import { randomiseBodyArt } from "./randomize";
 
 export default function BodyArtStep(_props: ChargenStepProps) {
-	const { playerState, updatePlayerState, gameState } = useGameContext();
+	const { playerState, updatePlayerState } = useGameContext();
 	const [locks, setLocks] = useState(defaultLocks());
-
-	const isNsfwMode = gameState?.isNsfw ?? false;
 
 	const bodyArt = playerState?.bodyArt ?? {};
 	const appearance = playerState?.appearance;
@@ -41,11 +39,7 @@ export default function BodyArtStep(_props: ChargenStepProps) {
 	};
 
 	const randomize = () => {
-		const generated = randomiseBodyArt(
-			genderExpression,
-			appearance,
-			isNsfwMode,
-		);
+		const generated = randomiseBodyArt(genderExpression, appearance);
 
 		const merged: BodyArt = {
 			tattoos: {},
@@ -191,40 +185,36 @@ export default function BodyArtStep(_props: ChargenStepProps) {
 							toggleLock={toggleLock}
 							lockKey="piercings.navel"
 						/>
-						{isNsfwMode && (
-							<>
-								<BodyArtField
-									label={nsfwLabel("Nipples")}
-									placeholder="e.g. barbells, rings"
-									value={piercings.nipples ?? ""}
-									onChange={(value) => setField("piercings.nipples", value)}
-									locks={locks}
-									toggleLock={toggleLock}
-									lockKey="piercings.nipples"
-								/>
-								{isFeminine && (
-									<BodyArtField
-										label={nsfwLabel("Hood")}
-										placeholder="e.g. small curved barbell"
-										value={piercings.hood ?? ""}
-										onChange={(value) => setField("piercings.hood", value)}
-										locks={locks}
-										toggleLock={toggleLock}
-										lockKey="piercings.hood"
-									/>
-								)}
-								{hasPenis && (
-									<BodyArtField
-										label={nsfwLabel("Cock")}
-										placeholder="e.g. prince albert ring"
-										value={piercings.cock ?? ""}
-										onChange={(value) => setField("piercings.cock", value)}
-										locks={locks}
-										toggleLock={toggleLock}
-										lockKey="piercings.cock"
-									/>
-								)}
-							</>
+						<BodyArtField
+							label={nsfwLabel("Nipples")}
+							placeholder="e.g. barbells, rings"
+							value={piercings.nipples ?? ""}
+							onChange={(value) => setField("piercings.nipples", value)}
+							locks={locks}
+							toggleLock={toggleLock}
+							lockKey="piercings.nipples"
+						/>
+						{isFeminine && (
+							<BodyArtField
+								label={nsfwLabel("Hood")}
+								placeholder="e.g. small curved barbell"
+								value={piercings.hood ?? ""}
+								onChange={(value) => setField("piercings.hood", value)}
+								locks={locks}
+								toggleLock={toggleLock}
+								lockKey="piercings.hood"
+							/>
+						)}
+						{hasPenis && (
+							<BodyArtField
+								label={nsfwLabel("Cock")}
+								placeholder="e.g. prince albert ring"
+								value={piercings.cock ?? ""}
+								onChange={(value) => setField("piercings.cock", value)}
+								locks={locks}
+								toggleLock={toggleLock}
+								lockKey="piercings.cock"
+							/>
 						)}
 					</Stack>
 

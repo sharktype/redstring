@@ -1,7 +1,6 @@
 import { SegmentedControl, SimpleGrid, Stack } from "@mantine/core";
 import useGameContext from "../../../../../context/GameContext/useGameContext";
 import {
-	NSFW_PROFILE_STATES,
 	PROFILE_STATES,
 	type ProfileState,
 } from "../../../../../models/PlayerState";
@@ -23,28 +22,23 @@ export default function ProfileGrid({
 	onGenerate,
 	onRemove,
 }: ProfileGridProps) {
-	const { playerState, gameState } = useGameContext();
+	const { playerState } = useGameContext();
 
-	const isNsfwMode = gameState?.isNsfw ?? false;
-	const allStates: ProfileState[] = isNsfwMode
-		? [...PROFILE_STATES, ...NSFW_PROFILE_STATES]
-		: [...PROFILE_STATES];
+	const allStates: ProfileState[] = [...PROFILE_STATES];
 
 	const profiles = playerState?.portraits?.profiles ?? {};
 
 	return (
 		<Stack gap="xs" flex={1} pr="md">
-			{isNsfwMode && (
-				<SegmentedControl
-					size="xs"
-					value={variantMode}
-					onChange={(variant) => setVariantMode(variant as VariantMode)}
-					data={[
-						{ label: "Clothed", value: "base" },
-						{ label: "Nude", value: "nude" },
-					]}
-				/>
-			)}
+			<SegmentedControl
+				size="xs"
+				value={variantMode}
+				onChange={(variant) => setVariantMode(variant as VariantMode)}
+				data={[
+					{ label: "Clothed", value: "base" },
+					{ label: "Nude", value: "nude" },
+				]}
+			/>
 			<SimpleGrid cols={{ base: 2, sm: 3, md: 4 }} spacing="xs">
 				{allStates.map((state) => {
 					const prof = profiles[state];
